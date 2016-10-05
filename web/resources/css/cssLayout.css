@@ -1,0 +1,10 @@
+#left {
+    float: left;
+    height: 100%;
+}
+
+#content {
+    padding: 0px;
+    margin-left: 201px;
+    height: 100%;
+}

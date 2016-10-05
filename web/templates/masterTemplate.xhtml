@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <!-- General style -->
+        <h:outputStylesheet name="css/default.css"/>
+        <h:outputStylesheet name="css/cssLayout.css"/>
+        <!-- Sidebar menu styles -->
+        <h:outputStylesheet name="fonts/css/font-awesome.min.css"/>
+        <h:outputStylesheet name="css/sections/sidebar-menu.css"/>
+        <!-- Home page styles -->
+        <h:outputStylesheet name="css/sections/home.css"/>
+        <!-- General form menu styles -->
+        <h:outputStylesheet name="css/sections/bootstrap.css"/>
+        <h:outputStylesheet name="css/sections/bootstrap-theme.css"/>
+        <h:outputStylesheet name="css/sections/generalForm.css"/>
+        <!-- Home page scripts -->
+        <h:outputScript name="js/jquery-3.1.0.js"/>
+        <h:outputScript name="js/home.js"/>
+        <!-- Sidebar menu script -->
+        <h:outputScript name="js/sidebar-menu.js"/>
+        <!-- General form scripts -->
+        <h:outputScript name="js/bootstrap.js"/>
+        <h:outputScript name="js/generalForm.js"/>
+        <h:outputScript name="js/bootstrapValidator.min.js"/>
+        <!-- Define favorite icon (favicon) -->
+        <link rel="icon" href="../resources/images/favicon.ico" />
+        <title>Facelets Template</title>
+    </h:head>
+
+    <h:body>
+        <div id="left">
+            <ui:insert name="left">
+                <ui:include src="/sections/sidebarMenu.xhtml"/>
+            </ui:insert>
+            <script>
+                $.sidebarMenu($('.sidebar-menu'));
+            </script>
+        </div>
+        <div id="content">
+            <ui:insert name="content"></ui:insert>
+        </div>
+    </h:body>
+</html>

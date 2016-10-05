@@ -1,0 +1,13 @@
+.home {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.home > p{
+    position: relative;
+    text-align: center;
+    color: #ffffff;
+    font-size: 80px;
+}
