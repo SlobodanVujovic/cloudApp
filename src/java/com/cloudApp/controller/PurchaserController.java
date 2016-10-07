@@ -2,14 +2,14 @@ package com.cloudApp.controller;
 
 import com.cloudApp.model.Purchaser;
 import java.io.Serializable;
-import javax.enterprise.context.RequestScoped;
+import javax.faces.bean.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
 @RequestScoped
 public class PurchaserController implements Serializable{
-
+    
     @Inject
     private Purchaser purchaser;
  

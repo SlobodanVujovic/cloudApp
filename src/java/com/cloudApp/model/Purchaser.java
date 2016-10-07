@@ -7,10 +7,10 @@ import javax.inject.Named;
 @Named
 @RequestScoped
 public class Purchaser implements Serializable{
-    private String firstName, lastName, companyName, email, phone, address, city, zip, state, description;
+    private String firstName, lastName, userName, password, email, companyName, phone, address, city, zip, state, description;
 
     public Purchaser(){}
-    
+        
     public String getFirstName() {
         return firstName;
     }
@@ -26,6 +26,30 @@ public class Purchaser implements Serializable{
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+    
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getCompanyName() {
         return companyName;
@@ -33,14 +57,6 @@ public class Purchaser implements Serializable{
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {

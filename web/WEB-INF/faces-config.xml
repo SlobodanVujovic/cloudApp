@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+    <validator>
+        <validator-id>EmptyInputValidator</validator-id>
+        <validator-class>com.cloudApp.validators.EmptyInputValidator</validator-class>
+    </validator>
+    <validator>
+        <validator-id>ShortPasswordValidator</validator-id>
+        <validator-class>com.cloudApp.validators.ShortPasswordValidator</validator-class>
+    </validator>
+    <validator>
+        <validator-id>ConfirmPasswordValidator</validator-id>
+        <validator-class>com.cloudApp.validators.ConfirmPasswordValidator</validator-class>
+    </validator>
+     <validator>
+        <validator-id>EmailValidator</validator-id>
+        <validator-class>com.cloudApp.validators.EmailValidator</validator-class>
+    </validator>
+</faces-config>
