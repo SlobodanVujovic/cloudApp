@@ -8,3 +8,11 @@
     margin-left: 201px;
     height: 100%;
 }
+
+#contact_form{
+    position: absolute;
+    top: 50%;
+    height: 426px;
+    margin-top: -310px;
+}
+

@@ -19,4 +19,8 @@
         <validator-id>EmailValidator</validator-id>
         <validator-class>com.cloudApp.validators.EmailValidator</validator-class>
     </validator>
+    <validator>
+        <validator-id>PhoneNumberValidator</validator-id>
+        <validator-class>com.cloudApp.validators.PhoneNumberValidator</validator-class>
+    </validator>
 </faces-config>

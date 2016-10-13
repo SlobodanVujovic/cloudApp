@@ -1,0 +1,78 @@
+#reservationsInput, #ticketingInput, #reservationsPanel, #ticketingPanel, #custName,
+#custPhone, #calendar, #time{
+    display: none;
+}
+
+#reservationsPanel, #ticketingPanel{
+    width: 400px;
+    height: 300px;
+    background-color: rgba(241, 232, 214, .64);
+    border-radius: 10px;
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+
+#reservationsPanel p, #ticketingPanel p{
+    margin-left: 5px;
+}
+
+nav{
+    float: left;
+    max-width: 300px;
+    padding: 4em 1em 1em 1em;
+}
+
+.levelOneList, .levelTwoList{
+    list-style: none;
+}
+
+.levelTwoList label{
+    font-weight: lighter;
+}
+
+article{
+    margin-left: 300px;
+}
+
+.previewElement{
+    margin-right: 10px;
+    margin-left: 20px;
+}
+
+#popupBack{
+    width: 100%;
+    height: 100%;
+    opacity: 0.95;
+    top: 0;
+    left: 0;
+    display: none;
+    position: fixed;			
+    background-color: #313131;
+    overflow:auto;
+}
+
+#calendarPopup{
+    position: absolute; 
+    left: 50%;
+    top: 17%;
+    margin-left: -202px;
+}
+
+#calendarForm{
+    max-width: 400px;
+    min-width: 250px;
+    padding: 10px 50px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    font-family:raleway;
+    background-color: whitesmoke;
+}
+
+#okButton, #cancleButton{
+    width: 49%;
+}
+
+#serviceTypesButton{
+    margin-top: 10px;
+    margin-left: 40px;
+}

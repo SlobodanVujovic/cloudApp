@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+    <body>
+        <ui:composition template="./../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+
+                <div class="container">
+                    <h:form prependId="false">
+                        <!-- Checkbox input-->
+                        <nav>
+                            <ul class="levelOneList">
+                                <li>
+                                    <h:selectBooleanCheckbox id="reservations" onclick="hideOrShow(this);"/>
+                                    <h:outputLabel value="Reservations" for="reservations"/>
+                                </li>
+                                <ul class="levelTwoList" id="reservationsInput">
+                                    <li>
+                                        <h:selectBooleanCheckbox id="r1" onclick="showPreview(this)"/>
+                                        <h:outputLabel value="Customer's Name" for="r1"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="r2" onclick="showPreview(this)"/>
+                                        <h:outputLabel value="Customer's Phone" for="r2"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="r3" onclick="showPopupWin(this)"/>
+                                        <h:outputLabel value="Calendar" for="r3"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="r4" onclick="showPreview(this)"/>
+                                        <h:outputLabel value="Time" for="r4"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="r5"/>
+                                        <h:outputLabel value="I have agents" for="r5"/>
+                                    </li>
+                                </ul>
+                                <li>
+                                    <h:selectBooleanCheckbox id="ticketing" onclick="hideOrShow(this);"/>
+                                    <h:outputLabel value="Ticketing System" for="ticketing"/>
+                                </li>
+                                <ul class="levelTwoList" id="ticketingInput">
+                                    <li>
+                                        <h:selectBooleanCheckbox id="t1"/>
+                                        <h:outputLabel value="Company Name" for="t1"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="t2"/>
+                                        <h:outputLabel value="Customer's Name" for="t2"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="t3"/>
+                                        <h:outputLabel value="Customer's Phone" for="t3"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="t4"/>
+                                        <h:outputLabel value="Calendar" for="t4"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="t5"/>
+                                        <h:outputLabel value="Scheduling period" for="t5"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="t6"/>
+                                        <h:outputLabel value="I have agents" for="t6"/>
+                                    </li>
+                                </ul>
+                            </ul>
+                            <!-- Button -->
+                            <button id="serviceTypesButton" type="button" action="#" class="btn btn-warning">Next <span class="glyphicon glyphicon-arrow-right"></span></button>
+                        </nav>
+                        <article>
+                            <h1>Service Types</h1>
+                            <div id="reservationsPanel">
+                                <p>Reservation Preview:</p>
+                                <p:panelGrid id="reservationsTable">
+                                    <h:panelGroup id="custName">
+                                        <h:outputLabel value="Your Name" class="previewElement"/>
+                                        <h:inputText id="your_name" pt:placeholder=" Your Name"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="custPhone">
+                                        <h:outputLabel value="Your Phone" class="previewElement"/>
+                                        <h:inputText id="your_phone" pt:placeholder=" Your Phone"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="calendar">
+                                        <h:outputLabel value="Pick Date" class="previewElement"/>
+                                        <h:inputText id="datepicker" pt:placeholder=" Pick Date"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup id="time">
+                                        <h:outputLabel value="Pick Time" class="previewElement"/>
+                                        <h:inputText id="timeInput" pt:placeholder=" Pick Time"/>
+                                    </h:panelGroup>
+                                </p:panelGrid>
+                            </div>
+                            <div id="ticketingPanel">
+                                <p>Ticketing Preview:</p>
+                                <h:panelGrid id="ticketingTable" columns="2">
+
+                                </h:panelGrid>
+                            </div>
+                        </article>
+                    </h:form>
+                    <div id="popupBack">
+                        <div id="calendarPopup">
+                            <h:form id="calendarForm" prependId="false">
+                                <h2>Select date format</h2>
+                                <h:selectOneRadio layout="pageDirection">
+                                    <f:selectItem itemValue="1" itemLabel="mm/dd/yyyy" />
+                                    <f:selectItem itemValue="2" itemLabel="dd/mm/yyyy" />	   			
+                                </h:selectOneRadio>
+                                <button id="okButton" type="button" action="#" class="btn btn-warning">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button id="cancleButton" type="button" action="#" class="btn btn-warning" onclick="hidePopupWin()">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

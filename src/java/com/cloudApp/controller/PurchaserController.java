@@ -27,7 +27,7 @@ public class PurchaserController implements Serializable{
         u folderu WebPages/confirm/confirmation.xhtml onda bi String definisali kao "/confirm/confirmation".
         1. forward slash (/) predstavlja root - WebPages.
         */
-        return "confirmation";
+        return "#";
     }
 
 }

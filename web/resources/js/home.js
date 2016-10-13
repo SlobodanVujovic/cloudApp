@@ -1,8 +1,17 @@
-// Napraviti tako da 1. red izranja iz zamisljene linije izmedju 2 reda a da se 2. red spusta iz te iste linije.
+/*
+ * Identicno je ako napisemo:
+ * $(document).ready(function () {
+ * ili:
+ * $(function () {
+ * Druga verzija je samo skracenje.
+ */
 $(document).ready(function () {
-    var animationSpeed = 2000;
-    $("#welcome").hide();
-    $("#welcome").show(animationSpeed);
-    return false;
+    $("#firstLine").vTicker("init", {speed: 2000});
+    $("#firstLine").vTicker("next", {animate: true});
+    $('#firstLine').vTicker("pause", true);
+    $("#secondLine").vTicker("init", {speed: 2000});
+    $("#secondLine").vTicker("prev", {animate: true});
+    $('#secondLine').vTicker("pause", true);
 });
 
+// TODO izbacuje jQuery exception u console-i kada se otvara stranica koja nije "Home".
