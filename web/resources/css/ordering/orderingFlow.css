@@ -1,19 +1,45 @@
-#reservationsInput, #ticketingInput, #reservationsPanel, #ticketingPanel, #custName,
-#custPhone, #calendar, #time{
+#reservationsInput, #ticketingInput, #reservationsPanel, #ticketingPanel, #your_name_label,
+#your_name, #your_phone_label, #your_phone, #datepicker_label, #datepicker, #timepicker_label, 
+#timepicker, #agentpicker_label, #agentpicker, #client_name_label, #client_name, #client_phone_label, #client_phone,
+#client_email_label, #client_email, #client_address_label, #client_address, #client_locateMe_button, #geoGmap, #emergency_level_label, #emergency_level,
+#problem_description_label, #problem_description, #reminderPanel, #reminderInput, #reminderSms, #reminderEmail{
     display: none;
 }
 
-#reservationsPanel, #ticketingPanel{
+#reservationsPanel{
     width: 400px;
-    height: 300px;
+    height: 210px;
     background-color: rgba(241, 232, 214, .64);
     border-radius: 10px;
     border: 1px solid black;
     margin-bottom: 10px;
 }
 
-#reservationsPanel p, #ticketingPanel p{
+#ticketingPanel, #reminderPanel{
+    width: 400px;
+    height: 380px;
+    background-color: rgba(241, 232, 214, .64);
+    border-radius: 10px;
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+
+#reservationsPanel p, #ticketingPanel p, #reminderPanel p{
     margin-left: 5px;
+}
+
+#reservationsTable, #ticketingTable, #reminderTable{
+    margin-left: 10px;
+    background-color: transparent;
+}
+
+#reservationsTable td, #reservationsTable tr{
+    background-color: transparent;
+    border: transparent;
+}
+
+#reservationsTable td, #agentForm\:oneByOneForm td, #ticketingTable td{
+    text-align: right;
 }
 
 nav{
@@ -39,7 +65,7 @@ article{
     margin-left: 20px;
 }
 
-#popupBack{
+#calendarPopupBack, #timePopupBack, #agentPopupBack, #reminderPopupBack{
     width: 100%;
     height: 100%;
     opacity: 0.95;
@@ -51,14 +77,14 @@ article{
     overflow:auto;
 }
 
-#calendarPopup{
+#calendarPopup, #timePopup, #agentPopup, #reminderPopup{
     position: absolute; 
     left: 50%;
     top: 17%;
     margin-left: -202px;
 }
 
-#calendarForm{
+#calendarForm, #timeForm, #agentForm, #reminderForm{
     max-width: 400px;
     min-width: 250px;
     padding: 10px 50px;
@@ -67,12 +93,59 @@ article{
     font-family:raleway;
     background-color: whitesmoke;
 }
-
-#okButton, #cancleButton{
+#calendarOkButton, #calendarCancleButton, #timeOkButton, #timeCancleButton, #agentOkButton, #agentCancleButton,
+#agentDownloadTemplateButton, #agentUploadTemplateButton, #reminderOkButton, #reminderCancleButton{
     width: 49%;
 }
 
 #serviceTypesButton{
     margin-top: 10px;
     margin-left: 40px;
+}
+
+#timeForm h2, #agentForm h2, #reminderForm h2{
+    text-align: center;
+}
+
+#reminderForm p{
+    margin-bottom: 0px;
+}
+
+#timeForm table, #agentForm table{
+    margin-left: 0px;
+    margin-bottom: 10px;
+}
+
+#timeForm input, #reminderForm input{
+    width: 30px;
+    margin: 5px;
+}
+
+select:disabled{
+    background: #e8eae3;
+}
+
+#timeForm select, #reminderForm select{
+    height: 26px;
+}
+
+#timepicker{
+    width: 91px;
+}
+
+#datepicker{
+    width: 90px;
+}
+
+#agentForm\:templateForm{
+    margin-top: 10px;
+}
+
+#agentForm\:templateForm tr{
+    background: transparent;
+    border: transparent;
+}
+
+#agentForm\:dlButtonRow, #agentForm\:ulButtonRow{
+    text-align: center;
 }

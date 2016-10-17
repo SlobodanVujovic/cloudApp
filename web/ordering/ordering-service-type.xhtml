@@ -9,113 +9,269 @@
     <body>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="content">
-
                 <div class="container">
                     <h:form prependId="false">
+
                         <!-- Checkbox input-->
                         <nav>
                             <ul class="levelOneList">
                                 <li>
-                                    <h:selectBooleanCheckbox id="reservations" onclick="hideOrShow(this);"/>
+                                    <h:selectBooleanCheckbox id="reservations" onclick="hideOrShowPreviewElement('reservations');"/>
                                     <h:outputLabel value="Reservations" for="reservations"/>
                                 </li>
                                 <ul class="levelTwoList" id="reservationsInput">
                                     <li>
-                                        <h:selectBooleanCheckbox id="r1" onclick="showPreview(this)"/>
+                                        <h:selectBooleanCheckbox id="r1" onclick="hideOrShowPreviewElement('r1')"/>
                                         <h:outputLabel value="Customer's Name" for="r1"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="r2" onclick="showPreview(this)"/>
+                                        <h:selectBooleanCheckbox id="r2" onclick="hideOrShowPreviewElement('r2')"/>
                                         <h:outputLabel value="Customer's Phone" for="r2"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="r3" onclick="showPopupWin(this)"/>
+                                        <h:selectBooleanCheckbox id="r3" onclick="showPopupWin('r3')"/>
                                         <h:outputLabel value="Calendar" for="r3"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="r4" onclick="showPreview(this)"/>
+                                        <h:selectBooleanCheckbox id="r4" onclick="showPopupWin('r4')"/>
                                         <h:outputLabel value="Time" for="r4"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="r5"/>
+                                        <h:selectBooleanCheckbox id="r5" onclick="showPopupWin('r5')"/>
                                         <h:outputLabel value="I have agents" for="r5"/>
                                     </li>
                                 </ul>
                                 <li>
-                                    <h:selectBooleanCheckbox id="ticketing" onclick="hideOrShow(this);"/>
+                                    <h:selectBooleanCheckbox id="ticketing" onclick="hideOrShowPreviewElement('ticketing');"/>
                                     <h:outputLabel value="Ticketing System" for="ticketing"/>
                                 </li>
                                 <ul class="levelTwoList" id="ticketingInput">
                                     <li>
-                                        <h:selectBooleanCheckbox id="t1"/>
-                                        <h:outputLabel value="Company Name" for="t1"/>
+                                        <h:selectBooleanCheckbox id="t1" onclick="hideOrShowPreviewElement('t1')"/>
+                                        <h:outputLabel value="Client Name" for="t1"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="t2"/>
-                                        <h:outputLabel value="Customer's Name" for="t2"/>
+                                        <h:selectBooleanCheckbox id="t2" onclick="hideOrShowPreviewElement('t2')"/>
+                                        <h:outputLabel value="Client Phone" for="t2"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="t3"/>
-                                        <h:outputLabel value="Customer's Phone" for="t3"/>
+                                        <h:selectBooleanCheckbox id="t3" onclick="hideOrShowPreviewElement('t3')"/>
+                                        <h:outputLabel value="Client E-Mail" for="t3"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="t4"/>
-                                        <h:outputLabel value="Calendar" for="t4"/>
+                                        <h:selectBooleanCheckbox id="t4" onclick="showAddressWithMapPreview()"/>
+                                        <h:outputLabel value="Client Adress" for="t4"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="t5"/>
-                                        <h:outputLabel value="Scheduling period" for="t5"/>
+                                        <h:selectBooleanCheckbox id="t5" onclick="hideOrShowPreviewElement('t5')"/>
+                                        <h:outputLabel value="Emergency level" for="t5"/>
                                     </li>
                                     <li>
-                                        <h:selectBooleanCheckbox id="t6"/>
-                                        <h:outputLabel value="I have agents" for="t6"/>
+                                        <h:selectBooleanCheckbox id="t6" onclick="hideOrShowPreviewElement('t6')"/>
+                                        <h:outputLabel value="Problem description" for="t6"/>
+                                    </li>
+                                </ul>
+                                <li>
+                                    <h:selectBooleanCheckbox id="reminder" onclick="hideOrShowPreviewElement('reminder')"/>
+                                    <h:outputLabel for="reminder" value="Reminder"/>
+                                </li>
+                                <ul class="levelTwoList" id="reminderInput">
+                                    <li>
+                                        <h:selectBooleanCheckbox id="rm1" onclick="showReminderPopupWin('rm1')"/>
+                                        <h:outputLabel for="rm1" value="SMS Message"/>
+                                    </li>
+                                    <li>
+                                        <h:selectBooleanCheckbox id="rm2" onclick="showReminderPopupWin('rm2')"/>
+                                        <h:outputLabel for="rm2" value="E-Mail"/>
                                     </li>
                                 </ul>
                             </ul>
                             <!-- Button -->
-                            <button id="serviceTypesButton" type="button" action="#" class="btn btn-warning">Next <span class="glyphicon glyphicon-arrow-right"></span></button>
+                            <!-- TODO Definisati validator koji nece dozvoljavati prelazak na sledecu stranicu ako nije izabran neki servis.-->
+                            <h:commandLink id="serviceTypesButton" action="ordering-overview" styleClass="btn btn-warning">Next <span class="glyphicon glyphicon-arrow-right"></span></h:commandLink>
                         </nav>
                         <article>
                             <h1>Service Types</h1>
                             <div id="reservationsPanel">
                                 <p>Reservation Preview:</p>
-                                <p:panelGrid id="reservationsTable">
-                                    <h:panelGroup id="custName">
-                                        <h:outputLabel value="Your Name" class="previewElement"/>
-                                        <h:inputText id="your_name" pt:placeholder=" Your Name"/>
-                                    </h:panelGroup>
-                                    <h:panelGroup id="custPhone">
-                                        <h:outputLabel value="Your Phone" class="previewElement"/>
-                                        <h:inputText id="your_phone" pt:placeholder=" Your Phone"/>
-                                    </h:panelGroup>
-                                    <h:panelGroup id="calendar">
-                                        <h:outputLabel value="Pick Date" class="previewElement"/>
-                                        <h:inputText id="datepicker" pt:placeholder=" Pick Date"/>
-                                    </h:panelGroup>
-                                    <h:panelGroup id="time">
-                                        <h:outputLabel value="Pick Time" class="previewElement"/>
-                                        <h:inputText id="timeInput" pt:placeholder=" Pick Time"/>
-                                    </h:panelGroup>
+                                <p:panelGrid id="reservationsTable" columns="2">
+                                    <h:outputLabel id="your_name_label" value="Your Name" class="previewElement"/>
+                                    <h:inputText id="your_name" pt:placeholder=" Your Name"/>
+                                    <h:outputLabel id="your_phone_label" value="Your Phone" class="previewElement"/>
+                                    <h:inputText id="your_phone" pt:placeholder=" Your Phone"/>
+                                    <h:outputLabel id="datepicker_label" value="Pick Date" class="previewElement"/>
+                                    <h:inputText id="datepicker" pt:placeholder=" Pick Date"/>
+                                    <h:outputLabel id="timepicker_label" value="Pick Time" class="previewElement"/>
+                                    <h:inputText id="timepicker" pt:placeholder=" Pick Time"/>
+                                    <h:outputLabel id="agentpicker_label" value="Choose Agent" class="previewElement"/>
+                                    <h:selectOneMenu id="agentpicker" pt:placeholder=" Pick Agent">
+                                        <f:selectItem itemLabel="John Foo" itemValue="johnFoo"/>
+                                        <f:selectItem itemLabel="Foo John" itemValue="fooJohn"/>
+                                    </h:selectOneMenu>
                                 </p:panelGrid>
+                                <!-- TODO "agentpicker" je dropdown lista koja treba da se popunjava iz DB-a. Ovde sam samo rucno uneo vrednosti u listi.
+                                    U "Internet stranice/JSF" folderu ima stranica "How to populate options of h_selectOneMenu from database"
+                                    koju treba koristiti kao referencu za ovo.-->
                             </div>
                             <div id="ticketingPanel">
+                                <!--TODO Google Maps u okviru "client_address" se ne pokazuje zbog API KEY-a-->
                                 <p>Ticketing Preview:</p>
                                 <h:panelGrid id="ticketingTable" columns="2">
-
+                                    <h:outputLabel id="client_name_label" for="client_name" value="Client Name" class="previewElement"/>
+                                    <h:inputText id="client_name" pt:placeholder=" Client Name"/>
+                                    <h:outputLabel id="client_phone_label" for="client_phone" value="Client Phone" class="previewElement"/>
+                                    <h:inputText id="client_phone" pt:placeholder=" Client Phone"/>
+                                    <h:outputLabel id="client_email_label" for="client_email" value="Client E-Mail" class="previewElement"/>
+                                    <h:inputText id="client_email" pt:placeholder=" Client E-Mail"/>
+                                    <h:outputLabel id="client_address_label" for="client_address" value="Client Address" class="previewElement"/>
+                                    <h:inputText id="client_address" pt:placeholder=" Client Address"/>
+                                    <p:commandButton id="client_locateMe_button" value="Locate Me" icon="ui-icon-search" onclick="geocode()" type="button"/>
+                                    <p:gmap id="geoGmap" center="#{geocodeView.centerGeoMap}" widgetVar="geoMap" model="#{geocodeView.geoModel}" zoom="2" type="ROADMAP" style="width:100%; height:100px">
+                                        <p:ajax event="geocode" listener="#{geocodeView.onGeocode}" update="@this"/>
+                                    </p:gmap>
+                                    <h:outputLabel id="emergency_level_label" for="emergency_level" value="Emergency Level" class="previewElement"/>
+                                    <h:selectOneMenu id="emergency_level">
+                                        <f:selectItem itemValue="l1" itemLabel="Priority 1"/>
+                                        <f:selectItem itemValue="l2" itemLabel="Priority 2"/>
+                                        <f:selectItem itemValue="l3" itemLabel="Priority 3"/>
+                                    </h:selectOneMenu>
+                                    <h:outputLabel id="problem_description_label" for="problem_description" value="Problem Description" class="previewElement"/>
+                                    <h:inputTextarea id="problem_description" pt:placeholder=" Describe your problem."/>
+                                </h:panelGrid>
+                                <!-- TODO Proveriti zasto "client_address" ne prikazuje mapu, testGoogleMaps prikazuje
+                                al' ovde se nista ne prikazuje iako je isti kod. Kada se stranica generise, ovoj stranici
+                                nedostaju script-ovi koji se ticu Maps-a a koji se generisu u test stranici.
+                                Site: "http://www.primefaces.org/showcase/ui/data/gmap/geocode.xhtml"-->
+                                <!--TODO Za listu "emergency_level" kreirati prozor gde ce moci 
+                                da se definisu nivoi, bilo da su to brojevi ili string-ovi-->
+                            </div>
+                            <div id="reminderPanel">
+                                <p>Reminder Preview:</p>
+                                <h:panelGrid id="reminderTable">
+                                    <p id="reminderSms">
+                                        Hello John,<br/>
+                                        You have dental appointment tomorrow (01.10.2016.) at 13 PM at 901 5th Avenue, New York.<br/>
+                                        <br/>
+                                        Kind Regards,<br/>
+                                        Dental Medic.
+                                    </p>
+                                    <p id="reminderEmail">
+                                        From: dental@medic.com<br/>
+                                        To: john@foo.com<br/>
+                                        Subject: Dental appointment reminder<br/>
+                                        <br/>
+                                        Hello John,<br/>
+                                        You have dental appointment tomorrow (01.10.2016.) at 13 PM at 901 5th Avenue, New York.<br/>
+                                        <br/>
+                                        Kind Regards,<br/>
+                                        Dental Medic.
+                                    </p>
                                 </h:panelGrid>
                             </div>
                         </article>
                     </h:form>
-                    <div id="popupBack">
+                    <div id="calendarPopupBack">
                         <div id="calendarPopup">
                             <h:form id="calendarForm" prependId="false">
                                 <h2>Select date format</h2>
-                                <h:selectOneRadio layout="pageDirection">
-                                    <f:selectItem itemValue="1" itemLabel="mm/dd/yyyy" />
-                                    <f:selectItem itemValue="2" itemLabel="dd/mm/yyyy" />	   			
+                                <!-- TODO value vrednost treba povezati sa bean-om, ova vrednost odredjuje 
+                                koji radio button ce biti selektovan kada se pojavi prozor.-->
+                                <h:selectOneRadio layout="pageDirection" value="md">
+                                    <f:selectItem itemValue="md" itemLabel="mm/dd/yyyy"/>
+                                    <f:selectItem itemValue="dm" itemLabel="dd/mm/yyyy" />	   			
                                 </h:selectOneRadio>
-                                <button id="okButton" type="button" action="#" class="btn btn-warning">OK <span class="glyphicon glyphicon-ok"></span></button>
-                                <button id="cancleButton" type="button" action="#" class="btn btn-warning" onclick="hidePopupWin()">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                                <button id="calendarOkButton" type="button" class="btn btn-warning" onclick="hidePopupWin('calendarPopupBack'); buttonOk('r3');">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button id="calendarCancleButton" type="button" class="btn btn-warning" onclick="hidePopupWin('calendarPopupBack'); uncheckElement('r3');">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                            </h:form>
+                        </div>
+                    </div>
+                    <div id="timePopupBack">
+                        <div id="timePopup">
+                            <h:form id="timeForm">
+                                <h2>Select time period for scheduling</h2>
+                                <h:selectOneRadio layout="pageDirection" value="#{reservationService.timePeriod}">
+                                    <f:selectItem itemValue="anytime" itemLabel="Anytime"/>
+                                    <f:selectItem itemValue="period" itemLabel="Every:"/>
+                                    <f:ajax render="periodNumeric periodUnit"/>
+                                </h:selectOneRadio>
+                                <h:inputText id="periodNumeric" maxlength="2" disabled="#{reservationService.timePeriod == 'anytime'}" value="30"/>
+                                <h:selectOneMenu id="periodUnit" disabled="#{reservationService.timePeriod == 'anytime'}">
+                                    <f:selectItem itemValue="min" itemLabel="min"/>
+                                    <f:selectItem itemValue="hour" itemLabel="hour(s)"/>
+                                    <f:selectItem itemValue="day" itemLabel="day(s)"/>
+                                </h:selectOneMenu>
+                                <br/>
+                                <button id="timeOkButton" type="button" class="btn btn-warning" onclick="hidePopupWin('timePopupBack'); buttonOk('r4')">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button id="timeCancleButton" type="button" class="btn btn-warning" onclick="hidePopupWin('timePopupBack'); uncheckElement('r4')">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                            </h:form>
+                        </div>
+                    </div>
+                    <div id="agentPopupBack">
+                        <div id="agentPopup">
+                            <h:form id="agentForm">
+                                <h2>Enter your agents</h2>
+                                <h:selectOneRadio value="#{agentController.inputType}">
+                                    <f:selectItem itemValue="oneByOne" itemLabel="One by one:"/>
+                                    <f:selectItem itemValue="template" itemLabel="By template:"/>
+                                    <f:ajax event="change" render="oneByOneForm templateForm"/>
+                                </h:selectOneRadio>
+                                <h:panelGrid id="oneByOneForm" columns="2" >
+                                    <h:outputLabel id="agent_first_name_label" value="First Name" class="previewElement"/>
+                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" disabled="#{agentController.inputType != 'oneByOne'}"/>
+                                    <h:outputLabel id="agent_last_name_label" value="Last Name" class="previewElement"/>
+                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" disabled="#{agentController.inputType != 'oneByOne'}"/>
+                                    <h:outputLabel id="agent_phone_label" value="Phone #" class="previewElement"/>
+                                    <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" disabled="#{agentController.inputType != 'oneByOne'}"/>
+                                    <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
+                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" disabled="#{agentController.inputType != 'oneByOne'}"/>
+                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" onclick="agentButtonWrite()" disabled="#{agentController.inputType != 'oneByOne'}">Write <span class="glyphicon glyphicon-ok"></span></h:commandLink>
+                                </h:panelGrid>
+                                <p:panelGrid id="templateForm">
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <ol>
+                                                <li>Download MS Office Excel.</li>
+                                                <li>Fill it according to it's form and save it.</li>
+                                                <li>Upload saved file.</li>
+                                            </ol>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row id="dlButtonRow">
+                                        <p:column>
+                                            <h:commandLink id="agentDownloadTemplateButton" class="btn btn-warning" onclick="agentButtonDownload()" disabled="#{agentController.inputType != 'template'}">Download <span class="glyphicon glyphicon-download-alt"></span></h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row id="ulButtonRow">
+                                        <p:column>
+                                            <h:commandLink id="agentUploadTemplateButton" class="btn btn-warning" onclick="agentButtonUpload()" disabled="#{agentController.inputType != 'template'}">Upload <span class="glyphicon glyphicon-cloud-upload"></span></h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <button id="agentOkButton" type="button" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); buttonOk('r5')">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button id="agentCancleButton" type="button" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); uncheckElement('r5')">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <div id="reminderPopupBack">
+                        <div id="reminderPopup">
+                            <h:form id="reminderForm">
+                                <h2>Select time for reminder</h2>
+                                <p>
+                                    Remind client 
+                                </p>
+                                <h:inputText id="reminderNumeric" maxlength="2" value="24"/>
+                                <h:selectOneMenu id="reminderUnit" value="#{reminder.reminderUnit}">
+                                    <f:selectItem itemValue="reminderMin" itemLabel="min"/>
+                                    <f:selectItem itemValue="reminderHour" itemLabel="hour(s)"/>
+                                    <f:selectItem itemValue="reinderDay" itemLabel="day(s)"/>
+                                </h:selectOneMenu>
+                                <p>
+                                    before event.
+                                </p>
+                                <br/>
+                                <button id="reminderOkButton" type="button" class="btn btn-warning" onclick="hidePopupWin('reminderPopupBack'); reminderButtonOk()">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button id="reminderCancleButton" type="button" class="btn btn-warning" onclick="hidePopupWin('reminderPopupBack'); uncheckReminder()">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
                             </h:form>
                         </div>
                     </div>

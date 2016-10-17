@@ -1,97 +1,221 @@
-function hideOrShow(checkbox) {
-    var checkboxId = checkbox.id;
-    var isChecked = checkbox.checked;
-    var listId;
-    var panelId;
+function hideOrShowPreviewElement(checkboxId) {
+    var isChecked = document.getElementById(checkboxId).checked;
+    var elementToShowId1;
+    var elementToShowId2;
     switch (checkboxId) {
         case "reservations":
-            listId = "reservationsInput";
-            panelId = "reservationsPanel";
+            elementToShowId1 = "reservationsInput";
+            elementToShowId2 = "reservationsPanel";
             break;
         case "ticketing":
-            listId = "ticketingInput";
-            panelId = "ticketingPanel";
+            elementToShowId1 = "ticketingInput";
+            elementToShowId2 = "ticketingPanel";
+            break;
+        case "reminder":
+            elementToShowId1 = "reminderInput";
+            elementToShowId2 = "reminderPanel";
+            break;
+        case "r1":
+            elementToShowId1 = "your_name_label";
+            elementToShowId2 = "your_name";
+            break;
+        case "r2":
+            elementToShowId1 = "your_phone_label";
+            elementToShowId2 = "your_phone";
+            break;
+        case "r3":
+            elementToShowId1 = "datepicker_label";
+            elementToShowId2 = "datepicker";
+            break;
+        case "r4":
+            elementToShowId1 = "timepicker_label";
+            elementToShowId2 = "timepicker";
+            break;
+        case "r5":
+            elementToShowId1 = "agentpicker_label";
+            elementToShowId2 = "agentpicker";
+            break;
+        case "t1":
+            elementToShowId1 = "client_name_label";
+            elementToShowId2 = "client_name";
+            break;
+        case "t2":
+            elementToShowId1 = "client_phone_label";
+            elementToShowId2 = "client_phone";
+            break;
+        case "t3":
+            elementToShowId1 = "client_email_label";
+            elementToShowId2 = "client_email";
+            break;
+        case "t5":
+            elementToShowId1 = "emergency_level_label";
+            elementToShowId2 = "emergency_level";
+            break;
+        case "t6":
+            elementToShowId1 = "problem_description_label";
+            elementToShowId2 = "problem_description";
             break;
         default:
-            listId = "thisIsErrorValue";
+            elementToShowId1 = "thisIsErrorValue";
     }
-    // Get the for using its ID.
-    var listToShow = document.getElementById(listId);
-    var panelToShow = document.getElementById(panelId);
+    var elementToShow1 = document.getElementById(elementToShowId1);
+    var elementToShow2 = document.getElementById(elementToShowId2);
     if (isChecked) {
-        $(listToShow).slideDown(500, function () {
-            listToShow.style.display = "block";
+        $(elementToShow1).slideDown(500, function () {
+            elementToShow1.style.display = "block";
         });
-        $(panelToShow).slideDown(500, function () {
-            panelToShow.style.display = "block";
+        $(elementToShow2).slideDown(500, function () {
+            elementToShow2.style.display = "block";
         });
     } else {
-        $(listToShow).slideUp(500, function () {
-            listToShow.style.display = "none";
+        $(elementToShow1).slideUp(500, function () {
+            elementToShow1.style.display = "none";
         });
-        $(panelToShow).slideUp(500, function () {
-            panelToShow.style.display = "none";
+        $(elementToShow2).slideUp(500, function () {
+            elementToShow2.style.display = "none";
         });
     }
 }
 
-function showPreview(checkbox) {
-    var checkboxId = checkbox.id;
-    var isChecked = checkbox.checked;
+function showReminder(checkboxId) {
+    var isChecked = document.getElementById(checkboxId).checked;
     var inputToShowId;
     switch (checkboxId) {
-        case "r1":
-            inputToShowId = "custName";
+        case "rm1":
+            inputToShowId = "reminderSms";
             break;
-        case "r2":
-            inputToShowId = "custPhone";
-            break;
-        case "r3":
-            inputToShowId = "calendar";
-            break;
-        case "r4":
-            inputToShowId = "time";
+        case "rm2":
+            inputToShowId = "reminderEmail";
             break;
     }
     var inputToShow = document.getElementById(inputToShowId);
     if (isChecked) {
         $(inputToShow).slideDown(500, function () {
-            inputToShow.style.display = "block";
+            (inputToShow).style.display = "block";
         });
-
     } else {
         $(inputToShow).slideUp(500, function () {
-            inputToShow.style.display = "none";
+            (inputToShow).style.display = "none";
         });
-
     }
 }
 
-function showPopupWin(checkbox) {
-    var checkboxId = checkbox.id;
-    var isChecked = checkbox.checked;
+function showAddressWithMapPreview() {
+    var isChecked = document.getElementById("t4").checked;
+    var inputToShowId1 = "client_address_label",
+            inputToShowId2 = "client_address",
+            inputToShowId3 = "client_locateMe_button",
+            inputToShowId4 = "geoGmap";
+    var inputToShow1 = document.getElementById(inputToShowId1),
+            inputToShow2 = document.getElementById(inputToShowId2),
+            inputToShow3 = document.getElementById(inputToShowId3),
+            inputToShow4 = document.getElementById(inputToShowId4);
+    if (isChecked) {
+        $(inputToShow1).slideDown(500, function () {
+            inputToShow1.style.display = "block";
+        });
+        $(inputToShow2).slideDown(500, function () {
+            inputToShow2.style.display = "block";
+        });
+        $(inputToShow3).slideDown(500, function () {
+            inputToShow3.style.display = "block";
+        });
+        $(inputToShow4).slideDown(500, function () {
+            inputToShow4.style.display = "block";
+        });
+
+    } else {
+        $(inputToShow1).slideUp(500, function () {
+            inputToShow1.style.display = "none";
+        });
+        $(inputToShow2).slideUp(500, function () {
+            inputToShow2.style.display = "none";
+        });
+        $(inputToShow3).slideDown(500, function () {
+            inputToShow3.style.display = "none";
+        });
+        $(inputToShow4).slideDown(500, function () {
+            inputToShow4.style.display = "none";
+        });
+    }
+}
+
+function showPopupWin(checkboxId) {
+    var isChecked = document.getElementById(checkboxId).checked;
     var divToShowId;
     switch (checkboxId) {
         case "r3":
-            divToShowId = "popupBack";
+            divToShowId = "calendarPopupBack";
             break;
         case "r4":
-            divToShowId = "timePopup";
+            divToShowId = "timePopupBack";
+            break;
+        case "r5":
+            divToShowId = "agentPopupBack";
             break;
     }
     var inputToShow = document.getElementById(divToShowId);
     if (isChecked) {
         inputToShow.style.display = "block";
-        showPreview(checkbox);
     } else {
-        inputToShow.style.display = "none";
-        showPreview(checkbox);
+        hideOrShowPreviewElement(checkboxId);
     }
 }
 
-function hidePopupWin() {
-    var inputToShow = document.getElementById("popupBack");
+function showReminderPopupWin(checkboxId) {
+    var checkbox = document.getElementById(checkboxId);
+    var isChecked = checkbox.checked;
+    var divToShowId = "reminderPopupBack";
+    var inputToShow = document.getElementById(divToShowId);
+    if (isChecked) {
+        inputToShow.style.display = "block";
+    } else {
+        showReminder(checkboxId);
+    }
+}
+
+function hidePopupWin(winId) {
+    var inputToShow = document.getElementById(winId);
     inputToShow.style.display = "none";
+}
+
+function uncheckElement(checkboxId) {
+    var checkbox = document.getElementById(checkboxId);
+    $(checkbox).prop("checked", false);
+}
+
+function uncheckReminder() {
+    var smsReminderElement = document.getElementById("rm1");
+    var emailReminderElement = document.getElementById("rm2");
+    var checkedId;
+    if (smsReminderElement.checked) {
+        checkedId = "#rm1";
+    } else if (emailReminderElement.checked) {
+        checkedId = "#rm2";
+    }
+    $(checkedId).prop("checked", false);
+}
+
+function buttonOk(checkboxId) {
+    hideOrShowPreviewElement(checkboxId);
+}
+
+function agentButtonWrite() {
+
+}
+
+function reminderButtonOk() {
+    var smsReminderElement = document.getElementById("rm1");
+    var emailReminderElement = document.getElementById("rm2");
+    var checkedId;
+    if (smsReminderElement.checked) {
+        checkedId = "rm1";
+        showReminder(checkedId);
+    }
+    if (emailReminderElement.checked) {
+        checkedId = "rm2";
+        showReminder(checkedId);
+    }
 }
 
 $(function () {
@@ -99,17 +223,21 @@ $(function () {
 });
 
 $(function () {
-    $('#timeInput').timepicker();
+    $('#timepicker').timepicker();
 });
 
+function geocode() {
+    PF('geoMap').geocode(document.getElementById('client_address').value);
+}
+
 /*
- $(document).ready(function () {
- $("#email").on("input", function () {
- var email = $("#email").val();
- var number = /\d+/g;
- if (email.match(number) != null) {
- alert("Ima broj");
- }
- });
- });
- */
+$(document).ready(function () {
+    $("#email").on("input", function () {
+        var email = $("#email").val();
+        var number = /\d+/g;
+        if (email.match(number) != null) {
+            alert("Ima broj");
+        }
+    });
+});
+*/

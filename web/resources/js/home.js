@@ -13,5 +13,3 @@ $(document).ready(function () {
     $("#secondLine").vTicker("prev", {animate: true});
     $('#secondLine').vTicker("pause", true);
 });
-
-// TODO izbacuje jQuery exception u console-i kada se otvara stranica koja nije "Home".
