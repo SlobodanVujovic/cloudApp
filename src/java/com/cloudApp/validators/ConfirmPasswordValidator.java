@@ -6,7 +6,8 @@ import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-
+//@FacesValidator("myValidator")
+//Proveriti da li ovaj annotation moze da zameni definisanje validatora u xml file-u.
 public class ConfirmPasswordValidator implements Validator {
 
     @Override
