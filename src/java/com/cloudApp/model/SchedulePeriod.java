@@ -6,13 +6,12 @@ import javax.inject.Named;
 
 @Named
 @SessionScoped
-public class ReservationService implements Serializable{
+public class SchedulePeriod implements Serializable{
+    private String timePeriod;
     
-    public ReservationService(){
+    public SchedulePeriod(){
         timePeriod = "anytime";
     }
-    
-    private String timePeriod;
 
     public String getTimePeriod() {
         return timePeriod;

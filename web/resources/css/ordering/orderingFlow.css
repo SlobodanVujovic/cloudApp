@@ -98,7 +98,7 @@ article{
     width: 49%;
 }
 
-#serviceTypesButton{
+#serviceTypesButton, #serviceTypesBackButton{
     margin-top: 10px;
     margin-left: 40px;
 }
@@ -148,4 +148,8 @@ select:disabled{
 
 #agentForm\:dlButtonRow, #agentForm\:ulButtonRow{
     text-align: center;
+}
+
+.col-md-4 a{
+    margin-right: 10px;
 }

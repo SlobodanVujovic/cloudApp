@@ -1,19 +1,17 @@
-package com.cloudApp.controller;
+package com.cloudApp.model;
 
-import com.cloudApp.model.Agent;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
 @RequestScoped
-public class AgentController {
+public class AgentInput {
+    private String inputType;
     
-    public AgentController(){
+    public AgentInput(){
         inputType = "oneByOne";
     }
-    
-    private String inputType;
 
     public String getInputType() {
         return inputType;

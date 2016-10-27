@@ -230,14 +230,14 @@ function geocode() {
     PF('geoMap').geocode(document.getElementById('client_address').value);
 }
 
-/*
-$(document).ready(function () {
-    $("#email").on("input", function () {
-        var email = $("#email").val();
-        var number = /\d+/g;
-        if (email.match(number) != null) {
-            alert("Ima broj");
+function chosenBricks() {
+    var checkedBricks = [];
+    var bricks = ["r1", "r2", "r3", "r4", "r5", "rm1", "rm2", "t1", "t2", "t3", "t4", "t5", "t6"];
+    for (var i = 0; i < bricks.length; i++) {
+        var element = document.getElementById(bricks[i]);
+        if (element.checked) {
+            checkedBricks.push(bricks[i]);
         }
-    });
-});
-*/
+    }
+    document.getElementById("selectedBricks").value = checkedBricks;
+}

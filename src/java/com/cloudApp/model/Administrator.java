@@ -6,10 +6,10 @@ import javax.inject.Named;
 
 @Named
 @SessionScoped
-public class Purchaser implements Serializable{
+public class Administrator implements Serializable{
     private String firstName, lastName, userName, password, email;
 
-    public Purchaser(){}
+    public Administrator(){}
         
     public String getFirstName() {
         return firstName;

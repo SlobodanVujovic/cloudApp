@@ -1,3 +1,6 @@
+/*
+Nece da prikaze mapu. Pogledati jos.
+*/
 package com.cloudApp.model;
 
 import java.io.Serializable;

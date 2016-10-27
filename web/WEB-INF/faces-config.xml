@@ -15,12 +15,36 @@
         <validator-id>ConfirmPasswordValidator</validator-id>
         <validator-class>com.cloudApp.validators.ConfirmPasswordValidator</validator-class>
     </validator>
-     <validator>
+    <validator>
         <validator-id>EmailValidator</validator-id>
         <validator-class>com.cloudApp.validators.EmailValidator</validator-class>
     </validator>
-    <validator>
-        <validator-id>PhoneNumberValidator</validator-id>
-        <validator-class>com.cloudApp.validators.PhoneNumberValidator</validator-class>
-    </validator>
+    <navigation-rule>
+        <from-view-id>/ordering/ordering.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>HOME</from-outcome>
+            <to-view-id>/sections/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/ordering/ordering-thanks.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>HOME</from-outcome>
+            <to-view-id>/sections/home.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/ordering/ordering-admin-info.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>COMPANY</from-outcome>
+            <to-view-id>/ordering/ordering.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/ordering/ordering-admin-info.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>SERVICES</from-outcome>
+            <to-view-id>/ordering/ordering-service-type.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>

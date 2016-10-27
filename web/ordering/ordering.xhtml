@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?>
+<!--TODO Uraditi validaciju za "Phone" i "ZIP Code" polja.-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -14,80 +15,31 @@
                         <fieldset>
 
                             <!-- Form Name -->
-                            <!--TODO Promeniti redosled stranica, 1. companija pa admin.-->
-                            
-                            <legend>Registration Page</legend>
+                            <legend>Company information</legend>
 
                             <!-- Text input-->
                             <div class="form-group">
-                                <h:outputLabel value="First Name" class="col-md-4 control-label"/>
+                                <h:outputLabel value="Company Name" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="first_name" pt:placeholder="First Name" value="#{purchaser.firstName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
-                                            <f:attribute name="message" value="First name can not be empty."/>
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                                        <h:inputText id="company_name" pt:placeholder="Company Name" value="#{company.companyName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
+                                            <f:attribute name="message" value="Company Name can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
                                     </div>
-                                    <h:message class="label label-danger" for="first_name" />
+                                    <h:message class="label label-danger" for="company_name"/>
                                 </div>
                             </div>
 
+                            <!-- TODO: Napisati validator za telefonski broj. -->
                             <!-- Text input-->
                             <div class="form-group">
-                                <h:outputLabel value="Last Name" class="col-md-4 control-label"/>
+                                <h:outputLabel value="Phone #" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="last_name" pt:placeholder="Last Name" value="#{purchaser.lastName}" required="true" requiredMessage="Last name is required." maxlength="70" styleClass="form-control">
-                                            <f:attribute name="message" value="Last name can not be empty."/>
-                                            <f:validator validatorId="EmptyInputValidator"/>
-                                        </h:inputText>
-                                    </div>
-                                    <h:message class="label label-danger" for="last_name"/>
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <h:outputLabel value="Username" class="col-md-4 control-label"/>
-                                <div class="col-md-4 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="user_name" pt:placeholder="Username" value="#{purchaser.userName}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
-                                            <f:attribute name="message" value="Username can not be empty."/>
-                                            <f:validator validatorId="EmptyInputValidator"/>
-                                        </h:inputText>
-                                    </div>
-                                    <h:message class="label label-danger" for="user_name"/>
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <h:outputLabel value="Password" class="col-md-4 control-label"/>
-                                <div class="col-md-4 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <h:inputSecret id="password" pt:placeholder="Password" value="#{purchaser.password}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
-                                            <f:attribute name="message" value="Invalid Password."/>
-                                            <f:attribute name="confirm_password" value="#{confirm_password}"/>
-                                            <f:validator validatorId="EmptyInputValidator"/>
-                                            <f:validator validatorId="ShortPasswordValidator"/>
-                                            <f:validator validatorId="ConfirmPasswordValidator"/>
-                                        </h:inputSecret>
-                                    </div>
-                                    <h:message class="label label-danger" for="password"/>
-                                </div>
-                            </div>
-
-                            <!-- Text input-->
-                            <div class="form-group">
-                                <h:outputLabel value="Confirm password" class="col-md-4 control-label"/>
-                                <div class="col-md-4 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <h:inputSecret id="confirm_password" pt:placeholder="Confirm Password" required="true" requiredMessage="Please confirm your password." binding="#{confirm_password}" styleClass="form-control"/>
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
+                                        <h:inputText id="phone" pt:placeholder="(0044)64 511-1423" value="#{company.phone}" styleClass="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -98,22 +50,66 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                        <h:inputText id="email" pt:placeholder="jonh.foo@isp.com" value="#{purchaser.email}" required="true" requiredMessage="E-Mail is required." styleClass="form-control">
+                                        <h:inputText id="email" pt:placeholder="company.contact@isp.com" value="#{company.email}" styleClass="form-control">
                                             <f:validator validatorId="EmailValidator"/>
                                         </h:inputText>
                                     </div>
                                     <h:message class="label label-danger" for="email" />
                                 </div>
                             </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <h:outputLabel value="Address" class="col-md-4 control-label"/>
+                                <div class="col-md-4 inputGroupContainer">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                                        <h:inputText id="address" pt:placeholder="Address" value="#{company.address}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <h:outputLabel value="City" class="col-md-4 control-label"/>
+                                <div class="col-md-4 inputGroupContainer">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-stats"></i></span>
+                                        <h:inputText id="city" pt:placeholder="City" value="#{company.city}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <!-- TODO Ubaciti Back button na svaku stranicu flow-a da bi korisnik mogao da se seta napred-nazad u flow-u.-->
-                            
-                            <!-- Button -->
+                            <!-- TODO: Napisati validator za ZIP kode. -->
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <h:outputLabel value="ZIP Code" class="col-md-4 control-label"/>
+                                <div class="col-md-4 inputGroupContainer">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-map-marker"></i></span>
+                                        <h:inputText id="zip" pt:placeholder="ZIP Code" value="#{company.zip}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <h:outputLabel value="State" class="col-md-4 control-label"/>
+                                <div class="col-md-4 inputGroupContainer">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
+                                        <h:inputText id="state" pt:placeholder="State" value="#{company.state}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
                             <!-- In h:commandButton can not be put icon so I use h:commandLink -->
                             <div class="form-group">
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4">
-                                    <h:commandLink action="ordering-company-info" styleClass="btn btn-warning">Next <span class="glyphicon glyphicon-arrow-right"></span></h:commandLink>
+                                    <h:commandLink value="Home " immediate="true" action="#{navigationController.goHome}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
+                                    <h:commandLink value="Next " action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                                 </div>
                             </div>
 

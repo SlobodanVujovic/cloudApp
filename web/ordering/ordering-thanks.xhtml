@@ -12,10 +12,16 @@
                         <fieldset>
 
                             <!-- Form Name -->
-                            <legend>Overview of your service order</legend>
+                            <legend>Thank You for choosing MDS Cloud</legend>
 
                             <!-- Text input-->
-                            
+                            <p>Access your services at:</p>
+                            <!-- TODO povezati # sa bean-ovima koji ce cuvati u sebi URL vrednost i labelu
+                            za taj URL (npr. "Reservation service:").-->
+                            <h:outputLabel value="#" class="previewElement"/>
+                            <h:inputText value="#"/>
+                            <br/>
+                            <h:commandLink value="Home " immediate="true" action="#{navigationController.goHome}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
 
                         </fieldset>
                     </h:form>

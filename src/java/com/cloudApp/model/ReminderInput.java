@@ -6,10 +6,10 @@ import javax.inject.Named;
 
 @Named
 @SessionScoped
-public class Reminder implements Serializable{
+public class ReminderInput implements Serializable{
     private String reminderUnit;
     
-    public Reminder(){
+    public ReminderInput(){
         reminderUnit = "reminderHour";
     }
 
