@@ -2,7 +2,8 @@
 #your_name, #your_phone_label, #your_phone, #datepicker_label, #datepicker, #timepicker_label, 
 #timepicker, #agentpicker_label, #agentpicker, #client_name_label, #client_name, #client_phone_label, #client_phone,
 #client_email_label, #client_email, #client_address_label, #client_address, #client_locateMe_button, #geoGmap, #emergency_level_label, #emergency_level,
-#problem_description_label, #problem_description, #reminderPanel, #reminderInput, #reminderSms, #reminderEmail{
+#problem_description_label, #problem_description, #reminderPanel, #reminderInput, #reminderSms, #reminderEmail,
+#service_2, #service_3{
     display: none;
 }
 
@@ -151,5 +152,24 @@ select:disabled{
 }
 
 .col-md-4 a{
+    margin-right: 10px;
+}
+
+#agentsCheckbox{
+    margin-left: 14px;
+    margin-top: 11px;
+    width: 13px;
+    height: 14px;
+}
+
+.center-checkbox{
+    margin-left: 350px;
+}
+
+.v_center_checkbox {
+    margin-top: 11px !important;
+}
+
+.defineServicesButtons a{
     margin-right: 10px;
 }

@@ -5,7 +5,8 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <body>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="content">
@@ -79,7 +80,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- TODO: Napisati validator za ZIP kode. -->
                             <!-- Text input-->
                             <div class="form-group">
@@ -103,6 +104,12 @@
                                 </div>
                             </div>
 
+                            <!-- Checkbox-->
+                            <div class="form-group">
+                                <h:outputLabel class="col-md-4 control-label" value="I have agents " for="agentsCheckbox"/>
+                                    <h:selectBooleanCheckbox id="agentsCheckbox" onclick="showAgentsPopupWin(); hideOrderingInputFields();"/>
+                            </div>
+
                             <!-- Buttons -->
                             <!-- In h:commandButton can not be put icon so I use h:commandLink -->
                             <div class="form-group">
@@ -115,6 +122,53 @@
 
                         </fieldset>
                     </h:form>
+
+                    <div id="agentPopupBack">
+                        <div id="agentPopup">
+                            <h:form id="agentForm">
+                                <h2>Enter your agents</h2>
+                                <h:selectOneRadio value="#{agentInput.inputType}">
+                                    <f:selectItem itemValue="oneByOne" itemLabel="One by one:"/>
+                                    <f:selectItem itemValue="template" itemLabel="By template:"/>
+                                    <f:ajax event="change" render="oneByOneForm templateForm"/>
+                                </h:selectOneRadio>
+                                <h:panelGrid id="oneByOneForm" columns="2" >
+                                    <h:outputLabel id="agent_first_name_label" value="First Name" class="previewElement"/>
+                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:outputLabel id="agent_last_name_label" value="Last Name" class="previewElement"/>
+                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:outputLabel id="agent_phone_label" value="Phone #" class="previewElement"/>
+                                    <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
+                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" onclick="agentButtonWrite()" disabled="#{agentInput.inputType != 'oneByOne'}">Write <span class="glyphicon glyphicon-ok"></span></h:commandLink>
+                                </h:panelGrid>
+                                <p:panelGrid id="templateForm">
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <ol>
+                                                <li>Download MS Office Excel.</li>
+                                                <li>Fill it according to it's form and save it.</li>
+                                                <li>Upload saved file.</li>
+                                            </ol>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row id="dlButtonRow">
+                                        <p:column>
+                                            <h:commandLink id="agentDownloadTemplateButton" class="btn btn-warning" onclick="agentButtonDownload()" disabled="#{agentInput.inputType != 'template'}">Download <span class="glyphicon glyphicon-download-alt"></span></h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row id="ulButtonRow">
+                                        <p:column>
+                                            <h:commandLink id="agentUploadTemplateButton" class="btn btn-warning" onclick="agentButtonUpload()" disabled="#{agentInput.inputType != 'template'}">Upload <span class="glyphicon glyphicon-cloud-upload"></span></h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <button id="agentOkButton" type="button" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); showOrderingInputFields();">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button id="agentCancleButton" type="button" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); uncheckElement('agentsCheckbox'); showOrderingInputFields();">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                            </h:form>
+                        </div>
+                    </div>
                 </div>
 
             </ui:define>

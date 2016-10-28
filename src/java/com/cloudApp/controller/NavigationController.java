@@ -30,4 +30,8 @@ public class NavigationController {
     public String goToThanks(){
         return "ordering-thanks";
     }
+    
+    public String goToDefineServices(){
+        return "DEF_SERVICE";
+    }
 }

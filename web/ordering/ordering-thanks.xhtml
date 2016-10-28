@@ -14,13 +14,21 @@
                             <!-- Form Name -->
                             <legend>Thank You for choosing MDS Cloud</legend>
 
-                            <!-- Text input-->
-                            <p>Access your services at:</p>
                             <!-- TODO povezati # sa bean-ovima koji ce cuvati u sebi URL vrednost i labelu
                             za taj URL (npr. "Reservation service:").-->
-                            <h:outputLabel value="#" class="previewElement"/>
-                            <h:inputText value="#"/>
-                            <br/>
+                            
+                            <!-- Text input-->
+                            <div class="form-group">
+                                <h:outputLabel value="Access your services at:" for="url_1" class="col-md-4 control-label"/>
+                                <div class="col-md-4 inputGroupContainer">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="glyphicon glyphicon-cloud"></i></span>
+                                        <h:inputText id="url_1" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- TODO Staviti dugme na sredinu div-a (okruziti ga 1. div-om).-->
                             <h:commandLink value="Home " immediate="true" action="#{navigationController.goHome}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
 
                         </fieldset>

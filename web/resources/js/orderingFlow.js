@@ -162,6 +162,38 @@ function showPopupWin(checkboxId) {
     }
 }
 
+
+function showAgentsPopupWin() {
+    var isChecked = document.getElementById("agentsCheckbox").checked;
+    var inputToShow = document.getElementById("agentPopupBack");
+    if (isChecked) {
+        inputToShow.style.display = "block";
+    }
+}
+
+function hideOrderingInputFields() {
+    var isChecked = document.getElementById("agentsCheckbox").checked;
+    if (isChecked) {
+        document.getElementById("company_name").style.display = "none";
+        document.getElementById("phone").style.display = "none";
+        document.getElementById("email").style.display = "none";
+        document.getElementById("address").style.display = "none";
+        document.getElementById("city").style.display = "none";
+        document.getElementById("zip").style.display = "none";
+        document.getElementById("state").style.display = "none";
+    }
+}
+
+function showOrderingInputFields() {
+    document.getElementById("company_name").style.display = "block";
+    document.getElementById("phone").style.display = "block";
+    document.getElementById("email").style.display = "block";
+    document.getElementById("address").style.display = "block";
+    document.getElementById("city").style.display = "block";
+    document.getElementById("zip").style.display = "block";
+    document.getElementById("state").style.display = "block";
+}
+
 function showReminderPopupWin(checkboxId) {
     var checkbox = document.getElementById(checkboxId);
     var isChecked = checkbox.checked;
@@ -230,6 +262,47 @@ function geocode() {
     PF('geoMap').geocode(document.getElementById('client_address').value);
 }
 
+function showMoreServices() {
+    var serviceIds = ["service_2", "service_3"];
+    var serviceId;
+    var divToShow;
+    for (var i = 0; i < serviceIds.length; i++) {
+        serviceId = serviceIds[i];
+        var serviceDiv = document.getElementById(serviceId);
+        //jQuery za proveravanje da li je element vidljiv (vidljiv je ako ima sirinu ili visinu >0).
+        var divIsVisible = $(serviceDiv).is(":visible");
+        if (!divIsVisible) {
+            break;
+        }
+    }
+    divToShow = document.getElementById(serviceId);
+    $(divToShow).slideDown(500, function () {
+        (divToShow).style.display = "block";
+    });
+    return false;
+}
+
+function showLessServices(){
+    var serviceIds = ["service_3", "service_2"];
+    var serviceId;
+    var divToShow;
+    for (var i = 0; i < serviceIds.length; i++) {
+        serviceId = serviceIds[i];
+        var serviceDiv = document.getElementById(serviceId);
+        //jQuery za proveravanje da li je element vidljiv (vidljiv je ako ima sirinu ili visinu >0).
+        var divIsVisible = $(serviceDiv).is(":visible");
+        if (divIsVisible) {
+            break;
+        }
+    }
+    divToShow = document.getElementById(serviceId);
+    $(divToShow).slideUp(500, function () {
+        (divToShow).style.display = "none";
+    });
+    return false;
+}
+
+// Ne koristi se trenutno.
 function chosenBricks() {
     var checkedBricks = [];
     var bricks = ["r1", "r2", "r3", "r4", "r5", "rm1", "rm2", "t1", "t2", "t3", "t4", "t5", "t6"];

@@ -47,4 +47,11 @@
             <to-view-id>/ordering/ordering-service-type.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/ordering/ordering-admin-info.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>DEF_SERVICE</from-outcome>
+            <to-view-id>/ordering/ordering-define-services.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
 </faces-config>
