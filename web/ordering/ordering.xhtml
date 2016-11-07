@@ -24,7 +24,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                        <h:inputText id="company_name" pt:placeholder="Company Name" value="#{company.companyName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="company_name" pt:placeholder="Company Name" value="#{companyController.selectedCompany.companyName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
                                             <f:attribute name="message" value="Company Name can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
@@ -40,7 +40,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
-                                        <h:inputText id="phone" pt:placeholder="(0044)64 511-1423" value="#{company.phone}" styleClass="form-control"/>
+                                        <h:inputText id="phone" pt:placeholder="(0044)64 511-1423" value="#{companyController.companyContact.phone}" styleClass="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -51,7 +51,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                        <h:inputText id="email" pt:placeholder="company.contact@isp.com" value="#{company.email}" styleClass="form-control">
+                                        <h:inputText id="email" pt:placeholder="company.contact@isp.com" value="#{companyController.companyContact.email}" styleClass="form-control">
                                             <f:validator validatorId="EmailValidator"/>
                                         </h:inputText>
                                     </div>
@@ -65,7 +65,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
-                                        <h:inputText id="address" pt:placeholder="Address" value="#{company.address}" styleClass="form-control"/>
+                                        <h:inputText id="address" pt:placeholder="Address" value="#{companyController.companyLocation.address}" styleClass="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-stats"></i></span>
-                                        <h:inputText id="city" pt:placeholder="City" value="#{company.city}" styleClass="form-control"/>
+                                        <h:inputText id="city" pt:placeholder="City" value="#{companyController.companyLocation.city}" styleClass="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-map-marker"></i></span>
-                                        <h:inputText id="zip" pt:placeholder="ZIP Code" value="#{company.zip}" styleClass="form-control"/>
+                                        <h:inputText id="zip" pt:placeholder="ZIP Code" value="#{companyController.companyLocation.zipCode}" styleClass="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +99,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
-                                        <h:inputText id="state" pt:placeholder="State" value="#{company.state}" styleClass="form-control"/>
+                                        <h:inputText id="state" pt:placeholder="State" value="#{companyController.companyLocation.state}" styleClass="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                             <!-- Checkbox-->
                             <div class="form-group">
                                 <h:outputLabel class="col-md-4 control-label" value="I have agents " for="agentsCheckbox"/>
-                                    <h:selectBooleanCheckbox id="agentsCheckbox" onclick="showAgentsPopupWin(); hideOrderingInputFields();"/>
+                                <h:selectBooleanCheckbox id="agentsCheckbox" value="#{agentInput.agentEntered}" onclick="showAgentsPopupWin(); hideOrderingInputFields();"/>
                             </div>
 
                             <!-- Buttons -->
@@ -115,8 +115,11 @@
                             <div class="form-group">
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4">
-                                    <h:commandLink value="Home " immediate="true" action="#{navigationController.goHome}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
+                                    <h:commandLink value="Home " action="#{navigationController.goHome}" immediate="true" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
                                     <h:commandLink value="Next " action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                                    <!-- TODO Metode iz testUseCase() metoda treba koristiti u okviru submit buttona na kraju
+                                    form-e. On u sebi ima metode za upis podataka na company strani forme.-->
+                                    <h:commandLink value="Test " action="#{companyController.testUseCase}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                                 </div>
                             </div>
 
@@ -134,14 +137,16 @@
                                 </h:selectOneRadio>
                                 <h:panelGrid id="oneByOneForm" columns="2" >
                                     <h:outputLabel id="agent_first_name_label" value="First Name" class="previewElement"/>
-                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" value="#{companyController.currentAgent.firstName}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
                                     <h:outputLabel id="agent_last_name_label" value="Last Name" class="previewElement"/>
-                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" value="#{companyController.currentAgent.lastName}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
                                     <h:outputLabel id="agent_phone_label" value="Phone #" class="previewElement"/>
-                                    <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" value="#{companyController.currentAgent.phone}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
                                     <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
-                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" disabled="#{agentInput.inputType != 'oneByOne'}"/>
-                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" onclick="agentButtonWrite()" disabled="#{agentInput.inputType != 'oneByOne'}">Write <span class="glyphicon glyphicon-ok"></span></h:commandLink>
+                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" value="#{companyController.currentAgent.email}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" disabled="#{agentInput.inputType != 'oneByOne'}" action="#{companyController.addNewAgent}">Write <span class="glyphicon glyphicon-ok"></span>
+                                        <f:ajax render="agent_first_name agent_last_name agent_phone agent_email" execute="@form"/>
+                                    </h:commandLink>
                                 </h:panelGrid>
                                 <p:panelGrid id="templateForm">
                                     <p:row>
@@ -153,6 +158,7 @@
                                             </ol>
                                         </p:column>
                                     </p:row>
+                                    <!-- TODO Implementirati akcije DL i UL button-a-->
                                     <p:row id="dlButtonRow">
                                         <p:column>
                                             <h:commandLink id="agentDownloadTemplateButton" class="btn btn-warning" onclick="agentButtonDownload()" disabled="#{agentInput.inputType != 'template'}">Download <span class="glyphicon glyphicon-download-alt"></span></h:commandLink>
@@ -164,8 +170,8 @@
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>
-                                <button id="agentOkButton" type="button" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); showOrderingInputFields();">OK <span class="glyphicon glyphicon-ok"></span></button>
-                                <button id="agentCancleButton" type="button" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); uncheckElement('agentsCheckbox'); showOrderingInputFields();">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                                <button type="button" id="agentOkButton" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); showOrderingInputFields();">OK <span class="glyphicon glyphicon-ok"></span></button>
+                                <button type="button" id="agentCancleButton" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); uncheckElement('agentsCheckbox'); showOrderingInputFields();">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
                             </h:form>
                         </div>
                     </div>

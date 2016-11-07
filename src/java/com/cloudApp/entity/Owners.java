@@ -6,7 +6,7 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,7 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -66,10 +67,11 @@ public class Owners implements Serializable {
     @Size(min = 1, max = 25)
     @Column(name = "password")
     private String password;
-    @ManyToMany(mappedBy = "ownersCollection")
-    private Collection<Companies> companiesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ownersId")
-    private Collection<OwnersContacts> ownersContactsCollection;
+    private List<OwnersContacts> ownersContactsList;
+    @JoinColumn(name = "companies_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Companies companiesId;
 
     public Owners() {
     }
@@ -127,21 +129,20 @@ public class Owners implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Companies> getCompaniesCollection() {
-        return companiesCollection;
+    public List<OwnersContacts> getOwnersContactsList() {
+        return ownersContactsList;
     }
 
-    public void setCompaniesCollection(Collection<Companies> companiesCollection) {
-        this.companiesCollection = companiesCollection;
+    public void setOwnersContactsList(List<OwnersContacts> ownersContactsList) {
+        this.ownersContactsList = ownersContactsList;
     }
 
-    @XmlTransient
-    public Collection<OwnersContacts> getOwnersContactsCollection() {
-        return ownersContactsCollection;
+    public Companies getCompaniesId() {
+        return companiesId;
     }
 
-    public void setOwnersContactsCollection(Collection<OwnersContacts> ownersContactsCollection) {
-        this.ownersContactsCollection = ownersContactsCollection;
+    public void setCompaniesId(Companies companiesId) {
+        this.companiesId = companiesId;
     }
 
     @Override
@@ -166,7 +167,14 @@ public class Owners implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.Owners[ id=" + id + " ]";
+        return "Owners\n"
+                + "companyId= " + companiesId + "\n"
+                + "id= " + id + "\n"
+                + "first name= " + firstName + "\n"
+                + "last name= " + lastName + "\n"
+                + "username= " + username + "\n"
+                + "password= " + password + "\n"
+                + "------------------------------------------------------------";
     }
-    
+
 }

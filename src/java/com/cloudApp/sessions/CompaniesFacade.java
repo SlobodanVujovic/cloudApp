@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.cloudApp.session;
+package com.cloudApp.sessions;
 
-import com.cloudApp.entity.CompanysContacts;
+import com.cloudApp.entity.Companies;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +15,7 @@ import javax.persistence.PersistenceContext;
  * @author svujovic
  */
 @Stateless
-public class CompanysContactsFacade extends AbstractFacade<CompanysContacts> {
+public class CompaniesFacade extends AbstractFacade<Companies> {
 
     @PersistenceContext(unitName = "cloudAppPU")
     private EntityManager em;
@@ -25,8 +25,8 @@ public class CompanysContactsFacade extends AbstractFacade<CompanysContacts> {
         return em;
     }
 
-    public CompanysContactsFacade() {
-        super(CompanysContacts.class);
+    public CompaniesFacade() {
+        super(Companies.class);
     }
     
 }

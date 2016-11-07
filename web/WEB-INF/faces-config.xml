@@ -20,38 +20,59 @@
         <validator-class>com.cloudApp.validators.EmailValidator</validator-class>
     </validator>
     <navigation-rule>
-        <from-view-id>/ordering/ordering.xhtml</from-view-id>
+        <from-view-id>/*</from-view-id>
         <navigation-case>
             <from-outcome>HOME</from-outcome>
             <to-view-id>/sections/home.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
-        <from-view-id>/ordering/ordering-thanks.xhtml</from-view-id>
-        <navigation-case>
-            <from-outcome>HOME</from-outcome>
-            <to-view-id>/sections/home.xhtml</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-    <navigation-rule>
-        <from-view-id>/ordering/ordering-admin-info.xhtml</from-view-id>
+        <from-view-id>/*</from-view-id>
         <navigation-case>
             <from-outcome>COMPANY</from-outcome>
             <to-view-id>/ordering/ordering.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
-        <from-view-id>/ordering/ordering-admin-info.xhtml</from-view-id>
+        <from-view-id>/*</from-view-id>
+        <navigation-case>
+            <from-outcome>ADMIN</from-outcome>
+            <to-view-id>/ordering/ordering-admin-info.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/*</from-view-id>
+        <navigation-case>
+            <from-outcome>DEF_SERVICE</from-outcome>
+            <to-view-id>/ordering/ordering-define-services.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/*</from-view-id>
         <navigation-case>
             <from-outcome>SERVICES</from-outcome>
             <to-view-id>/ordering/ordering-service-type.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
-        <from-view-id>/ordering/ordering-admin-info.xhtml</from-view-id>
+        <from-view-id>/*</from-view-id>
         <navigation-case>
-            <from-outcome>DEF_SERVICE</from-outcome>
-            <to-view-id>/ordering/ordering-define-services.xhtml</to-view-id>
+            <from-outcome>THANKS</from-outcome>
+            <to-view-id>/ordering/ordering-thanks.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/*</from-view-id>
+        <navigation-case>
+            <from-outcome>LOGIN</from-outcome>
+            <to-view-id>/sections/login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/*</from-view-id>
+        <navigation-case>
+            <from-outcome>LOGIN_ADMIN</from-outcome>
+            <to-view-id>/sections/adminLoginPage.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

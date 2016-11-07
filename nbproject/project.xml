@@ -24,6 +24,7 @@
             <word>favicon</word>
             <word>favorite</word>
             <word>Sidebar</word>
+            <word>URL</word>
         </spellchecker-wordlist>
     </configuration>
 </project>

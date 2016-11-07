@@ -6,8 +6,8 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,10 +38,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "CompanyOrder.findAll", query = "SELECT c FROM CompanyOrder c"),
     @NamedQuery(name = "CompanyOrder.findById", query = "SELECT c FROM CompanyOrder c WHERE c.id = :id"),
-    @NamedQuery(name = "CompanyOrder.findByServiceName", query = "SELECT c FROM CompanyOrder c WHERE c.serviceName = :serviceName"),
     @NamedQuery(name = "CompanyOrder.findByDateCreated", query = "SELECT c FROM CompanyOrder c WHERE c.dateCreated = :dateCreated"),
-    @NamedQuery(name = "CompanyOrder.findByOrderNumber", query = "SELECT c FROM CompanyOrder c WHERE c.orderNumber = :orderNumber"),
-    @NamedQuery(name = "CompanyOrder.findByAmount", query = "SELECT c FROM CompanyOrder c WHERE c.amount = :amount")})
+    @NamedQuery(name = "CompanyOrder.findByUrl", query = "SELECT c FROM CompanyOrder c WHERE c.url = :url"),
+    @NamedQuery(name = "CompanyOrder.findByAmount", query = "SELECT c FROM CompanyOrder c WHERE c.amount = :amount"),
+    @NamedQuery(name = "CompanyOrder.findByCompanyId", query = "SELECT c FROM CompanyOrder c WHERE c.companiesId = :companyId")})
 public class CompanyOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -52,22 +52,20 @@ public class CompanyOrder implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "service_name")
-    private String serviceName;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "date_created")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated;
+    private Date dateCreated = new Date();
     @Basic(optional = false)
     @NotNull
-    @Column(name = "order_number")
-    private int orderNumber;
+    @Size(min = 1, max = 100)
+    @Column(name = "url")
+    private String url = "http://www.mds.rs/cloud/CompanyName";
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "amount")
-    private Integer amount;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrder")
-    private Collection<CompanyOrderHasBrick> companyOrderHasBrickCollection;
+    private int amount = 0;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
+    private List<Services> servicesList;
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Companies companiesId;
@@ -79,11 +77,11 @@ public class CompanyOrder implements Serializable {
         this.id = id;
     }
 
-    public CompanyOrder(Integer id, String serviceName, Date dateCreated, int orderNumber) {
+    public CompanyOrder(Integer id, Date dateCreated, String url, int amount) {
         this.id = id;
-        this.serviceName = serviceName;
         this.dateCreated = dateCreated;
-        this.orderNumber = orderNumber;
+        this.url = url;
+        this.amount = amount;
     }
 
     public Integer getId() {
@@ -94,14 +92,6 @@ public class CompanyOrder implements Serializable {
         this.id = id;
     }
 
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -110,29 +100,29 @@ public class CompanyOrder implements Serializable {
         this.dateCreated = dateCreated;
     }
 
-    public int getOrderNumber() {
-        return orderNumber;
+    public String getUrl() {
+        return url;
     }
 
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public Integer getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 
     @XmlTransient
-    public Collection<CompanyOrderHasBrick> getCompanyOrderHasBrickCollection() {
-        return companyOrderHasBrickCollection;
+    public List<Services> getServicesList() {
+        return servicesList;
     }
 
-    public void setCompanyOrderHasBrickCollection(Collection<CompanyOrderHasBrick> companyOrderHasBrickCollection) {
-        this.companyOrderHasBrickCollection = companyOrderHasBrickCollection;
+    public void setServicesList(List<Services> servicesList) {
+        this.servicesList = servicesList;
     }
 
     public Companies getCompaniesId() {
@@ -165,7 +155,13 @@ public class CompanyOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.CompanyOrder[ id=" + id + " ]";
+        return "Company Order\n"
+                + "companyId= " + companiesId + "\n"
+                + "id= " + id + "\n"
+                + "date created= " + dateCreated + "\n"
+                + "url= " + url + "\n"
+                + "amount= " + amount + "\n"
+                + "----------------------------------------------------------------------------------";
     }
-    
+
 }

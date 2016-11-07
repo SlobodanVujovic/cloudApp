@@ -3,19 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.cloudApp.session;
+package com.cloudApp.sessions;
 
-import com.cloudApp.entity.Agents;
+import com.cloudApp.entity.Owners;
+import com.cloudApp.entity.OwnersContacts;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
  * @author svujovic
  */
 @Stateless
-public class AgentsFacade extends AbstractFacade<Agents> {
+public class OwnersContactsFacade extends AbstractFacade<OwnersContacts> {
 
     @PersistenceContext(unitName = "cloudAppPU")
     private EntityManager em;
@@ -25,8 +28,8 @@ public class AgentsFacade extends AbstractFacade<Agents> {
         return em;
     }
 
-    public AgentsFacade() {
-        super(Agents.class);
+    public OwnersContactsFacade() {
+        super(OwnersContacts.class);
     }
-    
+
 }

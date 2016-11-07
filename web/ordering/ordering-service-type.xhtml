@@ -86,12 +86,12 @@
                                     </li>
                                 </ul>
                             </ul>
-                            
+
                             <!-- Buttons -->
                             <!-- TODO Definisati validator koji nece dozvoljavati prelazak na sledecu stranicu ako nije izabran neki servis.-->
                             <h:commandLink value="Back " id="serviceTypesBackButton" immediate="true" action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
                             <h:commandLink value="Submit " id="serviceTypesButton" action="#{navigationController.goToThanks}" styleClass="btn btn-warning" onclick="chosenBricks();"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
-                            <h:inputHidden id="selectedBricks" value="#{chosenBricks.selectedBricks}"/>
+                            <h:inputHidden id="selectedBricks"/>
                         </nav>
                         <article>
                             <h1>Service Types</h1>
@@ -140,7 +140,6 @@
                                 </h:panelGrid>
                             </div>
                             <div id="ticketingPanel">
-                                <!--TODO Google Maps u okviru "client_address" se ne pokazuje zbog API KEY-a-->
                                 <p>Ticketing Preview:</p>
                                 <h:panelGrid id="ticketingTable" columns="2">
                                     <h:outputLabel id="client_name_label" for="client_name" value="Client Name" class="previewElement"/>
@@ -151,10 +150,6 @@
                                     <h:inputText id="client_email" pt:placeholder=" Client E-Mail"/>
                                     <h:outputLabel id="client_address_label" for="client_address" value="Client Address" class="previewElement"/>
                                     <h:inputText id="client_address" pt:placeholder=" Client Address"/>
-                                    <p:commandButton id="client_locateMe_button" value="Locate Me" icon="ui-icon-search" onclick="geocode()" type="button"/>
-                                    <p:gmap id="geoGmap" center="#{geocodeView.centerGeoMap}" widgetVar="geoMap" model="#{geocodeView.geoModel}" zoom="2" type="ROADMAP" style="width:100%; height:100px">
-                                        <p:ajax event="geocode" listener="#{geocodeView.onGeocode}" update="@this"/>
-                                    </p:gmap>
                                     <h:outputLabel id="emergency_level_label" for="emergency_level" value="Emergency Level" class="previewElement"/>
                                     <h:selectOneMenu id="emergency_level">
                                         <f:selectItem itemValue="l1" itemLabel="Priority 1"/>
@@ -178,7 +173,7 @@
                         <div id="calendarPopup">
                             <h:form id="calendarForm" prependId="false">
                                 <h2>Select date format</h2>
-                                <h:selectOneRadio layout="pageDirection" value="#{calendarInput.inputType}">
+                                <h:selectOneRadio layout="pageDirection" value="md">
                                     <f:selectItem itemValue="md" itemLabel="mm/dd/yyyy"/>
                                     <f:selectItem itemValue="dm" itemLabel="dd/mm/yyyy" />	   			
                                 </h:selectOneRadio>
@@ -191,13 +186,13 @@
                         <div id="timePopup">
                             <h:form id="timeForm">
                                 <h2>Select time period for scheduling</h2>
-                                <h:selectOneRadio layout="pageDirection" value="#{schedulePeriod.timePeriod}">
+                                <h:selectOneRadio layout="pageDirection" value="#anytime">
                                     <f:selectItem itemValue="anytime" itemLabel="Anytime"/>
                                     <f:selectItem itemValue="period" itemLabel="Every:"/>
                                     <f:ajax render="periodNumeric periodUnit"/>
                                 </h:selectOneRadio>
-                                <h:inputText id="periodNumeric" maxlength="2" disabled="#{schedulePeriod.timePeriod == 'anytime'}" value="30"/>
-                                <h:selectOneMenu id="periodUnit" disabled="#{schedulePeriod.timePeriod == 'anytime'}">
+                                <h:inputText id="periodNumeric" maxlength="2" disabled="#{'anytime' == 'anytime'}" value="30"/>
+                                <h:selectOneMenu id="periodUnit" disabled="#{'anytime' == 'anytime'}">
                                     <f:selectItem itemValue="min" itemLabel="min"/>
                                     <f:selectItem itemValue="hour" itemLabel="hour(s)"/>
                                     <f:selectItem itemValue="day" itemLabel="day(s)"/>
@@ -262,7 +257,7 @@
                                     Remind client 
                                 </p>
                                 <h:inputText id="reminderNumeric" maxlength="2" value="24"/>
-                                <h:selectOneMenu id="reminderUnit" value="#{reminderInput.reminderUnit}">
+                                <h:selectOneMenu id="reminderUnit" value="reminderHour">
                                     <f:selectItem itemValue="reminderMin" itemLabel="min"/>
                                     <f:selectItem itemValue="reminderHour" itemLabel="hour(s)"/>
                                     <f:selectItem itemValue="reinderDay" itemLabel="day(s)"/>

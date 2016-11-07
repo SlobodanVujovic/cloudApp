@@ -113,7 +113,10 @@ public class OwnersContacts implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.OwnersContacts[ id=" + id + " ]";
+        return "Owners Contacts\n"
+                + "id= " + id + "\n"
+                + "phone= " + phone + "\n"
+                + "email= " + email + "\n";
     }
-    
+
 }

@@ -6,32 +6,41 @@ import javax.inject.Named;
 @Named
 @RequestScoped
 public class NavigationController {
-    
-    public NavigationController(){
-        
+
+    public NavigationController() {
+
     }
-    
-    public String goHome(){
+
+    public String goHome() {
         return "HOME";
     }
-    
-    public String goToAdmin(){
-        return "ordering-admin-info";
-    }
-    
-    public String goToCompany(){
+
+    public String goToCompany() {
         return "COMPANY";
     }
-    
-    public String goToServices(){
-        return "SERVICES";
+
+    public String goToAdmin() {
+        return "ADMIN";
     }
-    
-    public String goToThanks(){
-        return "ordering-thanks";
-    }
-    
-    public String goToDefineServices(){
+
+    public String goToDefineServices() {
         return "DEF_SERVICE";
     }
+
+    public String goToServices() {
+        return "SERVICES";
+    }
+
+    public String goToThanks() {
+        return "THANKS";
+    }
+    
+    public String goToLogin() {
+        return "LOGIN";
+    }
+    
+    public String goToLoginAdmin(){
+        return "LOGIN_ADMIN";
+    }
+
 }

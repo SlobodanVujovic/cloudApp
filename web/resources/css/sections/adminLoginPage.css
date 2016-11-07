@@ -1,0 +1,7 @@
+#adminLoginContainer > h1{
+    margin-left: 15px;
+}
+
+#adminLoginContainer > table{
+    background-color: transparent;
+}

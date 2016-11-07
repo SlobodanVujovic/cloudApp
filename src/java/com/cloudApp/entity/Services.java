@@ -6,35 +6,34 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author svujovic
  */
 @Entity
-@Table(name = "bricks")
+@Table(name = "services")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Bricks.findAll", query = "SELECT b FROM Bricks b"),
-    @NamedQuery(name = "Bricks.findById", query = "SELECT b FROM Bricks b WHERE b.id = :id"),
-    @NamedQuery(name = "Bricks.findByName", query = "SELECT b FROM Bricks b WHERE b.name = :name"),
-    @NamedQuery(name = "Bricks.findByPrice", query = "SELECT b FROM Bricks b WHERE b.price = :price")})
-public class Bricks implements Serializable {
+    @NamedQuery(name = "Services.findAll", query = "SELECT s FROM Services s"),
+    @NamedQuery(name = "Services.findById", query = "SELECT s FROM Services s WHERE s.id = :id"),
+    @NamedQuery(name = "Services.findByName", query = "SELECT s FROM Services s WHERE s.name = :name"),
+    @NamedQuery(name = "Services.findByReservation", query = "SELECT s FROM Services s WHERE s.reservation = :reservation"),
+    @NamedQuery(name = "Services.findByCompanyOrderId", query = "SELECT s FROM Services s WHERE s.companyOrderId = :companyOrderId")})
+public class Services implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -45,15 +44,16 @@ public class Bricks implements Serializable {
     @Size(max = 45)
     @Column(name = "name")
     private String name;
-    @Column(name = "price")
-    private Integer price;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "bricks")
-    private Collection<CompanyOrderHasBrick> companyOrderHasBrickCollection;
+    @Column(name = "reservation")
+    private Boolean reservation;
+    @JoinColumn(name = "company_order_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private CompanyOrder companyOrderId;
 
-    public Bricks() {
+    public Services() {
     }
 
-    public Bricks(Integer id) {
+    public Services(Integer id) {
         this.id = id;
     }
 
@@ -73,21 +73,20 @@ public class Bricks implements Serializable {
         this.name = name;
     }
 
-    public Integer getPrice() {
-        return price;
+    public Boolean getReservation() {
+        return reservation;
     }
 
-    public void setPrice(Integer price) {
-        this.price = price;
+    public void setReservation(Boolean reservation) {
+        this.reservation = reservation;
     }
 
-    @XmlTransient
-    public Collection<CompanyOrderHasBrick> getCompanyOrderHasBrickCollection() {
-        return companyOrderHasBrickCollection;
+    public CompanyOrder getCompanyOrderId() {
+        return companyOrderId;
     }
 
-    public void setCompanyOrderHasBrickCollection(Collection<CompanyOrderHasBrick> companyOrderHasBrickCollection) {
-        this.companyOrderHasBrickCollection = companyOrderHasBrickCollection;
+    public void setCompanyOrderId(CompanyOrder companyOrderId) {
+        this.companyOrderId = companyOrderId;
     }
 
     @Override
@@ -100,10 +99,10 @@ public class Bricks implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Bricks)) {
+        if (!(object instanceof Services)) {
             return false;
         }
-        Bricks other = (Bricks) object;
+        Services other = (Services) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -112,7 +111,11 @@ public class Bricks implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.Bricks[ id=" + id + " ]";
+        return "Services\n"
+                + "id= " + id + "\n"
+                + "name= " + name + "\n"
+                + "reservation= " + reservation + "\n"
+                + "----------------------------------------------------------------";
     }
-    
+
 }

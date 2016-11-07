@@ -24,7 +24,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="first_name" pt:placeholder="First Name" value="#{administrator.firstName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="first_name" pt:placeholder="First Name" value="#{adminController.owner.firstName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
                                             <f:attribute name="message" value="First name can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
@@ -39,7 +39,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="last_name" pt:placeholder="Last Name" value="#{administrator.lastName}" required="true" requiredMessage="Last name is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="last_name" pt:placeholder="Last Name" value="#{adminController.owner.lastName}" required="true" requiredMessage="Last name is required." maxlength="70" styleClass="form-control">
                                             <f:attribute name="message" value="Last name can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
@@ -48,13 +48,16 @@
                                 </div>
                             </div>
 
+                            <!-- TODO Username treba proveriti pre unosa u bazu da se ne desi da 2 razlicita korisnika imaju
+                            isti username, jer se prema njemu trazi password u bazi i vraca se samo 1 rezultat koji se poredi
+                            sa password-om koji je korisnik uneo u login page kada zeli da se loguje na cloud.-->
                             <!-- Text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Username" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="user_name" pt:placeholder="Username" value="#{administrator.userName}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="user_name" pt:placeholder="Username" value="#{adminController.owner.username}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
                                             <f:attribute name="message" value="Username can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
@@ -69,7 +72,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <h:inputSecret id="password" pt:placeholder="Password" value="#{administrator.password}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
+                                        <h:inputSecret id="password" pt:placeholder="Password" value="#{adminController.owner.password}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
                                             <f:attribute name="message" value="Invalid Password."/>
                                             <f:attribute name="confirm_password" value="#{confirm_password}"/>
                                             <f:validator validatorId="EmptyInputValidator"/>
@@ -98,7 +101,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                        <h:inputText id="email" pt:placeholder="jonh.foo@isp.com" value="#{administrator.email}" required="true" requiredMessage="E-Mail is required." styleClass="form-control">
+                                        <h:inputText id="email" pt:placeholder="jonh.foo@isp.com" value="#{adminController.ownersContacts.email}" required="true" requiredMessage="E-Mail is required." styleClass="form-control">
                                             <f:validator validatorId="EmailValidator"/>
                                         </h:inputText>
                                     </div>
@@ -113,6 +116,7 @@
                                 <div class="col-md-4">
                                     <h:commandLink value="Back " immediate="true" action="#{navigationController.goToCompany}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
                                     <h:commandLink value="Next " action="#{navigationController.goToDefineServices}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                                    <h:commandLink value="Test " action="#{adminController.testUseCase}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                                 </div>
                             </div>
 

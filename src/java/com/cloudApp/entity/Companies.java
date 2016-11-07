@@ -6,7 +6,7 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,9 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -50,17 +47,16 @@ public class Companies implements Serializable {
     @Size(min = 1, max = 45)
     @Column(name = "company_name")
     private String companyName;
-    @JoinTable(name = "companies_has_owners", joinColumns = {
-        @JoinColumn(name = "companies_id", referencedColumnName = "id")}, inverseJoinColumns = {
-        @JoinColumn(name = "owners_id", referencedColumnName = "id")})
-    @ManyToMany
-    private Collection<Owners> ownersCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
-    private Collection<CompanysLocation> companysLocationCollection;
+    private List<CompanysLocation> companysLocationList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
-    private Collection<CompanysContacts> companysContactsCollection;
+    private List<Owners> ownersList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
-    private Collection<CompanyOrder> companyOrderCollection;
+    private List<CompanysContacts> companysContactsList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
+    private List<Agents> agentsList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
+    private List<CompanyOrder> companyOrderList;
 
     public Companies() {
     }
@@ -91,39 +87,48 @@ public class Companies implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Owners> getOwnersCollection() {
-        return ownersCollection;
+    public List<CompanysLocation> getCompanysLocationList() {
+        return companysLocationList;
     }
 
-    public void setOwnersCollection(Collection<Owners> ownersCollection) {
-        this.ownersCollection = ownersCollection;
-    }
-
-    @XmlTransient
-    public Collection<CompanysLocation> getCompanysLocationCollection() {
-        return companysLocationCollection;
-    }
-
-    public void setCompanysLocationCollection(Collection<CompanysLocation> companysLocationCollection) {
-        this.companysLocationCollection = companysLocationCollection;
+    public void setCompanysLocationList(List<CompanysLocation> companysLocationList) {
+        this.companysLocationList = companysLocationList;
     }
 
     @XmlTransient
-    public Collection<CompanysContacts> getCompanysContactsCollection() {
-        return companysContactsCollection;
+    public List<Owners> getOwnersList() {
+        return ownersList;
     }
 
-    public void setCompanysContactsCollection(Collection<CompanysContacts> companysContactsCollection) {
-        this.companysContactsCollection = companysContactsCollection;
+    public void setOwnersList(List<Owners> ownersList) {
+        this.ownersList = ownersList;
     }
 
     @XmlTransient
-    public Collection<CompanyOrder> getCompanyOrderCollection() {
-        return companyOrderCollection;
+    public List<CompanysContacts> getCompanysContactsList() {
+        return companysContactsList;
     }
 
-    public void setCompanyOrderCollection(Collection<CompanyOrder> companyOrderCollection) {
-        this.companyOrderCollection = companyOrderCollection;
+    public void setCompanysContactsList(List<CompanysContacts> companysContactsList) {
+        this.companysContactsList = companysContactsList;
+    }
+
+    @XmlTransient
+    public List<Agents> getAgentsList() {
+        return agentsList;
+    }
+
+    public void setAgentsList(List<Agents> agentsList) {
+        this.agentsList = agentsList;
+    }
+
+    @XmlTransient
+    public List<CompanyOrder> getCompanyOrderList() {
+        return companyOrderList;
+    }
+
+    public void setCompanyOrderList(List<CompanyOrder> companyOrderList) {
+        this.companyOrderList = companyOrderList;
     }
 
     @Override
@@ -148,7 +153,10 @@ public class Companies implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.Companies[ id=" + id + " ]";
+        return "Companies\n"
+                + "id= " + id + "\n"
+                + "company name= " + companyName + "\n"
+                + "******************************************************";
     }
-    
+
 }

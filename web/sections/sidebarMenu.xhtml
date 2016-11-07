@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
     <head>
         <title>Ignored</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
-    
+
     <body>
         <ui:composition>
             <aside style="width: 200px">
@@ -23,11 +24,14 @@
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="../ordering/ordering.xhtml"><i class="fa fa-arrow-circle-right"></i> Company Info</a></li>
-                            <li><a href="../ordering/ordering-admin-info.xhtml"><i class="fa fa-arrow-circle-right"></i> Administrator Info</a></li>
-                            <li><a href="../ordering/ordering-define-services.xhtml"><i class="fa fa-arrow-circle-right"></i> Define Services</a></li>
-                            <li><a href="../ordering/ordering-service-type.xhtml"><i class="fa fa-arrow-circle-right"></i> Service Types</a></li>
-                            <li><a href="../ordering/ordering-thanks.xhtml"><i class="fa fa-arrow-circle-right"></i> Thanks</a></li>
+                            <h:form>
+                                <li><h:commandLink action="#{navigationController.goToCompany}"><i class="fa fa-arrow-circle-right"/> Company Info</h:commandLink></li>
+                                <li><h:commandLink action="#{navigationController.goToAdmin}"><i class="fa fa-arrow-circle-right"></i> Administrator Info</h:commandLink></li>
+                                <li><h:commandLink action="#{navigationController.goToDefineServices}"><i class="fa fa-arrow-circle-right"></i> Define Services</h:commandLink></li>
+                                <li><h:commandLink action="#{navigationController.goToServices}"><i class="fa fa-arrow-circle-right"></i> Service Types</h:commandLink></li>
+                                <li><h:commandLink action="#{navigationController.goToThanks}"><i class="fa fa-arrow-circle-right"></i> Thanks</h:commandLink></li>
+                                <li><h:commandLink action="#{navigationController.goToLogin}"><i class="fa fa-arrow-circle-right"></i> Log In</h:commandLink></li>
+                            </h:form>
                         </ul>
                     </li>
                 </ul>

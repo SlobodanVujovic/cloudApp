@@ -6,11 +6,13 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -27,18 +29,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Agents.findAll", query = "SELECT a FROM Agents a"),
-    @NamedQuery(name = "Agents.findById", query = "SELECT a FROM Agents a WHERE a.agentsPK.id = :id"),
+    @NamedQuery(name = "Agents.findById", query = "SELECT a FROM Agents a WHERE a.id = :id"),
     @NamedQuery(name = "Agents.findByFirstName", query = "SELECT a FROM Agents a WHERE a.firstName = :firstName"),
     @NamedQuery(name = "Agents.findByLastName", query = "SELECT a FROM Agents a WHERE a.lastName = :lastName"),
     @NamedQuery(name = "Agents.findByPhone", query = "SELECT a FROM Agents a WHERE a.phone = :phone"),
     @NamedQuery(name = "Agents.findByEmail", query = "SELECT a FROM Agents a WHERE a.email = :email"),
-    @NamedQuery(name = "Agents.findByCompanyOrderHasBrickCompanyOrderId", query = "SELECT a FROM Agents a WHERE a.agentsPK.companyOrderHasBrickCompanyOrderId = :companyOrderHasBrickCompanyOrderId"),
-    @NamedQuery(name = "Agents.findByCompanyOrderHasBrickBricksId", query = "SELECT a FROM Agents a WHERE a.agentsPK.companyOrderHasBrickBricksId = :companyOrderHasBrickBricksId")})
+    @NamedQuery(name = "Agents.findByCompanyId", query = "SELECT a FROM Agents a WHERE a.companiesId = :companyId")})
 public class Agents implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    protected AgentsPK agentsPK;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
+    private Integer id;
     @Size(max = 25)
     @Column(name = "first_name")
     private String firstName;
@@ -53,29 +57,23 @@ public class Agents implements Serializable {
     @Size(max = 45)
     @Column(name = "email")
     private String email;
-    @JoinColumns({
-        @JoinColumn(name = "company_order_has_brick_company_order_id", referencedColumnName = "company_order_id", insertable = false, updatable = false),
-        @JoinColumn(name = "company_order_has_brick_bricks_id", referencedColumnName = "bricks_id", insertable = false, updatable = false)})
+    @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private CompanyOrderHasBrick companyOrderHasBrick;
+    private Companies companiesId;
 
     public Agents() {
     }
 
-    public Agents(AgentsPK agentsPK) {
-        this.agentsPK = agentsPK;
+    public Agents(Integer id) {
+        this.id = id;
     }
 
-    public Agents(int id, int companyOrderHasBrickCompanyOrderId, int companyOrderHasBrickBricksId) {
-        this.agentsPK = new AgentsPK(id, companyOrderHasBrickCompanyOrderId, companyOrderHasBrickBricksId);
+    public Integer getId() {
+        return id;
     }
 
-    public AgentsPK getAgentsPK() {
-        return agentsPK;
-    }
-
-    public void setAgentsPK(AgentsPK agentsPK) {
-        this.agentsPK = agentsPK;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -110,18 +108,18 @@ public class Agents implements Serializable {
         this.email = email;
     }
 
-    public CompanyOrderHasBrick getCompanyOrderHasBrick() {
-        return companyOrderHasBrick;
+    public Companies getCompaniesId() {
+        return companiesId;
     }
 
-    public void setCompanyOrderHasBrick(CompanyOrderHasBrick companyOrderHasBrick) {
-        this.companyOrderHasBrick = companyOrderHasBrick;
+    public void setCompaniesId(Companies companiesId) {
+        this.companiesId = companiesId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (agentsPK != null ? agentsPK.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -132,7 +130,7 @@ public class Agents implements Serializable {
             return false;
         }
         Agents other = (Agents) object;
-        if ((this.agentsPK == null && other.agentsPK != null) || (this.agentsPK != null && !this.agentsPK.equals(other.agentsPK))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -140,7 +138,14 @@ public class Agents implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.Agents[ agentsPK=" + agentsPK + " ]";
+        return "Agents\n"
+                + "companyId= " + companiesId + "\n"
+                + "id= " + id + "\n"
+                + "first name= " + firstName + "\n"
+                + "last name= " + lastName + "\n"
+                + "phone= " + phone + "\n"
+                + "email= " + email + "\n"
+                + "----------------------------------------------------------";
     }
-    
+
 }

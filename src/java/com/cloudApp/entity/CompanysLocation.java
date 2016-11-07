@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CompanysLocation.findByAddress", query = "SELECT c FROM CompanysLocation c WHERE c.address = :address"),
     @NamedQuery(name = "CompanysLocation.findByCity", query = "SELECT c FROM CompanysLocation c WHERE c.city = :city"),
     @NamedQuery(name = "CompanysLocation.findByZipCode", query = "SELECT c FROM CompanysLocation c WHERE c.zipCode = :zipCode"),
-    @NamedQuery(name = "CompanysLocation.findByState", query = "SELECT c FROM CompanysLocation c WHERE c.state = :state")})
+    @NamedQuery(name = "CompanysLocation.findByState", query = "SELECT c FROM CompanysLocation c WHERE c.state = :state"),
+    @NamedQuery(name = "CompanysLocation.findByCompanyId", query = "SELECT c FROM CompanysLocation c WHERE c.companiesId = :companyId")})
 public class CompanysLocation implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -134,7 +135,14 @@ public class CompanysLocation implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.CompanysLocation[ id=" + id + " ]";
+        return "CompanysLocation\n"
+                + "companyId= " + companiesId + "\n"
+                + "id= " + id + "\n"
+                + "address= " + address + "\n"
+                + "city= " + city + "\n"
+                + "ZIP code= " + zipCode + "\n"
+                + "state= " + state + "\n"
+                + "----------------------------------------------------------------------";
     }
-    
+
 }

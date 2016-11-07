@@ -3,19 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.cloudApp.session;
+package com.cloudApp.sessions;
 
+import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.Companies;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
  * @author svujovic
  */
 @Stateless
-public class CompaniesFacade extends AbstractFacade<Companies> {
+public class AgentsFacade extends AbstractFacade<Agents> {
 
     @PersistenceContext(unitName = "cloudAppPU")
     private EntityManager em;
@@ -25,8 +28,15 @@ public class CompaniesFacade extends AbstractFacade<Companies> {
         return em;
     }
 
-    public CompaniesFacade() {
-        super(Companies.class);
+    public AgentsFacade() {
+        super(Agents.class);
     }
-    
+
+    public List<Agents> getAgentsByCompanyId(Companies company) {
+        TypedQuery<Agents> query = getEntityManager().createNamedQuery("Agents.findByCompanyId", Agents.class);
+        query.setParameter("companyId", company);
+        List<Agents> resultList = query.getResultList();
+        return resultList;
+    }
+
 }

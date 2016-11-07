@@ -93,6 +93,8 @@
                                     <h:selectBooleanCheckbox id="service_checkbox_3" class="v_center_checkbox" onclick="#"/>
                                 </div>
                             </div>
+                            <h:inputHidden id="hiddenInput1" value="#{servicesController.serviceNames}"/>
+                            <h:inputHidden id="hiddenInput2" value="#{servicesController.serviceReservations}"/>
 
                             <!-- TODO Stavi button-e na centar div-a.-->
                             <!-- Buttons -->
@@ -101,6 +103,7 @@
                                 <h:commandLink value="Less services " immediate="true" id="defineServicesLessButton" onclick="return showLessServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-up"/></h:commandLink>
                                 <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
                                 <h:commandLink value="Submit " id="defineServicesSubmitButton" action="#{navigationController.goToThanks}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                                <h:commandLink value="Test " id="testButton" onclick="definedServiceNames(); definedReservations();" action="#{servicesController.testUseCase}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                             </div>
                         </fieldset>
                     </h:form>

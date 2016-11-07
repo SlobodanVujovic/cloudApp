@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <body>
+        <ui:composition template="./../templates/masterTemplate.xhtml">
+            <ui:define name="left">
+
+            </ui:define>
+
+            <ui:define name="content">
+                <div id="adminLoginContainer" class="container">
+                    <h1>
+                        All company data
+                    </h1>
+                    <h:outputLabel value="Company name" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.company.companyName}"/>
+                    <br/>
+                    <h:outputLabel value="Company adress" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getCompanysLocation().address}"/>
+                    <br/>
+                    <h:outputLabel value="Company city" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getCompanysLocation().city}"/>
+                    <br/>
+                    <h:outputLabel value="Company ZIP code" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getCompanysLocation().zipCode}"/>
+                    <br/>
+                    <h:outputLabel value="Company state" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getCompanysLocation().state}"/>
+                    <br/>
+                    <h:outputLabel value="Company phone" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getCompanysContact().phone}"/>
+                    <br/>
+                    <h:outputLabel value="Company email" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getCompanysContact().email}"/>
+                    <br/>
+                    <h:outputLabel value="Company owner first name" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getOwner().firstName}"/>
+                    <br/>
+                    <h:outputLabel value="Company owner last name" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getOwner().lastName}"/>
+                    <br/>
+                    <h:outputLabel value="Company owner username" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getOwner().username}"/>
+                    <br/>
+                    <h:outputLabel value="Company owner password" class="col-md-4 control-label"/>
+                    <h:outputLabel value="#{logInController.getOwner().password}"/>
+                    <br/>
+                    <h:outputLabel value="Company owner contacts" class="col-md-4 control-label"/>
+                    <h:dataTable value="#{logInController.ownersContacts}" var="ownerContact" border="1">
+                        <h:column>
+                            <f:facet name="header">Phone</f:facet>
+                                #{ownerContact.phone}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Email</f:facet>
+                                #{ownerContact.email}
+                        </h:column>
+                    </h:dataTable>
+                    <h:outputLabel value="Company agents" class="col-md-4 control-label"/>
+                    <h:dataTable value="#{logInController.agents}" var="agent" border="1">
+                        <h:column>
+                            <f:facet name="header">First name</f:facet>
+                            #{agent.firstName}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Last name</f:facet>
+                            #{agent.lastName}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Phone</f:facet>
+                            #{agent.phone}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Email</f:facet>
+                            #{agent.email}
+                        </h:column>
+                    </h:dataTable>
+                    <h:outputLabel value="Company orders" class="col-md-4 control-label"/>
+                    <h:dataTable value="#{logInController.companyOrders}" var="order" border="1">
+                        <h:column>
+                            <f:facet name="header">Creation date</f:facet>
+                            #{order.dateCreated}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Amount</f:facet>
+                            #{order.amount}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">URL</f:facet>
+                            #{order.url}
+                        </h:column>
+                    </h:dataTable>
+                    <h:outputLabel value="Company services" class="col-md-4 control-label"/>
+                    <h:dataTable value="#{logInController.services}" var="service" border="1">
+                        <h:column>
+                            <f:facet name="header">Name</f:facet>
+                            #{service.name}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Reservation</f:facet>
+                            #{service.reservation}
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

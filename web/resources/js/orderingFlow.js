@@ -232,10 +232,6 @@ function buttonOk(checkboxId) {
     hideOrShowPreviewElement(checkboxId);
 }
 
-function agentButtonWrite() {
-
-}
-
 function reminderButtonOk() {
     var smsReminderElement = document.getElementById("rm1");
     var emailReminderElement = document.getElementById("rm2");
@@ -282,7 +278,7 @@ function showMoreServices() {
     return false;
 }
 
-function showLessServices(){
+function showLessServices() {
     var serviceIds = ["service_3", "service_2"];
     var serviceId;
     var divToShow;
@@ -302,15 +298,27 @@ function showLessServices(){
     return false;
 }
 
-// Ne koristi se trenutno.
-function chosenBricks() {
-    var checkedBricks = [];
-    var bricks = ["r1", "r2", "r3", "r4", "r5", "rm1", "rm2", "t1", "t2", "t3", "t4", "t5", "t6"];
-    for (var i = 0; i < bricks.length; i++) {
-        var element = document.getElementById(bricks[i]);
-        if (element.checked) {
-            checkedBricks.push(bricks[i]);
+function definedServiceNames() {
+    var serviceNames = [];
+    var serviceIds = ["service_name_1", "service_name_2", "service_name_3"];
+    for (var i = 0; i < serviceIds.length; i++) {
+        var element = document.getElementById(serviceIds[i]);
+        if (element.value) {
+            serviceNames.push(element.value);
         }
     }
-    document.getElementById("selectedBricks").value = checkedBricks;
+    document.getElementById("hiddenInput1").value = serviceNames;
+}
+
+function definedReservations() {
+    var servicesWithReservation = [];
+    var reservationIds = ["service_checkbox_1", "service_checkbox_2", "service_checkbox_3"];
+    for (var i = 0; i < reservationIds.length; i++) {
+        var element = document.getElementById(reservationIds[i]);
+        if (element.checked) {
+            var serviceId = reservationIds[i].substr(reservationIds[i].length - 1, 1);
+            servicesWithReservation.push(serviceId);
+        }
+    }
+    document.getElementById("hiddenInput2").value = servicesWithReservation;
 }

@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.cloudApp.session;
+package com.cloudApp.sessions;
 
+import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -28,5 +31,11 @@ public class CompanyOrderFacade extends AbstractFacade<CompanyOrder> {
     public CompanyOrderFacade() {
         super(CompanyOrder.class);
     }
-    
+
+    public List<CompanyOrder> getOrdersByCompanyId(Companies company) {
+        TypedQuery<CompanyOrder> query = em.createNamedQuery("CompanyOrder.findByCompanyId", CompanyOrder.class);
+        query.setParameter("companyId", company);
+        List<CompanyOrder> resultList = query.getResultList();
+        return resultList;
+    }
 }

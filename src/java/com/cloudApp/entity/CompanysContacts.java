@@ -31,7 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CompanysContacts.findAll", query = "SELECT c FROM CompanysContacts c"),
     @NamedQuery(name = "CompanysContacts.findById", query = "SELECT c FROM CompanysContacts c WHERE c.id = :id"),
     @NamedQuery(name = "CompanysContacts.findByPhone", query = "SELECT c FROM CompanysContacts c WHERE c.phone = :phone"),
-    @NamedQuery(name = "CompanysContacts.findByEmail", query = "SELECT c FROM CompanysContacts c WHERE c.email = :email")})
+    @NamedQuery(name = "CompanysContacts.findByEmail", query = "SELECT c FROM CompanysContacts c WHERE c.email = :email"),
+    @NamedQuery(name = "CompanysContacts.findByCompanyId", query = "SELECT c FROM CompanysContacts c WHERE c.companiesId=:companyId")})
 public class CompanysContacts implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -113,7 +114,12 @@ public class CompanysContacts implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.CompanysContacts[ id=" + id + " ]";
+        return "Companys Contacts\n"
+                + "companyId= " + companiesId + "\n"
+                + "id= " + id + "\n"
+                + "phone= " + phone + "\n"
+                + "email= " + email + "\n"+
+                "-------------------------------------------------------------------";
     }
-    
+
 }
