@@ -11,7 +11,6 @@ import javax.inject.Named;
 @Named
 @RequestScoped
 public class ThanksController {
-
     private String url;
 
     public ThanksController() {
@@ -26,7 +25,7 @@ public class ThanksController {
     public String getUrl() {
         Companies selectedCompany = companyController.getSelectedCompany();
         List<CompanyOrder> orders = orderFacade.getOrdersByCompanyId(selectedCompany);
-        if (orders.size() > 1) {
+        if (orders.size() > 0) {
             CompanyOrder lastOrder = orders.get(orders.size() - 1);
             url = lastOrder.getUrl();
         } else {

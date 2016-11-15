@@ -1,0 +1,75 @@
+#servicesCheckboxes{
+    width: 201px;
+}
+
+table{
+    background-color: transparent;
+    margin-left: 20%;
+}
+
+.reservationDiv{
+    float: left;
+    margin-top: 46px;
+    margin-left: 10px;
+}
+
+.reservationDiv input{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.reservationDate, .reservationTime, .reservationLabel{
+    display: none;
+}
+
+.reservationTime{
+    width: 203px;
+    height: 31px;
+}
+
+#left{
+    margin-top: 69px;
+}
+
+#servicesCheckboxes\:servicesLabel{
+    margin-left: 15px;
+    font-size: 18px;
+}
+
+hr{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#content h1{
+    margin-left: 50px;
+    color: white;
+}
+
+#agentsForm{
+    float: left;
+}
+
+#agentsForm\:agentsList{
+    margin-top: 46px;
+    margin-left: 10px;
+}
+
+#agentsForm label{
+    margin-left: 10px;
+}
+
+.clientNameDiv{
+    float: left;
+    margin-top: 42px;
+}
+
+#clientName{
+    margin-left: 10px;
+}
+
+.buttonDiv{
+    float: left;
+    margin-top: 38px;
+    margin-left: 10px;
+}

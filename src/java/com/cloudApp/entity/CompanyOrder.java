@@ -44,6 +44,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CompanyOrder.findByCompanyId", query = "SELECT c FROM CompanyOrder c WHERE c.companiesId = :companyId")})
 public class CompanyOrder implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
+    private List<ClientOrders> clientOrdersList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -162,6 +165,15 @@ public class CompanyOrder implements Serializable {
                 + "url= " + url + "\n"
                 + "amount= " + amount + "\n"
                 + "----------------------------------------------------------------------------------";
+    }
+
+    @XmlTransient
+    public List<ClientOrders> getClientOrdersList() {
+        return clientOrdersList;
+    }
+
+    public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
+        this.clientOrdersList = clientOrdersList;
     }
 
 }

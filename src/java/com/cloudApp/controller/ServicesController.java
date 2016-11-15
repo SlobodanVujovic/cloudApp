@@ -1,87 +1,111 @@
 package com.cloudApp.controller;
 
+import com.cloudApp.entity.Agents;
+import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.CompanyOrderFacade;
-import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
-@Named
+@Named(value = "servicesController")
 @SessionScoped
 public class ServicesController implements Serializable {
+
+    // orderId treba da bude u URL-u (tu vrednost uzimamo iz GET-a) i na osnovu ovog parametra odredjujemo sve ostalo sto
+    // se tice podataka vezanih za tu kompaniju.
+    private int orderId = 6;
+    private CompanyOrder order;
+    private List<Services> allServices;
+    private List<String> serviceIdWithRequiredReservation;
+    private String[] checkedServices;
+    private Companies company;
+    private List<Agents> allAgents;
+    private String choosenAgent;
 
     public ServicesController() {
 
     }
 
-    private CompanyOrder companyOrder;
-    private Services services;
-    private String serviceNames;
-    private String serviceReservations;
-
     @PostConstruct
     public void init() {
-        companyOrder = new CompanyOrder();
-        services = new Services();
+        setCompanyOrder();
+        setCompany();
+        setServiceIdWithRequiredReservation();
     }
 
     @Inject
-    private CompanyController companyController;
-    @Inject
-    private ServicesFacade servicesFacade;
-    @Inject
-    private CompanyOrderFacade companyOrderFacade;
+    private CompanyOrderFacade orderFacade;
 
-    public void testUseCase() {
-        companyOrder.setCompaniesId(companyController.getSelectedCompany());
-        companyOrderFacade.create(companyOrder);
+    public void setCompanyOrder() {
+        order = orderFacade.find(orderId);
+    }
 
-        String[] servicesArray = serviceNames.split(",");
-        for (int i = 0; i < servicesArray.length; i++) {
-            services.setName(servicesArray[i]);
-            if (serviceReservations.contains(i + 1 + "")) {
-                services.setReservation(true);
-            } else {
-                services.setReservation(false);
+    public List<Services> getAllServices() {
+        allServices = order.getServicesList();
+        return allServices;
+    }
+
+    public List<String> getServiceIdWithRequiredReservation() {
+        return serviceIdWithRequiredReservation;
+    }
+
+    public void setServiceIdWithRequiredReservation() {
+        allServices = order.getServicesList();
+        serviceIdWithRequiredReservation = new ArrayList<>();
+        for (Services service : allServices) {
+            if (service.getReservation() == true) {
+                String serviceName = service.getName();
+                if (serviceName.contains(" ")) {
+                    serviceName = serviceName.replace(" ", "");
+                }
+                serviceIdWithRequiredReservation.add(serviceName);
             }
         }
-        services.setCompanyOrderId(companyOrder);
-        servicesFacade.create(services);
     }
 
-    public String getServiceReservations() {
-        return serviceReservations;
+    public String[] getCheckedServices() {
+        return checkedServices;
     }
 
-    public void setServiceReservations(String serviceReservations) {
-        this.serviceReservations = serviceReservations;
+    public void setCheckedServices(String[] checkedServices) {
+        this.checkedServices = checkedServices;
     }
 
-    public String getServiceNames() {
-        return serviceNames;
+    public Companies getCompany() {
+        return company;
     }
 
-    public void setServiceNames(String serviceNames) {
-        this.serviceNames = serviceNames;
+    public void setCompany() {
+        company = order.getCompaniesId();
     }
 
-    public CompanyOrder getCompanyOrder() {
-        return companyOrder;
+    public String getChoosenAgent() {
+        return choosenAgent;
     }
 
-    public void setCompanyOrder(CompanyOrder companyOrder) {
-        this.companyOrder = companyOrder;
+    public void setChoosenAgent(String choosenAgent) {
+        this.choosenAgent = choosenAgent;
     }
 
-    public Services getServices() {
-        return services;
+    public List<Agents> getAllAgents() {
+        allAgents = company.getAgentsList();
+        return allAgents;
+    }
+    
+    public void scheduleClient(){
+        
     }
 
-    public void setServices(Services services) {
-        this.services = services;
+    // Ovaj metod koristimo samo u result.xhtml str. zarad provere vrednosti array-a kada se cekiraju odredjena polja.
+    public String getAllServicesArrayAsString() {
+        return Arrays.toString(checkedServices);
     }
+
 }

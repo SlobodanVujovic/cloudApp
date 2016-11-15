@@ -254,10 +254,6 @@ $(function () {
     $('#timepicker').timepicker();
 });
 
-function geocode() {
-    PF('geoMap').geocode(document.getElementById('client_address').value);
-}
-
 function showMoreServices() {
     var serviceIds = ["service_2", "service_3"];
     var serviceId;
