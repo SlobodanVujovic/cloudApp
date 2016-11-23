@@ -41,8 +41,13 @@ function checkIfServiceRequireReservation(checkbox) {
     }
 }
 
-$(function () {
-    $('.reservationTime').timepicker();
+// Biblioteka se nalazi u: C:\Libraries\jquery-timepicker-99cfc2d. Postoje i primeri na index.html stranici.
+$(document).ready(function () {
+    $('#reservation_time').timepicker({
+        'timeFormat': 'H:i',
+        'minTime': '8:00',
+        'maxTime': '19:30'
+    });
 });
 
 function isAllInputOk() {
@@ -92,6 +97,23 @@ function isNameEntered() {
         nameIsEntered = true;
     }
     return nameIsEntered;
+}
+
+function transferValueToTextInput(checkbox) {
+    var selectedServicesElement = document.getElementById("selectedServices");
+    var clickedServiceValue = checkbox.value + " ";
+    var chosenServicesInputValue = selectedServicesElement.value;
+    if (checkbox.checked) {
+        if (chosenServicesInputValue !== "") {
+        }
+        chosenServicesInputValue += clickedServiceValue;
+    } else {
+        var serviceAlreadyChosen = chosenServicesInputValue.includes(clickedServiceValue);
+        if (serviceAlreadyChosen) {
+            chosenServicesInputValue = chosenServicesInputValue.replace(clickedServiceValue, "");
+        }
+    }
+    selectedServicesElement.value = chosenServicesInputValue;
 }
 
 //console.log(checkboxValue);

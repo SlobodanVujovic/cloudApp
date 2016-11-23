@@ -111,11 +111,7 @@ public class Services implements Serializable {
 
     @Override
     public String toString() {
-        return "Services\n"
-                + "id= " + id + "\n"
-                + "name= " + name + "\n"
-                + "reservation= " + reservation + "\n"
-                + "----------------------------------------------------------------";
+        return "com.cloudApp.entity.Services[ id=" + id + " ]";
     }
-
+    
 }

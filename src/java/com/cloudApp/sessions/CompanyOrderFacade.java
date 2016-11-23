@@ -38,4 +38,5 @@ public class CompanyOrderFacade extends AbstractFacade<CompanyOrder> {
         List<CompanyOrder> resultList = query.getResultList();
         return resultList;
     }
+
 }

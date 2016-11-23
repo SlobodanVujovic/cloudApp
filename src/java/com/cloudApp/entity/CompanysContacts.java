@@ -114,12 +114,7 @@ public class CompanysContacts implements Serializable {
 
     @Override
     public String toString() {
-        return "Companys Contacts\n"
-                + "companyId= " + companiesId + "\n"
-                + "id= " + id + "\n"
-                + "phone= " + phone + "\n"
-                + "email= " + email + "\n"+
-                "-------------------------------------------------------------------";
+        return "com.cloudApp.entity.CompanysContacts[ id=" + id + " ]";
     }
-
+    
 }

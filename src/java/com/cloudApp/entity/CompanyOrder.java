@@ -44,9 +44,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CompanyOrder.findByCompanyId", query = "SELECT c FROM CompanyOrder c WHERE c.companiesId = :companyId")})
 public class CompanyOrder implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
-    private List<ClientOrders> clientOrdersList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,6 +64,8 @@ public class CompanyOrder implements Serializable {
     @NotNull
     @Column(name = "amount")
     private int amount = 0;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
+    private List<ClientOrders> clientOrdersList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
     private List<Services> servicesList;
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
@@ -120,6 +119,15 @@ public class CompanyOrder implements Serializable {
     }
 
     @XmlTransient
+    public List<ClientOrders> getClientOrdersList() {
+        return clientOrdersList;
+    }
+
+    public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
+        this.clientOrdersList = clientOrdersList;
+    }
+
+    @XmlTransient
     public List<Services> getServicesList() {
         return servicesList;
     }
@@ -158,22 +166,7 @@ public class CompanyOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "Company Order\n"
-                + "companyId= " + companiesId + "\n"
-                + "id= " + id + "\n"
-                + "date created= " + dateCreated + "\n"
-                + "url= " + url + "\n"
-                + "amount= " + amount + "\n"
-                + "----------------------------------------------------------------------------------";
+        return "com.cloudApp.entity.CompanyOrder[ id=" + id + " ]";
     }
-
-    @XmlTransient
-    public List<ClientOrders> getClientOrdersList() {
-        return clientOrdersList;
-    }
-
-    public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
-        this.clientOrdersList = clientOrdersList;
-    }
-
+    
 }

@@ -138,14 +138,7 @@ public class Agents implements Serializable {
 
     @Override
     public String toString() {
-        return "Agents\n"
-                + "companyId= " + companiesId + "\n"
-                + "id= " + id + "\n"
-                + "first name= " + firstName + "\n"
-                + "last name= " + lastName + "\n"
-                + "phone= " + phone + "\n"
-                + "email= " + email + "\n"
-                + "----------------------------------------------------------";
+        return "com.cloudApp.entity.Agents[ id=" + id + " ]";
     }
-
+    
 }

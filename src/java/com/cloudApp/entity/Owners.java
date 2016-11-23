@@ -167,14 +167,7 @@ public class Owners implements Serializable {
 
     @Override
     public String toString() {
-        return "Owners\n"
-                + "companyId= " + companiesId + "\n"
-                + "id= " + id + "\n"
-                + "first name= " + firstName + "\n"
-                + "last name= " + lastName + "\n"
-                + "username= " + username + "\n"
-                + "password= " + password + "\n"
-                + "------------------------------------------------------------";
+        return "com.cloudApp.entity.Owners[ id=" + id + " ]";
     }
-
+    
 }

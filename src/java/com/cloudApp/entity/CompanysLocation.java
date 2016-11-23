@@ -135,14 +135,7 @@ public class CompanysLocation implements Serializable {
 
     @Override
     public String toString() {
-        return "CompanysLocation\n"
-                + "companyId= " + companiesId + "\n"
-                + "id= " + id + "\n"
-                + "address= " + address + "\n"
-                + "city= " + city + "\n"
-                + "ZIP code= " + zipCode + "\n"
-                + "state= " + state + "\n"
-                + "----------------------------------------------------------------------";
+        return "com.cloudApp.entity.CompanysLocation[ id=" + id + " ]";
     }
 
 }

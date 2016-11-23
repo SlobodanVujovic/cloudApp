@@ -12,6 +12,7 @@ import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
 import com.cloudApp.sessions.CompanysContactsFacade;
 import com.cloudApp.sessions.CompanysLocationFacade;
+import com.cloudApp.sessions.OwnersContactsFacade;
 import com.cloudApp.sessions.OwnersFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.util.List;
@@ -52,16 +53,15 @@ public class LogInController {
     private ServicesFacade servicesFacade;
     @Inject
     private NavigationController navigationController;
+    @Inject
+    private OwnersContactsFacade ownersContactsFacade;
 
     public String validateUsernameAndPassword() {
         owner = ownersFacade.getOwnerByUsername(username);
-        // System.out.println(owner);
         String resultPassword = owner.getPassword();
         if (resultPassword.equals(password)) {
             company = owner.getCompaniesId();
-            // System.out.println(company);
-            ownersContacts = owner.getOwnersContactsList();
-            // System.out.println(ownersContacts);
+            setOwnersContacts();
             setCompanysLocation();
             setCompanysContact();
             setAgents();
@@ -74,30 +74,29 @@ public class LogInController {
         }
     }
 
+    public void setOwnersContacts() {
+        ownersContacts = ownersContactsFacade.getOwnersContactsByOwnerId(owner);
+    }
+
     public void setCompanysLocation() {
         companysLocation = locationFacade.getLocationByCompanyId(company);
-        // System.out.println(companysLocation);
     }
 
     public void setCompanysContact() {
         companysContact = contactsFacade.getContactByCompanyId(company);
-        // System.out.println(companysContact);
     }
 
     public void setAgents() {
         agents = agentsFacade.getAgentsByCompanyId(company);
-        // System.out.println(agents);
     }
 
     public void setCompanyOrder() {
         companyOrders = orderFacade.getOrdersByCompanyId(company);
-        // System.out.println(companyOrders);
     }
 
     public void setCompanyServices() {
         for (CompanyOrder order : companyOrders) {
             services = servicesFacade.getServicesByCompanyOrderId(order);
-            // System.out.println(services);
         }
     }
 
@@ -148,5 +147,5 @@ public class LogInController {
     public List<Services> getServices() {
         return services;
     }
-    
+
 }

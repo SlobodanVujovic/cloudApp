@@ -12,6 +12,7 @@ import javax.inject.Named;
 @RequestScoped
 public class ThanksController {
     private String url;
+    private int orderId;
 
     public ThanksController() {
 
@@ -27,7 +28,10 @@ public class ThanksController {
         List<CompanyOrder> orders = orderFacade.getOrdersByCompanyId(selectedCompany);
         if (orders.size() > 0) {
             CompanyOrder lastOrder = orders.get(orders.size() - 1);
-            url = lastOrder.getUrl();
+            orderId = lastOrder.getId();
+            url = "localhost:8080/cloudapp/faces/cloud/services.xhtml?poId=" + orderId;
+            lastOrder.setUrl(url);
+            orderFacade.edit(lastOrder);
         } else {
             url = "";
         }

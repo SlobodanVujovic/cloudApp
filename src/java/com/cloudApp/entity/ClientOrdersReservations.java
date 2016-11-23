@@ -46,8 +46,7 @@ public class ClientOrdersReservations implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date reservationDate;
     @Column(name = "reservation_time")
-    @Temporal(TemporalType.TIME)
-    private Date reservationTime;
+    private String reservationTime;
     @JoinColumn(name = "client_orders_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private ClientOrders clientOrdersId;
@@ -75,11 +74,11 @@ public class ClientOrdersReservations implements Serializable {
         this.reservationDate = reservationDate;
     }
 
-    public Date getReservationTime() {
+    public String getReservationTime() {
         return reservationTime;
     }
 
-    public void setReservationTime(Date reservationTime) {
+    public void setReservationTime(String reservationTime) {
         this.reservationTime = reservationTime;
     }
 

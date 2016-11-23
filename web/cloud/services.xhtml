@@ -8,20 +8,23 @@
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:p="http://primefaces.org/ui">
     <body>
+        <f:metadata>
+            <f:viewParam name="poId" value="#{servicesController.orderId}" />
+        </f:metadata>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
                 <h:form id="servicesCheckboxes">
                     <h:outputLabel value="Services" id="servicesLabel"/>
                     <hr/>
-                    <h:selectManyCheckbox value="#{servicesController.checkedServices}" layout="pageDirection" onclick="checkIfServiceRequireReservation(this)">
+                    <h:selectManyCheckbox layout="pageDirection" onclick="checkIfServiceRequireReservation(this); transferValueToTextInput(this)">
                         <f:selectItems value="#{servicesController.allServices}" var="service" itemLabel="#{service.name}" itemValue="#{service.name}"/>
                     </h:selectManyCheckbox>
                     <h:inputHidden id="servicesWithReservation" value="#{servicesController.serviceIdWithRequiredReservation}"/>
-                    
+
                     <!-- Button za submit-ovanje rezultata ka "result.xhtml" stranici koju korisimo za proveru 
-                    vrednosti promenljivih
-                    <h:commandButton value="Submit" action="result"/>-->
-                    
+                    vrednosti promenljivih-->
+                    <!--<h:commandLink value="Submit" action="result"/>-->
+
                 </h:form>
             </ui:define>
             <ui:define name="content">
@@ -29,39 +32,38 @@
                     <h1>
                         #{servicesController.company.companyName}
                     </h1>
-                    <!-- TODO Ova forma treba da se pojavi samo ako postoje definisani agenti akon ne onda treba da bude hidde-ovana.-->
-                    <h:form id="agentsForm">
-                        <h:outputLabel for="agentsList" value="Choose agent"/>
-                        <h:selectOneMenu id="agentsList" value="#{servicesController.choosenAgent}">
-                            <f:selectItems value="#{servicesController.allAgents}" var="agent" itemLabel="#{agent.firstName.concat(' ')}#{agent.lastName}" itemValue="#{agent.firstName.concat(' ')}#{agent.lastName}"/>
-                        </h:selectOneMenu>
+                    <!-- TODO Ova forma treba da se pojavi samo ako postoje definisani agenti a ako ne onda treba da bude hidde-ovana.-->
+                    <h:form prependId="false">
+                        <h:inputHidden id="selectedServices" value="#{servicesController.checkedServices}"/>
+                        <div id="agentsForm">
+                            <h:outputLabel for="agentsList" value="Choose agent"/>
+                            <h:selectOneMenu id="agentsList" value="#{servicesController.clientOrdersAgent.agent}">
+                                <f:selectItems value="#{servicesController.allAgents}" var="agent" itemLabel="#{agent.firstName.concat(' ')}#{agent.lastName}" itemValue="#{agent.firstName.concat(' ')}#{agent.lastName}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="reservationDiv">
+                            <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
+                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.clientOrdersReservation.reservationDate}" placeholder=" Pick Date"/>
+                            <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.clientOrdersReservation.reservationTime}" pt:placeholder=" Pick Time"/>
+
+                            <!-- Ako zelimo da napravimo vise JSF komponenti onda koristimo <c:forEach> tag. Atributu "items" dodeljujemo
+                            kolekciju kroz koju ce se vrsiti iteracija pri kreiranju JSF komponenti. Atribut "var" predstavlja trenutni
+                            objekat u iteraciji.
+                            <c:forEach items="#{servicesController.serviceIdWithRequiredReservation}" var="serviceWithReservation" varStatus="loop">
+                               <h:outputLabel id="#{serviceWithReservation}_label" class="reservationLabel" value="Choose appointment"/>
+                               <p:calendar id="#{serviceWithReservation}" class="reservationDate" placeholder=" Pick Date"/>
+                               <h:inputText id="#{serviceWithReservation}_time" class="reservationTime" pt:placeholder=" Pick Time"/>                        
+                            </c:forEach>-->
+
+                        </div>
+                        <div class="clientNameDiv">
+                            <h:outputLabel for="clientName" value="Enter your name"/>
+                            <h:inputText id="clientName" value="#{servicesController.clientOrder.clientName}" pt:placeholder=" Yout Name"/>
+                        </div>
+                        <div class="buttonDiv col-md-4">
+                            <h:commandLink value="Schedule " onclick="return isAllInputOk();" action="#{servicesController.takeClientsOrder()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-check"/></h:commandLink>
+                        </div>
                     </h:form>
-                    <div class="reservationDiv">
-                        <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
-                        <p:calendar id="reservation_date" class="reservationDate" placeholder=" Pick Date"/>
-                        <h:inputText id="reservation_time" class="reservationTime" pt:placeholder=" Pick Time"/>
-                        
-                     <!-- Ako zelimo da napravimo vise JSF komponenti onda koristimo <c:forEach> tag. Atributu "items" dodeljujemo
-                     kolekciju kroz koju ce se vrsiti iteracija pri kreiranju JSF komponenti. Atribut "var" predstavlja trenutni
-                     objekat u iteraciji.
-                     <c:forEach items="#{servicesController.serviceIdWithRequiredReservation}" var="serviceWithReservation" varStatus="loop">
-                        <h:outputLabel id="#{serviceWithReservation}_label" class="reservationLabel" value="Choose appointment"/>
-                        <p:calendar id="#{serviceWithReservation}" class="reservationDate" placeholder=" Pick Date"/>
-                        <h:inputText id="#{serviceWithReservation}_time" class="reservationTime" pt:placeholder=" Pick Time"/>                        
-                    </c:forEach>-->
-                     
-                    </div>
-                    <div class="clientNameDiv">
-                        <h:outputLabel for="clientName" value="Enter your name"/>
-                        <h:inputText id="clientName" pt:placeholder=" Yout Name"/>
-                    </div>
-                    <div class="buttonDiv">
-                        <h:form>
-                            <div class="col-md-4">
-                                <h:commandLink value="Schedule " onclick="return isAllInputOk();" action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-check"/></h:commandLink>
-                            </div>
-                        </h:form>
-                    </div>
                 </div>
             </ui:define>
         </ui:composition>

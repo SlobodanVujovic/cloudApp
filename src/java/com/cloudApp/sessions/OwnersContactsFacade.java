@@ -31,5 +31,12 @@ public class OwnersContactsFacade extends AbstractFacade<OwnersContacts> {
     public OwnersContactsFacade() {
         super(OwnersContacts.class);
     }
-
+    
+    public List<OwnersContacts> getOwnersContactsByOwnerId(Owners ownersId){
+        TypedQuery<OwnersContacts> query = em.createNamedQuery("OwnersContacts.findByOwnersId", OwnersContacts.class);
+        query.setParameter("ownersId", ownersId);
+        List<OwnersContacts> resultSet = query.getResultList();
+        return resultSet;
+    }
+    
 }
