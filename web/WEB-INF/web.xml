@@ -23,7 +23,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>faces/index.html</welcome-file>
+        <welcome-file>faces/sections/home.xhtml</welcome-file>
     </welcome-file-list>
     <!-- Kada koristimo JPA API za komunikaciju sa bazom onda se u okviru persistence.xml-a definise
     resource reference tako da <resource-ref> tag ovde nije potreban (proveriti)-->

@@ -288,6 +288,24 @@ function showLessServices() {
     return false;
 }
 
+function defineServicesValidation(){
+    var areServicesDefined = false;
+    var serviceIds = ["service_name_1", "service_name_2", "service_name_3"];
+    for (var i = 0; i < serviceIds.length; i++) {
+        var element = document.getElementById(serviceIds[i]);
+        if (element.value !== "") {
+            areServicesDefined = true;
+        }
+    }
+    if(!areServicesDefined){
+        alert("Please define at least one Service Name.");
+    } else{
+        definedServiceNames();
+        definedReservations();
+    }
+    return areServicesDefined;
+}
+
 function definedServiceNames() {
     var serviceNames = [];
     var serviceIds = ["service_name_1", "service_name_2", "service_name_3"];
@@ -311,4 +329,63 @@ function definedReservations() {
         }
     }
     document.getElementById("hiddenInput2").value = servicesWithReservation;
+}
+
+function companyInfoValidation(){
+    var isInputValid = true;
+    var companyName = document.getElementById("company_name");
+    if(companyName.value === ""){
+        alert("Please enter Company Name.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var companyEmail = document.getElementById("email");
+    if(companyEmail.value === ""){
+        alert("Please enter E-Mail.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    return isInputValid;
+}
+
+function administratorInfoValidation(){
+    var isInputValid = true;
+    var firstName = document.getElementById("first_name");
+    if(firstName.value === ""){
+        alert("Please enter First Name.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var lastName = document.getElementById("last_name");
+    if(lastName.value === ""){
+        alert("Please enter Last Name.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var username = document.getElementById("user_name");
+    if(username.value === ""){
+        alert("Please enter Username.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var password = document.getElementById("password");
+    if(password.value === ""){
+        alert("Please enter Password.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var confirmPassword = document.getElementById("confirm_password");
+    if(confirmPassword.value === ""){
+        alert("Please enter Confirm Password.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var email = document.getElementById("email");
+    if(email.value === ""){
+        alert("Please enter E-Mail.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    
+    
 }

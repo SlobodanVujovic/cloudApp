@@ -7,6 +7,8 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">
     <body>
+        <!-- TODO Svi kontorleri koji se koriste u ordering flow-u treba da imaju ConversationScope da bi odmah nakon kraja 1 
+        flow-a i definisanja 1 order-a mogao da se definise novi u istoj sesiji. -->
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="content">
 
@@ -32,7 +34,6 @@
                                 </div>
                             </div>
 
-                            <!-- TODO: Napisati validator za telefonski broj. -->
                             <!-- Text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Phone #" class="col-md-4 control-label"/>
@@ -80,7 +81,6 @@
                                 </div>
                             </div>
 
-                            <!-- TODO: Napisati validator za ZIP kode. -->
                             <!-- Text input-->
                             <div class="form-group">
                                 <h:outputLabel value="ZIP Code" class="col-md-4 control-label"/>
@@ -117,7 +117,7 @@
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4">
                                     <h:commandLink value="Home " action="#{navigationController.goHome}" immediate="true" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
-                                    <h:commandLink value="Next " action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                                    <h:commandLink value="Next " action="#{navigationController.goToAdmin}" onclick="return companyInfoValidation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                                 </div>
                             </div>
 

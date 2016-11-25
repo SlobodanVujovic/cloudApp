@@ -113,7 +113,7 @@
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4">
                                     <h:commandLink value="Back " immediate="true" action="#{navigationController.goToCompany}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
-                                    <h:commandLink value="Next " action="#{navigationController.goToDefineServices}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                                    <h:commandLink value="Next " action="#{navigationController.goToDefineServices}" onclick="return administratorInfoValidation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                                 </div>
                             </div>
 

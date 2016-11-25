@@ -26,8 +26,7 @@
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-wrench"></i></span>
                                         <!-- TODO Ako se stave JSF validatori na input polja (kodovi koji su zakomentarisani u nastavku strane)
                                         onda se, cak iako input polja nisu vidljiva, kada se pritisne Submit button, validacija primenjuje
-                                        na poljima i ne moze da se predje na sledecu stranicu. Odraditi validaciju kroz JavaScript umesto
-                                        kroz JSF.-->
+                                        na poljima i ne moze da se predje na sledecu stranicu. Uradjena JavaScript validacija. -->
                                         <!-- U h:inputText treba ubaciti:
                                         required="true" requiredMessage="Service name is required." maxlength="70"-->
                                         <h:inputText id="service_name_1" pt:placeholder="Service Name" styleClass="form-control">
@@ -114,7 +113,9 @@
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4 defineServicesButtons">
                                     <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
-                                    <h:commandLink value="Submit " id="defineServicesSubmitButton" action="#{navigationController.goToThanks}" onclick="definedServiceNames(); definedReservations();" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/>
+                                    <!-- TODO Ako korisnik pritisne Submit i ode na Thanks stranicu i onda pritisne Back na browseru i to ga vrati na Define services
+                                    ako opet pritisne submit, kreira se novi rekord u bazi, ovo ne sme da se desava.-->
+                                    <h:commandLink value="Submit " id="defineServicesSubmitButton" action="#{navigationController.goToThanks}" onclick="return defineServicesValidation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/>
                                         <f:actionListener binding="#{companyController.writeToDatabase()}"/>
                                         <f:actionListener binding="#{adminController.writeToDatabase()}"/>
                                         <f:actionListener binding="#{defineServicesController.writeToDatabase()}"/>

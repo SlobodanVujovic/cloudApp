@@ -22,7 +22,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="userName" pt:placeholder="Username" value="#{logInController.username}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="userName" pt:placeholder="Username" value="#{logInController.username}" binding="#{logInController.usernameComponent}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
                                          <f:attribute name="message" value="Username can not be empty."/>
                                          <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>

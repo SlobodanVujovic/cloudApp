@@ -21,6 +21,7 @@ import com.cloudApp.sessions.CompanysLocationFacade;
 import com.cloudApp.sessions.OwnersContactsFacade;
 import com.cloudApp.sessions.OwnersFacade;
 import com.cloudApp.sessions.ServicesFacade;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.RequestScoped;
@@ -48,6 +49,7 @@ public class LogInController {
     private ClientOrdersReservations clientOrdersReservation;
     private ClientOrderPresenter clientOrderPresenter;
     private List<ClientOrderPresenter> clientOrderPresenterList;
+    private UIComponent usernameComponent;
     private UIComponent passwordComponent;
 
     public LogInController() {
@@ -79,20 +81,26 @@ public class LogInController {
 
     public String validateUsernameAndPassword() {
         owner = ownersFacade.getOwnerByUsername(username);
-        String resultPassword = owner.getPassword();
-        if (resultPassword.equals(password)) {
-            company = owner.getCompaniesId();
-            setOwnersContacts();
-            setCompanysLocation();
-            setCompanysContact();
-            setAgents();
-            setCompanyOrder();
-            setCompanyServices();
-            setClientOrderPresenters();
-            return navigationController.goToLoginAdmin();
+        if (owner != null) {
+            String resultPassword = owner.getPassword();
+            if (resultPassword.equals(password)) {
+                company = owner.getCompaniesId();
+                setOwnersContacts();
+                setCompanysLocation();
+                setCompanysContact();
+                setAgents();
+                setCompanyOrder();
+                setCompanyServices();
+                setClientOrderPresenters();
+                return navigationController.goToLoginAdmin();
+            } else {
+                FacesContext context = FacesContext.getCurrentInstance();
+                context.addMessage(passwordComponent.getClientId(), new FacesMessage("Incorrect password."));
+                return navigationController.goToLogin();
+            }
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(passwordComponent.getClientId(), new FacesMessage("Incorrect password."));
+            context.addMessage(usernameComponent.getClientId(), new FacesMessage("Incorrect username."));
             return navigationController.goToLogin();
         }
     }
@@ -112,10 +120,12 @@ public class LogInController {
 
                 clientOrdersReservation = clientOrdersReservationsFacade.getClientOrdersAgentsByClientOrdersId(tempClientOrder);
                 if (clientOrdersReservation != null) {
-                    clientOrderPresenter.setReservationDate(clientOrdersReservation.getReservationDate().toString());
+                    // Podesavanje formata datuma da bi bilo citljivije.
+                    DateFormat mediumDf = DateFormat.getDateInstance(DateFormat.MEDIUM);
+                    String reservationDate = mediumDf.format(clientOrdersReservation.getReservationDate());
+                    clientOrderPresenter.setReservationDate(reservationDate);
                     clientOrderPresenter.setReservationTime(clientOrdersReservation.getReservationTime());
                 }
-
                 clientOrderPresenterList.add(clientOrderPresenter);
             }
         }
@@ -146,7 +156,15 @@ public class LogInController {
             services = servicesFacade.getServicesByCompanyOrderId(order);
         }
     }
-    
+
+    public UIComponent getUsernameComponent() {
+        return usernameComponent;
+    }
+
+    public void setUsernameComponent(UIComponent usernameComponent) {
+        this.usernameComponent = usernameComponent;
+    }
+
     public UIComponent getPasswordComponent() {
         return passwordComponent;
     }
