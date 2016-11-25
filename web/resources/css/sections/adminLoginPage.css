@@ -5,3 +5,12 @@
 #adminLoginContainer > table{
     background-color: transparent;
 }
+
+#clientOrdersDiv{
+    overflow-y: scroll;
+    height: 420px;
+}
+
+#clientOrdersTable{
+    margin-left: 0px;
+}

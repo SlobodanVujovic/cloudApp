@@ -25,7 +25,7 @@ import javax.inject.Inject;
 @SessionScoped
 public class ServicesController implements Serializable {
 
-    // orderId treba da bude u URL-u (tu vrednost uzimamo iz GET-a) i na osnovu ovog parametra odredjujemo sve ostalo sto
+    // orderId je u URL-u (tu vrednost uzimamo iz GET-a) i na osnovu ovog parametra odredjujemo sve ostalo sto
     // se tice podataka vezanih za tu kompaniju.
     private int orderId;
     private CompanyOrder order;
@@ -139,7 +139,6 @@ public class ServicesController implements Serializable {
 
     public List<Agents> getAllAgents() {
         allAgents = agentsFacade.getAgentsByCompanyId(company);
-        System.out.println(allAgents);
         return allAgents;
     }
 

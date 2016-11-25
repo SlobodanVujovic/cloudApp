@@ -37,7 +37,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <h:inputSecret id="logInPassword" pt:placeholder="Password" value="#{logInController.password}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
+                                        <h:inputSecret id="logInPassword" pt:placeholder="Password" value="#{logInController.password}" binding="#{logInController.passwordComponent}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
                                             <f:attribute name="message" value="Invalid Password."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                             <f:validator validatorId="ShortPasswordValidator"/>

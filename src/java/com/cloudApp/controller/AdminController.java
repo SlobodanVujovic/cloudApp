@@ -34,7 +34,7 @@ public class AdminController implements Serializable {
     @Inject
     private CompanyController companyController;
 
-    public void testUseCase(){
+    public void writeToDatabase(){
         owner.setCompaniesId(companyController.getSelectedCompany());
         ownersFacade.create(owner);
         

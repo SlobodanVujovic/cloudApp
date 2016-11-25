@@ -1,5 +1,4 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!--TODO Uraditi validaciju za "Phone" i "ZIP Code" polja.-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -106,8 +105,10 @@
 
                             <!-- Checkbox-->
                             <div class="form-group">
-                                <h:outputLabel class="col-md-4 control-label" value="I have agents " for="agentsCheckbox"/>
-                                <h:selectBooleanCheckbox id="agentsCheckbox" value="#{agentInput.agentEntered}" onclick="showAgentsPopupWin(); hideOrderingInputFields();"/>
+                                <h:outputLabel class="col-md-4 control-label"/>
+                                <div class="col-md-4">
+                                    <h:commandLink value="I have agents " onclick="showAgentsPopupWin(); hideOrderingInputFields(); return false;" immediate="true" styleClass="btn btn-warning"><span class="glyphicon glyphicon-user"/></h:commandLink>
+                                </div>
                             </div>
 
                             <!-- Buttons -->
@@ -117,9 +118,6 @@
                                 <div class="col-md-4">
                                     <h:commandLink value="Home " action="#{navigationController.goHome}" immediate="true" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
                                     <h:commandLink value="Next " action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
-                                    <!-- TODO Metode iz testUseCase() metoda treba koristiti u okviru submit buttona na kraju
-                                    form-e. On u sebi ima metode za upis podataka na company strani forme.-->
-                                    <h:commandLink value="Test " action="#{companyController.testUseCase}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                                 </div>
                             </div>
 

@@ -7,7 +7,12 @@
     <body>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
-
+                <h:form>
+                    <!-- Button -->
+                    <div class="col-md-4">
+                        <h:commandLink value="Logout " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-out"/></h:commandLink>
+                    </div>
+                </h:form>
             </ui:define>
 
             <ui:define name="content">
@@ -63,47 +68,72 @@
                     <h:dataTable value="#{logInController.agents}" var="agent" border="1">
                         <h:column>
                             <f:facet name="header">First name</f:facet>
-                            #{agent.firstName}
+                                #{agent.firstName}
                         </h:column>
                         <h:column>
                             <f:facet name="header">Last name</f:facet>
-                            #{agent.lastName}
+                                #{agent.lastName}
                         </h:column>
                         <h:column>
                             <f:facet name="header">Phone</f:facet>
-                            #{agent.phone}
+                                #{agent.phone}
                         </h:column>
                         <h:column>
                             <f:facet name="header">Email</f:facet>
-                            #{agent.email}
+                                #{agent.email}
                         </h:column>
                     </h:dataTable>
                     <h:outputLabel value="Company orders" class="col-md-4 control-label"/>
                     <h:dataTable value="#{logInController.companyOrders}" var="order" border="1">
                         <h:column>
                             <f:facet name="header">Creation date</f:facet>
-                            #{order.dateCreated}
+                                #{order.dateCreated}
                         </h:column>
                         <h:column>
                             <f:facet name="header">Amount</f:facet>
-                            #{order.amount}
+                                #{order.amount}
                         </h:column>
                         <h:column>
                             <f:facet name="header">URL</f:facet>
-                            #{order.url}
+                                #{order.url}
                         </h:column>
                     </h:dataTable>
                     <h:outputLabel value="Company services" class="col-md-4 control-label"/>
                     <h:dataTable value="#{logInController.services}" var="service" border="1">
                         <h:column>
                             <f:facet name="header">Name</f:facet>
-                            #{service.name}
+                                #{service.name}
                         </h:column>
                         <h:column>
                             <f:facet name="header">Reservation</f:facet>
-                            #{service.reservation}
+                                #{service.reservation}
                         </h:column>
                     </h:dataTable>
+                    <h:outputLabel value="Client orders" class="col-md-4 control-label"/>
+                    <div id="clientOrdersDiv">
+                        <h:dataTable id="clientOrdersTable" value="#{logInController.clientOrderPresenterList}" var="clientOrderPresenter" border="1">
+                            <h:column>
+                                <f:facet name="header">Client Name</f:facet>
+                                    #{clientOrderPresenter.clientName}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Ordered Service</f:facet>
+                                    #{clientOrderPresenter.orderedService}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Agent</f:facet>
+                                    #{clientOrderPresenter.agent}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Reservation Date</f:facet>
+                                    #{clientOrderPresenter.reservationDate}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Reservation Time</f:facet>
+                                    #{clientOrderPresenter.reservationTime}
+                            </h:column>
+                        </h:dataTable>
+                    </div>
                 </div>
             </ui:define>
         </ui:composition>

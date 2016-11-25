@@ -8,7 +8,6 @@ import javax.inject.Named;
 @SessionScoped
 public class AgentInput implements Serializable{
     private String inputType;
-    private boolean agentEntered = false;
     
     public AgentInput(){
         inputType = "oneByOne";
@@ -22,12 +21,4 @@ public class AgentInput implements Serializable{
         this.inputType = inputType;
     }
 
-    public boolean isAgentEntered() {
-        return agentEntered;
-    }
-
-    public void setAgentEntered(boolean agentEntered) {
-        this.agentEntered = agentEntered;
-    }
-    
 }

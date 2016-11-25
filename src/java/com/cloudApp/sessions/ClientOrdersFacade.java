@@ -6,9 +6,12 @@
 package com.cloudApp.sessions;
 
 import com.cloudApp.entity.ClientOrders;
+import com.cloudApp.entity.CompanyOrder;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -29,4 +32,10 @@ public class ClientOrdersFacade extends AbstractFacade<ClientOrders> {
         super(ClientOrders.class);
     }
     
+    public List<ClientOrders> getClientOrdersByCompanyOrderId(CompanyOrder companyOrder){
+        TypedQuery<ClientOrders> query = getEntityManager().createNamedQuery("ClientOrders.findByCompanyOrderId", ClientOrders.class);
+        query.setParameter("companyOrderId", companyOrder);
+        List<ClientOrders> resultList = query.getResultList();
+        return resultList;
+    }
 }

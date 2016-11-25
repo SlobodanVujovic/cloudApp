@@ -1,4 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' ?>
+<!-- Posto je ServicesController SessionScoped, ne moze se pristupati aplikaciji kroz isti browser, sa istog
+racunara. -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -20,11 +22,6 @@
                         <f:selectItems value="#{servicesController.allServices}" var="service" itemLabel="#{service.name}" itemValue="#{service.name}"/>
                     </h:selectManyCheckbox>
                     <h:inputHidden id="servicesWithReservation" value="#{servicesController.serviceIdWithRequiredReservation}"/>
-
-                    <!-- Button za submit-ovanje rezultata ka "result.xhtml" stranici koju korisimo za proveru 
-                    vrednosti promenljivih-->
-                    <!--<h:commandLink value="Submit" action="result"/>-->
-
                 </h:form>
             </ui:define>
             <ui:define name="content">
@@ -32,7 +29,6 @@
                     <h1>
                         #{servicesController.company.companyName}
                     </h1>
-                    <!-- TODO Ova forma treba da se pojavi samo ako postoje definisani agenti a ako ne onda treba da bude hidde-ovana.-->
                     <h:form prependId="false">
                         <h:inputHidden id="selectedServices" value="#{servicesController.checkedServices}"/>
                         <div id="agentsForm">
@@ -62,6 +58,7 @@
                         </div>
                         <div class="buttonDiv col-md-4">
                             <h:commandLink value="Schedule " onclick="return isAllInputOk();" action="#{servicesController.takeClientsOrder()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-check"/></h:commandLink>
+                            <h:commandLink value="Home " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
                         </div>
                     </h:form>
                 </div>

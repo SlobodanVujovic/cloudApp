@@ -36,7 +36,7 @@ public class DefineServicesController implements Serializable {
     @Inject
     private CompanyOrderFacade companyOrderFacade;
 
-    public void testUseCase() {
+    public void writeToDatabase() {
         companyOrder.setCompaniesId(companyController.getSelectedCompany());
         companyOrderFacade.create(companyOrder);
 

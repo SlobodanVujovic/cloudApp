@@ -164,16 +164,11 @@ function showPopupWin(checkboxId) {
 
 
 function showAgentsPopupWin() {
-    var isChecked = document.getElementById("agentsCheckbox").checked;
     var inputToShow = document.getElementById("agentPopupBack");
-    if (isChecked) {
         inputToShow.style.display = "block";
-    }
 }
 
 function hideOrderingInputFields() {
-    var isChecked = document.getElementById("agentsCheckbox").checked;
-    if (isChecked) {
         document.getElementById("company_name").style.display = "none";
         document.getElementById("phone").style.display = "none";
         document.getElementById("email").style.display = "none";
@@ -181,7 +176,6 @@ function hideOrderingInputFields() {
         document.getElementById("city").style.display = "none";
         document.getElementById("zip").style.display = "none";
         document.getElementById("state").style.display = "none";
-    }
 }
 
 function showOrderingInputFields() {

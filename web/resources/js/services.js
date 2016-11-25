@@ -116,4 +116,23 @@ function transferValueToTextInput(checkbox) {
     selectedServicesElement.value = chosenServicesInputValue;
 }
 
+function checkIfCompanyHaveAgents(){
+    var agentsListDiv = document.getElementById("agentsList");
+    var agentsNodeList = agentsListDiv.childNodes;
+    var numberOfAgents = agentsNodeList.length;
+    if (numberOfAgents > 0){
+        var agentsFormDiv = document.getElementById("agentsForm");
+        agentsFormDiv.style.display = "block";
+    }
+}
+
+function checkIfThisIsServicesPage(){
+    var pathname = window.location.pathname;
+    if (pathname.indexOf("/services.xhtml") !== -1){
+        checkIfCompanyHaveAgents();
+    }
+}
+
+window.onload = checkIfThisIsServicesPage;
+
 //console.log(checkboxValue);

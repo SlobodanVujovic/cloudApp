@@ -1,4 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?>
+<!-- Ova stranica se ne koristi. Ostavio sam je ako zatreba njen kod koji radi nesto korisno. -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -30,8 +31,8 @@
                                         <!-- U h:inputText treba ubaciti:
                                         required="true" requiredMessage="Service name is required." maxlength="70"-->
                                         <h:inputText id="service_name_1" pt:placeholder="Service Name" styleClass="form-control">
-                                         <!-- <f:attribute name="message" value="Service Name can not be empty."/>
-                                         <f:validator validatorId="EmptyInputValidator"/>-->
+                                            <!-- <f:attribute name="message" value="Service Name can not be empty."/>
+                                            <f:validator validatorId="EmptyInputValidator"/>-->
                                         </h:inputText>
                                     </div>
                                     <h:message class="label label-danger" for="service_name_1"/>
@@ -96,14 +97,29 @@
                             <h:inputHidden id="hiddenInput1" value="#{defineServicesController.serviceNames}"/>
                             <h:inputHidden id="hiddenInput2" value="#{defineServicesController.serviceReservations}"/>
 
-                            <!-- TODO Stavi button-e na centar div-a.-->
                             <!-- Buttons -->
-                            <div class="defineServicesButtons">
-                                <h:commandLink value="More services " immediate="true" id="defineServicesMoreButton" onclick="return showMoreServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-down"/></h:commandLink>
-                                <h:commandLink value="Less services " immediate="true" id="defineServicesLessButton" onclick="return showLessServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-up"/></h:commandLink>
-                                <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
-                                <h:commandLink value="Submit " id="defineServicesSubmitButton" action="#{navigationController.goToThanks}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
-                                <h:commandLink value="Test " id="testButton" onclick="definedServiceNames(); definedReservations();" action="#{defineServicesController.testUseCase}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                            <div class="form-group">
+                                <h:outputLabel class="col-md-4 control-label"/>
+                                <div class="col-md-4 defineServicesButtons">
+                                    <h:commandLink value="More services " immediate="true" id="defineServicesMoreButton" onclick="return showMoreServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-down"/></h:commandLink>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h:outputLabel class="col-md-4 control-label"/>
+                                <div class="col-md-4 defineServicesButtons">
+                                    <h:commandLink value="Less services " immediate="true" id="defineServicesLessButton" onclick="return showLessServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-up"/></h:commandLink>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <h:outputLabel class="col-md-4 control-label"/>
+                                <div class="col-md-4 defineServicesButtons">
+                                    <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
+                                    <h:commandLink value="Submit " id="defineServicesSubmitButton" action="#{navigationController.goToThanks}" onclick="definedServiceNames(); definedReservations();" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/>
+                                        <f:actionListener binding="#{companyController.writeToDatabase()}"/>
+                                        <f:actionListener binding="#{adminController.writeToDatabase()}"/>
+                                        <f:actionListener binding="#{defineServicesController.writeToDatabase()}"/>
+                                    </h:commandLink>
+                                </div>
                             </div>
                         </fieldset>
                     </h:form>

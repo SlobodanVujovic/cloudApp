@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 
-// Deo neophodan za testUseCase() metod.
+// Deo neophodan za writeToDatabase() metod.
 import com.cloudApp.sessions.CompaniesFacade;
 import com.cloudApp.sessions.CompanysContactsFacade;
 import com.cloudApp.sessions.CompanysLocationFacade;
@@ -68,7 +68,7 @@ public class CompanyController implements Serializable {
     }
     
     // TODO Koristiti metode iz ovog metoda za upis company strane forme u bazu.
-    public String testUseCase() {
+    public String writeToDatabase() {
         /* Kada unosimo podatke u bazu, u tabelu koja ima spoljni kljuc ka nekoj drugoj tabeli, onda u set metod fasade
          prosedjujemo ceo objekat iz koga je spoljasnji kljuc uzet.
          */

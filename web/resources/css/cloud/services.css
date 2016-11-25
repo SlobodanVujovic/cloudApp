@@ -48,6 +48,7 @@ hr{
 
 #agentsForm{
     float: left;
+    display: none;
 }
 
 #agentsList{

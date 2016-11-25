@@ -5,10 +5,14 @@
  */
 package com.cloudApp.sessions;
 
+import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.ClientOrdersAgents;
+import com.cloudApp.entity.CompanysContacts;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -28,5 +32,15 @@ public class ClientOrdersAgentsFacade extends AbstractFacade<ClientOrdersAgents>
     public ClientOrdersAgentsFacade() {
         super(ClientOrdersAgents.class);
     }
-    
+
+    public ClientOrdersAgents getClientOrdersAgentsByClientOrdersId(ClientOrders clientOrders) {
+        TypedQuery<ClientOrdersAgents> query = getEntityManager().createNamedQuery("ClientOrdersAgents.findByClientOrderId", ClientOrdersAgents.class);
+        query.setParameter("clientOrdersId", clientOrders);
+        List<ClientOrdersAgents> resultList = query.getResultList();
+        ClientOrdersAgents resultClientOrdersAgents = null;
+        if (!resultList.isEmpty()) {
+            resultClientOrdersAgents = resultList.get(0);
+        }
+        return resultClientOrdersAgents;
+    }
 }
