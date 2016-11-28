@@ -38,5 +38,4 @@ public class AgentsFacade extends AbstractFacade<Agents> {
         List<Agents> resultList = query.getResultList();
         return resultList;
     }
-    
 }

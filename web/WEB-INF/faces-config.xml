@@ -58,7 +58,7 @@
         <from-view-id>/*</from-view-id>
         <navigation-case>
             <from-outcome>THANKS</from-outcome>
-            <to-view-id>/ordering/ordering-thanks.xhtml</to-view-id>
+            <to-view-id>/sections/thanks.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     <navigation-rule>
@@ -75,7 +75,21 @@
             <to-view-id>/sections/adminLoginPage.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
-    <flow-definition>
-        
+    <flow-definition id="ordering">
+        <view id="ordering">
+            <vdl-document>/ordering/ordering.xhtml</vdl-document>
+        </view>
+        <flow-return id="exitToHome">
+            <from-outcome>/sections/home.xhtml</from-outcome>
+        </flow-return>
+        <flow-return id="exitToThanks">
+            <from-outcome>/sections/thanks.xhtml</from-outcome>
+        </flow-return>
     </flow-definition>
+    <application>
+        <resource-bundle>
+            <base-name>/Bundle</base-name>
+            <var>bundle</var>
+        </resource-bundle>
+    </application>
 </faces-config>

@@ -8,13 +8,15 @@ racunara. -->
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      >
     <body>
         <!-- TODO Kada se izabere agent i zatim upisuje u bazu trebalo bi da se upise agentsID iz agents tabele i na taj naci
         ce rekordi biti povezani a ne samo da imamo ime agenta a nista od ostalih podataka koje su unete pri definisanju
         order-a. -->
         <f:metadata>
-            <f:viewParam name="poId" value="#{servicesController.orderId}" />
+            <f:viewParam name="poId" value="#{servicesController.orderId}"/>
+            
         </f:metadata>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
@@ -36,13 +38,15 @@ racunara. -->
                         <h:inputHidden id="selectedServices" value="#{servicesController.checkedServices}"/>
                         <div id="agentsForm">
                             <h:outputLabel for="agentsList" value="Choose agent"/>
-                            <h:selectOneMenu id="agentsList" value="#{servicesController.clientOrdersAgent.agent}">
-                                <f:selectItems value="#{servicesController.allAgents}" var="agent" itemLabel="#{agent.firstName.concat(' ')}#{agent.lastName}" itemValue="#{agent.firstName.concat(' ')}#{agent.lastName}"/>
+                            <!-- Da bi tag-u, f:selectItems, mogli da dodelimo "Agent" entity (Java object) kao vrednost value atributa i da bi tu vrednost mogli
+                            da prenesemo u value h:selectOneMenu tag-a, koristimo atribut converter="omnifaces.SelectItemsConverter".-->
+                            <h:selectOneMenu id="agentsList" value="#{servicesController.clientOrdersAgent.agentsId}" converter="omnifaces.SelectItemsConverter">
+                                <f:selectItems value="#{servicesController.allAgents}" var="agent" itemLabel="#{agent.firstName.concat(' ')}#{agent.lastName}" itemValue="#{agent}"/>
                             </h:selectOneMenu>
                         </div>
                         <div class="reservationDiv">
                             <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
-                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.clientOrdersReservation.reservationDate}" placeholder=" Pick Date"/>
+                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.clientOrdersReservation.reservationDate}" mindate="today" placeholder=" Pick Date"/>
                             <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.clientOrdersReservation.reservationTime}" pt:placeholder=" Pick Time"/>
 
                             <!-- Ako zelimo da napravimo vise JSF komponenti onda koristimo <c:forEach> tag. Atributu "items" dodeljujemo

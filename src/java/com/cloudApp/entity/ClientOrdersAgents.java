@@ -17,7 +17,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,9 +29,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ClientOrdersAgents.findAll", query = "SELECT c FROM ClientOrdersAgents c"),
     @NamedQuery(name = "ClientOrdersAgents.findById", query = "SELECT c FROM ClientOrdersAgents c WHERE c.id = :id"),
-    @NamedQuery(name = "ClientOrdersAgents.findByAgent", query = "SELECT c FROM ClientOrdersAgents c WHERE c.agent = :agent"),
     @NamedQuery(name = "ClientOrdersAgents.findByClientOrderId", query = "SELECT c FROM ClientOrdersAgents c WHERE c.clientOrdersId = :clientOrdersId")})
 public class ClientOrdersAgents implements Serializable {
+
+    @JoinColumn(name = "client_orders_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private ClientOrders clientOrdersId;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -40,12 +42,9 @@ public class ClientOrdersAgents implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 45)
-    @Column(name = "agent")
-    private String agent;
-    @JoinColumn(name = "client_orders_id", referencedColumnName = "id")
+    @JoinColumn(name = "agents_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private ClientOrders clientOrdersId;
+    private Agents agentsId;
 
     public ClientOrdersAgents() {
     }
@@ -62,20 +61,12 @@ public class ClientOrdersAgents implements Serializable {
         this.id = id;
     }
 
-    public String getAgent() {
-        return agent;
+    public Agents getAgentsId() {
+        return agentsId;
     }
 
-    public void setAgent(String agent) {
-        this.agent = agent;
-    }
-
-    public ClientOrders getClientOrdersId() {
-        return clientOrdersId;
-    }
-
-    public void setClientOrdersId(ClientOrders clientOrdersId) {
-        this.clientOrdersId = clientOrdersId;
+    public void setAgentsId(Agents agentsId) {
+        this.agentsId = agentsId;
     }
 
     @Override
@@ -101,6 +92,14 @@ public class ClientOrdersAgents implements Serializable {
     @Override
     public String toString() {
         return "com.cloudApp.entity.ClientOrdersAgents[ id=" + id + " ]";
+    }
+
+    public ClientOrders getClientOrdersId() {
+        return clientOrdersId;
+    }
+
+    public void setClientOrdersId(ClientOrders clientOrdersId) {
+        this.clientOrdersId = clientOrdersId;
     }
     
 }

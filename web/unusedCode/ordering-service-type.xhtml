@@ -89,8 +89,8 @@
 
                             <!-- Buttons -->
                             <!-- TODO Definisati validator koji nece dozvoljavati prelazak na sledecu stranicu ako nije izabran neki servis.-->
-                            <h:commandLink value="Back " id="serviceTypesBackButton" immediate="true" action="#{navigationController.goToAdmin}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
-                            <h:commandLink value="Submit " id="serviceTypesButton" action="#{navigationController.goToThanks}" styleClass="btn btn-warning" onclick="chosenBricks();"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
+                            <h:commandLink value="Back " id="serviceTypesBackButton" immediate="true" action="#" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
+                            <h:commandLink value="Submit " id="serviceTypesButton" action="#" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                             <h:inputHidden id="selectedBricks"/>
                         </nav>
                         <article>
@@ -221,7 +221,7 @@
                                     <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" disabled="#{agentInput.inputType != 'oneByOne'}"/>
                                     <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
                                     <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" disabled="#{agentInput.inputType != 'oneByOne'}"/>
-                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" onclick="agentButtonWrite()" disabled="#{agentInput.inputType != 'oneByOne'}">Write <span class="glyphicon glyphicon-ok"></span></h:commandLink>
+                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" disabled="#{agentInput.inputType != 'oneByOne'}">Write <span class="glyphicon glyphicon-ok"></span></h:commandLink>
                                 </h:panelGrid>
                                 <p:panelGrid id="templateForm">
                                     <p:row>
@@ -235,12 +235,12 @@
                                     </p:row>
                                     <p:row id="dlButtonRow">
                                         <p:column>
-                                            <h:commandLink id="agentDownloadTemplateButton" class="btn btn-warning" onclick="agentButtonDownload()" disabled="#{agentInput.inputType != 'template'}">Download <span class="glyphicon glyphicon-download-alt"></span></h:commandLink>
+                                            <h:commandLink id="agentDownloadTemplateButton" class="btn btn-warning" disabled="#{agentInput.inputType != 'template'}">Download <span class="glyphicon glyphicon-download-alt"></span></h:commandLink>
                                         </p:column>
                                     </p:row>
                                     <p:row id="ulButtonRow">
                                         <p:column>
-                                            <h:commandLink id="agentUploadTemplateButton" class="btn btn-warning" onclick="agentButtonUpload()" disabled="#{agentInput.inputType != 'template'}">Upload <span class="glyphicon glyphicon-cloud-upload"></span></h:commandLink>
+                                            <h:commandLink id="agentUploadTemplateButton" class="btn btn-warning" disabled="#{agentInput.inputType != 'template'}">Upload <span class="glyphicon glyphicon-cloud-upload"></span></h:commandLink>
                                         </p:column>
                                     </p:row>
                                 </p:panelGrid>

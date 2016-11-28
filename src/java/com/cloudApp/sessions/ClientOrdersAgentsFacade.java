@@ -7,7 +7,6 @@ package com.cloudApp.sessions;
 
 import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.ClientOrdersAgents;
-import com.cloudApp.entity.CompanysContacts;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,7 +31,7 @@ public class ClientOrdersAgentsFacade extends AbstractFacade<ClientOrdersAgents>
     public ClientOrdersAgentsFacade() {
         super(ClientOrdersAgents.class);
     }
-
+    
     public ClientOrdersAgents getClientOrdersAgentsByClientOrdersId(ClientOrders clientOrders) {
         TypedQuery<ClientOrdersAgents> query = getEntityManager().createNamedQuery("ClientOrdersAgents.findByClientOrderId", ClientOrdersAgents.class);
         query.setParameter("clientOrdersId", clientOrders);

@@ -6,12 +6,12 @@ import com.cloudApp.sessions.OwnersContactsFacade;
 import com.cloudApp.sessions.OwnersFacade;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.flow.FlowScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
-@SessionScoped
+@FlowScoped(value = "ordering")
 public class AdminController implements Serializable {
 
     public AdminController() {
@@ -34,14 +34,14 @@ public class AdminController implements Serializable {
     @Inject
     private CompanyController companyController;
 
-    public void writeToDatabase(){
+    public void writeToDatabase() {
         owner.setCompaniesId(companyController.getSelectedCompany());
         ownersFacade.create(owner);
-        
+
         ownersContacts.setOwnersId(owner);
         ownersContactsFacade.create(ownersContacts);
     }
-    
+
     public Owners getOwner() {
         return owner;
     }

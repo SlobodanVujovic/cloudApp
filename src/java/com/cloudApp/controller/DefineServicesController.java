@@ -1,17 +1,19 @@
 package com.cloudApp.controller;
 
+import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.CompanyOrderFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.List;
+import javax.faces.flow.FlowScoped;
 
 @Named
-@SessionScoped
+@FlowScoped(value = "ordering")
 public class DefineServicesController implements Serializable {
 
     public DefineServicesController() {
@@ -28,18 +30,20 @@ public class DefineServicesController implements Serializable {
         companyOrder = new CompanyOrder();
         services = new Services();
     }
-
+    
     @Inject
     private CompanyController companyController;
     @Inject
     private ServicesFacade servicesFacade;
     @Inject
     private CompanyOrderFacade companyOrderFacade;
+    @Inject
+    private PublicUrlController publicUrlController;
 
     public void writeToDatabase() {
         companyOrder.setCompaniesId(companyController.getSelectedCompany());
         companyOrderFacade.create(companyOrder);
-
+        setPublicUrl();
         String[] servicesArray = serviceNames.split(",");
         for (int i = 0; i < servicesArray.length; i++) {
             services.setName(servicesArray[i]);
@@ -50,6 +54,19 @@ public class DefineServicesController implements Serializable {
             }
             services.setCompanyOrderId(companyOrder);
             servicesFacade.create(services);
+        }
+    }
+
+    public void setPublicUrl() {
+        Companies selectedCompany = companyController.getSelectedCompany();
+        List<CompanyOrder> orders = companyOrderFacade.getOrdersByCompanyId(selectedCompany);
+        if (orders.size() > 0) {
+            CompanyOrder lastOrder = orders.get(orders.size() - 1);
+            int orderId = lastOrder.getId();
+            String url = "localhost:8080/cloudapp/faces/cloud/services.xhtml?poId=" + orderId;
+            lastOrder.setUrl(url);
+            companyOrderFacade.edit(lastOrder);
+            publicUrlController.setUrl(url);
         }
     }
 

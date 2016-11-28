@@ -116,7 +116,7 @@ public class LogInController {
                 clientOrderPresenter.setOrderedService(tempClientOrder.getOrderedService());
 
                 clientOrdersAgent = clientOrdersAgentsFacade.getClientOrdersAgentsByClientOrdersId(tempClientOrder);
-                clientOrderPresenter.setAgent(clientOrdersAgent.getAgent());
+                clientOrderPresenter.setAgent(clientOrdersAgent.getAgentsId().getFirstName() + " " + clientOrdersAgent.getAgentsId().getLastName());
 
                 clientOrdersReservation = clientOrdersReservationsFacade.getClientOrdersAgentsByClientOrdersId(tempClientOrder);
                 if (clientOrdersReservation != null) {

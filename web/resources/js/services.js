@@ -135,4 +135,6 @@ function checkIfThisIsServicesPage(){
 
 window.onload = checkIfThisIsServicesPage;
 
+var today = new Date();
+
 //console.log(checkboxValue);

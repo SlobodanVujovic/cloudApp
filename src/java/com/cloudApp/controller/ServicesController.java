@@ -21,6 +21,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 
+// TODO Ne moze kroz isti browser da se zakazuje vise razlicitih servisa, zato sto je ServicesController session scoped.
 @Named
 @SessionScoped
 public class ServicesController implements Serializable {
@@ -98,7 +99,7 @@ public class ServicesController implements Serializable {
             clientReservationFacade.create(clientOrdersReservation);
             clientOrdersReservation = new ClientOrdersReservations();
         }
-        if (clientOrdersAgent.getAgent() != null) {
+        if (clientOrdersAgent.getAgentsId()!= null) {
             clientOrdersAgent.setClientOrdersId(clientOrder);
             clientOrdersAgentFacade.create(clientOrdersAgent);
             clientOrdersAgent = new ClientOrdersAgents();

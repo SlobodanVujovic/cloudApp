@@ -31,12 +31,11 @@ public class CompanyOrderFacade extends AbstractFacade<CompanyOrder> {
     public CompanyOrderFacade() {
         super(CompanyOrder.class);
     }
-
+    
     public List<CompanyOrder> getOrdersByCompanyId(Companies company) {
         TypedQuery<CompanyOrder> query = em.createNamedQuery("CompanyOrder.findByCompanyId", CompanyOrder.class);
         query.setParameter("companyId", company);
         List<CompanyOrder> resultList = query.getResultList();
         return resultList;
     }
-
 }

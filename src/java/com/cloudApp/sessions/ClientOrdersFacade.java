@@ -31,8 +31,8 @@ public class ClientOrdersFacade extends AbstractFacade<ClientOrders> {
     public ClientOrdersFacade() {
         super(ClientOrders.class);
     }
-    
-    public List<ClientOrders> getClientOrdersByCompanyOrderId(CompanyOrder companyOrder){
+
+    public List<ClientOrders> getClientOrdersByCompanyOrderId(CompanyOrder companyOrder) {
         TypedQuery<ClientOrders> query = getEntityManager().createNamedQuery("ClientOrders.findByCompanyOrderId", ClientOrders.class);
         query.setParameter("companyOrderId", companyOrder);
         List<ClientOrders> resultList = query.getResultList();

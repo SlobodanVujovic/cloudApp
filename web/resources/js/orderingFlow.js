@@ -1,3 +1,4 @@
+// Koristi se samo na ordering-service-type.xhtml strani.
 function hideOrShowPreviewElement(checkboxId) {
     var isChecked = document.getElementById(checkboxId).checked;
     var elementToShowId1;
@@ -77,6 +78,64 @@ function hideOrShowPreviewElement(checkboxId) {
     }
 }
 
+// Koristi se samo na ordering-service-type.xhtml strani.
+function showReminderPopupWin(checkboxId) {
+    var checkbox = document.getElementById(checkboxId);
+    var isChecked = checkbox.checked;
+    var divToShowId = "reminderPopupBack";
+    var inputToShow = document.getElementById(divToShowId);
+    if (isChecked) {
+        inputToShow.style.display = "block";
+    } else {
+        showReminder(checkboxId);
+    }
+}
+
+// Koristi se samo na ordering-service-type.xhtml strani.
+function hidePopupWin(winId) {
+    var inputToShow = document.getElementById(winId);
+    inputToShow.style.display = "none";
+}
+
+// Koristi se samo na ordering-service-type.xhtml strani.
+function uncheckElement(checkboxId) {
+    var checkbox = document.getElementById(checkboxId);
+    $(checkbox).prop("checked", false);
+}
+// Koristi se samo na ordering-service-type.xhtml strani.
+function uncheckReminder() {
+    var smsReminderElement = document.getElementById("rm1");
+    var emailReminderElement = document.getElementById("rm2");
+    var checkedId;
+    if (smsReminderElement.checked) {
+        checkedId = "#rm1";
+    } else if (emailReminderElement.checked) {
+        checkedId = "#rm2";
+    }
+    $(checkedId).prop("checked", false);
+}
+
+// Koristi se samo na ordering-service-type.xhtml strani.
+function buttonOk(checkboxId) {
+    hideOrShowPreviewElement(checkboxId);
+}
+
+// Koristi se samo na ordering-service-type.xhtml strani.
+function reminderButtonOk() {
+    var smsReminderElement = document.getElementById("rm1");
+    var emailReminderElement = document.getElementById("rm2");
+    var checkedId;
+    if (smsReminderElement.checked) {
+        checkedId = "rm1";
+        showReminder(checkedId);
+    }
+    if (emailReminderElement.checked) {
+        checkedId = "rm2";
+        showReminder(checkedId);
+    }
+}
+
+// Koristi se samo na ordering-service-type.xhtml strani.
 function showReminder(checkboxId) {
     var isChecked = document.getElementById(checkboxId).checked;
     var inputToShowId;
@@ -100,6 +159,7 @@ function showReminder(checkboxId) {
     }
 }
 
+// Koristi se samo na ordering-service-type.xhtml strani.
 function showAddressWithMapPreview() {
     var isChecked = document.getElementById("t4").checked;
     var inputToShowId1 = "client_address_label",
@@ -140,6 +200,7 @@ function showAddressWithMapPreview() {
     }
 }
 
+// Koristi se samo na ordering-service-type.xhtml strani.
 function showPopupWin(checkboxId) {
     var isChecked = document.getElementById(checkboxId).checked;
     var divToShowId;
@@ -161,8 +222,11 @@ function showPopupWin(checkboxId) {
         hideOrShowPreviewElement(checkboxId);
     }
 }
+// Sve dovde se koristi samo na ordering-service-type.xhtml stranici.
 
+// ==============================================================================================================
 
+// Odavde krece kod koji se aktivno koristi u aplikaciji.
 function showAgentsPopupWin() {
     var inputToShow = document.getElementById("agentPopupBack");
         inputToShow.style.display = "block";
@@ -186,58 +250,6 @@ function showOrderingInputFields() {
     document.getElementById("city").style.display = "block";
     document.getElementById("zip").style.display = "block";
     document.getElementById("state").style.display = "block";
-}
-
-function showReminderPopupWin(checkboxId) {
-    var checkbox = document.getElementById(checkboxId);
-    var isChecked = checkbox.checked;
-    var divToShowId = "reminderPopupBack";
-    var inputToShow = document.getElementById(divToShowId);
-    if (isChecked) {
-        inputToShow.style.display = "block";
-    } else {
-        showReminder(checkboxId);
-    }
-}
-
-function hidePopupWin(winId) {
-    var inputToShow = document.getElementById(winId);
-    inputToShow.style.display = "none";
-}
-
-function uncheckElement(checkboxId) {
-    var checkbox = document.getElementById(checkboxId);
-    $(checkbox).prop("checked", false);
-}
-
-function uncheckReminder() {
-    var smsReminderElement = document.getElementById("rm1");
-    var emailReminderElement = document.getElementById("rm2");
-    var checkedId;
-    if (smsReminderElement.checked) {
-        checkedId = "#rm1";
-    } else if (emailReminderElement.checked) {
-        checkedId = "#rm2";
-    }
-    $(checkedId).prop("checked", false);
-}
-
-function buttonOk(checkboxId) {
-    hideOrShowPreviewElement(checkboxId);
-}
-
-function reminderButtonOk() {
-    var smsReminderElement = document.getElementById("rm1");
-    var emailReminderElement = document.getElementById("rm2");
-    var checkedId;
-    if (smsReminderElement.checked) {
-        checkedId = "rm1";
-        showReminder(checkedId);
-    }
-    if (emailReminderElement.checked) {
-        checkedId = "rm2";
-        showReminder(checkedId);
-    }
 }
 
 $(function () {

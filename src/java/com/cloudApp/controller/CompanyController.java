@@ -1,7 +1,6 @@
 package com.cloudApp.controller;
 
 import com.cloudApp.entity.Agents;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import com.cloudApp.entity.Companies;
@@ -12,14 +11,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-
+import javax.faces.flow.FlowScoped;
 // Deo neophodan za writeToDatabase() metod.
 import com.cloudApp.sessions.CompaniesFacade;
 import com.cloudApp.sessions.CompanysContactsFacade;
 import com.cloudApp.sessions.CompanysLocationFacade;
 
+
 @Named
-@SessionScoped
+@FlowScoped(value = "ordering")
 public class CompanyController implements Serializable {
 
     public CompanyController() {
@@ -67,7 +67,6 @@ public class CompanyController implements Serializable {
         currentAgent = new Agents();
     }
     
-    // TODO Koristiti metode iz ovog metoda za upis company strane forme u bazu.
     public String writeToDatabase() {
         /* Kada unosimo podatke u bazu, u tabelu koja ima spoljni kljuc ka nekoj drugoj tabeli, onda u set metod fasade
          prosedjujemo ceo objekat iz koga je spoljasnji kljuc uzet.

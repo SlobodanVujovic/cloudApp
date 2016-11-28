@@ -6,7 +6,9 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,9 +18,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,6 +40,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Agents.findByEmail", query = "SELECT a FROM Agents a WHERE a.email = :email"),
     @NamedQuery(name = "Agents.findByCompanyId", query = "SELECT a FROM Agents a WHERE a.companiesId = :companyId")})
 public class Agents implements Serializable {
+
+    @JoinColumn(name = "companies_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Companies companiesId;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -57,9 +65,8 @@ public class Agents implements Serializable {
     @Size(max = 45)
     @Column(name = "email")
     private String email;
-    @JoinColumn(name = "companies_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Companies companiesId;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "agentsId")
+    private List<ClientOrdersAgents> clientOrdersAgentsList;
 
     public Agents() {
     }
@@ -108,12 +115,13 @@ public class Agents implements Serializable {
         this.email = email;
     }
 
-    public Companies getCompaniesId() {
-        return companiesId;
+    @XmlTransient
+    public List<ClientOrdersAgents> getClientOrdersAgentsList() {
+        return clientOrdersAgentsList;
     }
 
-    public void setCompaniesId(Companies companiesId) {
-        this.companiesId = companiesId;
+    public void setClientOrdersAgentsList(List<ClientOrdersAgents> clientOrdersAgentsList) {
+        this.clientOrdersAgentsList = clientOrdersAgentsList;
     }
 
     @Override
@@ -138,7 +146,15 @@ public class Agents implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cloudApp.entity.Agents[ id=" + id + " ]";
+        return String.format("%s[id=%d]", getClass().getSimpleName(), getId());
+    }
+
+    public Companies getCompaniesId() {
+        return companiesId;
+    }
+
+    public void setCompaniesId(Companies companiesId) {
+        this.companiesId = companiesId;
     }
     
 }
