@@ -11,12 +11,10 @@ racunara. -->
       xmlns:p="http://primefaces.org/ui"
       >
     <body>
-        <!-- TODO Kada se izabere agent i zatim upisuje u bazu trebalo bi da se upise agentsID iz agents tabele i na taj naci
-        ce rekordi biti povezani a ne samo da imamo ime agenta a nista od ostalih podataka koje su unete pri definisanju
-        order-a. -->
+        <!-- TODO Napisati JSF validatore za sve input-e koji su obavezni, kao sto postoji kroj JavaScript. -->
         <f:metadata>
             <f:viewParam name="poId" value="#{servicesController.orderId}"/>
-            
+
         </f:metadata>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
@@ -62,6 +60,12 @@ racunara. -->
                         <div class="clientNameDiv">
                             <h:outputLabel for="clientName" value="Enter your name"/>
                             <h:inputText id="clientName" value="#{servicesController.clientOrder.clientName}" pt:placeholder=" Yout Name"/>
+                            <br/>
+                            <h:outputLabel for="clientPhone" value="Enter your phone"/>
+                            <h:inputText id="clientPhone" value="#{servicesController.clientOrder.clientPhone}" pt:placeholder=" 064 51 11 423"/>
+                            <br/>
+                            <h:outputLabel for="clientEmail" value="Enter your e-mail"/>
+                            <h:inputText id="clientEmail" value="#{servicesController.clientOrder.clientEmail}" pt:placeholder=" john@gmail.com"/>
                         </div>
                         <div class="buttonDiv col-md-4">
                             <h:commandLink value="Schedule " onclick="return isAllInputOk();" action="#{servicesController.takeClientsOrder()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-check"/></h:commandLink>

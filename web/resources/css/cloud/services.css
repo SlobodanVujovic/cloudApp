@@ -66,7 +66,18 @@ hr{
 }
 
 #clientName{
+    margin-left: 17px;
+    margin-bottom: 5px;
+}
+
+#clientPhone{
     margin-left: 10px;
+    margin-bottom: 5px;
+}
+
+#clientEmail{
+    margin-left: 13px;
+    margin-bottom: 5px;
 }
 
 .buttonDiv{

@@ -55,8 +55,23 @@ function isAllInputOk() {
     var serviceIsSelected = isServiceSelected();
     var reservatioIsSelected = isReservationAppointmentChoosen();
     var clientNameIsEntered = isNameEntered();
-    if (serviceIsSelected && reservatioIsSelected && clientNameIsEntered) {
-        inputIsOk = true;
+    var clientPhoneIsEntered = isPhoneEntered();
+    if (serviceIsSelected) {
+        if (reservatioIsSelected) {
+            if (clientNameIsEntered) {
+                if (clientPhoneIsEntered) {
+                    inputIsOk = true;
+                } else {
+                    alert("Please enter your phone number.");
+                }
+            } else {
+                alert("Please enter your name.");
+            }
+        } else {
+            alert("Please enter reservation date and time.");
+        }
+    } else {
+        alert("Please choose at least one service.");
     }
     return inputIsOk;
 }
@@ -99,6 +114,15 @@ function isNameEntered() {
     return nameIsEntered;
 }
 
+function isPhoneEntered() {
+    var phoneIsEntered = false;
+    var phoneInput = document.getElementById("clientPhone").value;
+    if (phoneInput !== "") {
+        phoneIsEntered = true;
+    }
+    return phoneIsEntered;
+}
+
 function transferValueToTextInput(checkbox) {
     var selectedServicesElement = document.getElementById("selectedServices");
     var clickedServiceValue = checkbox.value + " ";
@@ -116,19 +140,19 @@ function transferValueToTextInput(checkbox) {
     selectedServicesElement.value = chosenServicesInputValue;
 }
 
-function checkIfCompanyHaveAgents(){
+function checkIfCompanyHaveAgents() {
     var agentsListDiv = document.getElementById("agentsList");
     var agentsNodeList = agentsListDiv.childNodes;
     var numberOfAgents = agentsNodeList.length;
-    if (numberOfAgents > 0){
+    if (numberOfAgents > 0) {
         var agentsFormDiv = document.getElementById("agentsForm");
         agentsFormDiv.style.display = "block";
     }
 }
 
-function checkIfThisIsServicesPage(){
+function checkIfThisIsServicesPage() {
     var pathname = window.location.pathname;
-    if (pathname.indexOf("/services.xhtml") !== -1){
+    if (pathname.indexOf("/services.xhtml") !== -1) {
         checkIfCompanyHaveAgents();
     }
 }

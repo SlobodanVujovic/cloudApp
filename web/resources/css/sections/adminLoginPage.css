@@ -1,16 +1,52 @@
+#companyInformations{
+    display: none;
+}
+
 #adminLoginContainer > h1{
     margin-left: 15px;
 }
 
-#adminLoginContainer > table{
+#companyInformationsGrid, #clientOrdersGrid{
+    margin-left: 5px;
+}
+
+#companyInformationsGrid tr, #clientOrdersGrid tr{
     background-color: transparent;
 }
 
-#clientOrdersDiv{
-    overflow-y: scroll;
-    height: 420px;
+#companyInformationsGrid td, #clientOrdersGrid td{
+    border-color: transparent;
 }
 
-#clientOrdersTable{
+#companyInformationsGrid label, #clientOrdersGrid label{
+    width: 230px;
+    text-align: right;
+}
+
+#companyInformationsGrid table, #clientOrdersGrid table{
     margin-left: 0px;
+}
+
+#companyOrdersTable td{
+    border-color: rgb(128, 128, 128);
+}
+
+input[type="checkbox"]{
+    margin-left: 36px;
+}
+
+.deleteButtonForm{
+    margin-bottom: 0px;
+}
+
+#clientOrdersGrid{
+    float: left;
+}
+
+#clientOrdersTable .evenRows{
+    background-color: transparent;
+}
+
+#clientOrdersTable .oddRows{
+    background-color: white;
 }

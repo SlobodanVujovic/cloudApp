@@ -86,10 +86,4 @@
             <from-outcome>/sections/thanks.xhtml</from-outcome>
         </flow-return>
     </flow-definition>
-    <application>
-        <resource-bundle>
-            <base-name>/Bundle</base-name>
-            <var>bundle</var>
-        </resource-bundle>
-    </application>
 </faces-config>

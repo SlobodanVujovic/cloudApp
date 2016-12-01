@@ -6,9 +6,7 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,11 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,6 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ClientOrders.findById", query = "SELECT c FROM ClientOrders c WHERE c.id = :id"),
     @NamedQuery(name = "ClientOrders.findByOrderedService", query = "SELECT c FROM ClientOrders c WHERE c.orderedService = :orderedService"),
     @NamedQuery(name = "ClientOrders.findByClientName", query = "SELECT c FROM ClientOrders c WHERE c.clientName = :clientName"),
+    @NamedQuery(name = "ClientOrders.findByClientPhone", query = "SELECT c FROM ClientOrders c WHERE c.clientPhone = :clientPhone"),
+    @NamedQuery(name = "ClientOrders.findByClientEmail", query = "SELECT c FROM ClientOrders c WHERE c.clientEmail = :clientEmail"),
     @NamedQuery(name = "ClientOrders.findByCompanyOrderId", query = "SELECT c FROM ClientOrders c WHERE c.companyOrderId = :companyOrderId")})
 public class ClientOrders implements Serializable {
 
@@ -51,10 +49,12 @@ public class ClientOrders implements Serializable {
     @Size(max = 45)
     @Column(name = "client_name")
     private String clientName;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientOrdersId")
-    private List<ClientOrdersAgents> clientOrdersAgentsList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientOrdersId")
-    private List<ClientOrdersReservations> clientOrdersReservationsList;
+    @Size(max = 45)
+    @Column(name = "client_phone")
+    private String clientPhone;
+    @Size(max = 45)
+    @Column(name = "client_email")
+    private String clientEmail;
     @JoinColumn(name = "company_order_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private CompanyOrder companyOrderId;
@@ -90,22 +90,20 @@ public class ClientOrders implements Serializable {
         this.clientName = clientName;
     }
 
-    @XmlTransient
-    public List<ClientOrdersAgents> getClientOrdersAgentsList() {
-        return clientOrdersAgentsList;
+    public String getClientPhone() {
+        return clientPhone;
     }
 
-    public void setClientOrdersAgentsList(List<ClientOrdersAgents> clientOrdersAgentsList) {
-        this.clientOrdersAgentsList = clientOrdersAgentsList;
+    public void setClientPhone(String clientPhone) {
+        this.clientPhone = clientPhone;
     }
 
-    @XmlTransient
-    public List<ClientOrdersReservations> getClientOrdersReservationsList() {
-        return clientOrdersReservationsList;
+    public String getClientEmail() {
+        return clientEmail;
     }
 
-    public void setClientOrdersReservationsList(List<ClientOrdersReservations> clientOrdersReservationsList) {
-        this.clientOrdersReservationsList = clientOrdersReservationsList;
+    public void setClientEmail(String clientEmail) {
+        this.clientEmail = clientEmail;
     }
 
     public CompanyOrder getCompanyOrderId() {
