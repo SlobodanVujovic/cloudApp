@@ -38,5 +38,4 @@ public class ServicesFacade extends AbstractFacade<Services> {
         List<Services> resultList = query.getResultList();
         return resultList;
     }
-
 }

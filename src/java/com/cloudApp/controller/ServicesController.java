@@ -71,20 +71,22 @@ public class ServicesController implements Serializable {
         serviceIdWithRequiredReservation = new ArrayList<>();
         for (Services service : allServices) {
             if (service.getReservation() == true) {
-                String serviceName = service.getName();
-                if (serviceName.contains(" ")) {
-                    serviceName = serviceName.replace(" ", "");
-                }
+                String serviceName = service.getId().toString();
                 serviceIdWithRequiredReservation.add(serviceName);
             }
         }
     }
 
     public String takeClientsOrder() {
-        clientOrder.setOrderedService(checkedServices);
-        clientOrder.setCompanyOrderId(order);
-        clientOrder.setAgentsId(selectedAgent);
-        clientOrderFacade.create(clientOrder);
+        String[] idsOfCheckedServices = checkedServices.split(" ");
+        for (int i = 0; i < idsOfCheckedServices.length; i++) {
+            // find() metodi prosledjujemo ID objekata, koji trazimo iz DB-a, u obliku Integer-a.
+            Services tempCheckedService = servicesFacade.find(Integer.parseInt(idsOfCheckedServices[i]));
+            clientOrder.setServicesId(tempCheckedService);
+            clientOrder.setCompanyOrderId(order);
+            clientOrder.setAgentsId(selectedAgent);
+            clientOrderFacade.create(clientOrder);
+        }
         clientOrder = new ClientOrders();
         return "";
     }
@@ -131,7 +133,7 @@ public class ServicesController implements Serializable {
     public void setSelectedAgent(Agents selectedAgent) {
         this.selectedAgent = selectedAgent;
     }
-    
+
     public void setClientOrder(ClientOrders clientOrder) {
         this.clientOrder = clientOrder;
     }

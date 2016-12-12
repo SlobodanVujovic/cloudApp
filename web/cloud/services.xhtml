@@ -25,7 +25,7 @@ racunara. -->
                     <h:outputLabel value="Services" id="servicesLabel"/>
                     <hr/>
                     <h:selectManyCheckbox layout="pageDirection" onclick="checkIfServiceRequireReservation(this); transferValueToTextInput(this)">
-                        <f:selectItems value="#{servicesController.allServices}" var="service" itemLabel="#{service.name}" itemValue="#{service.name}"/>
+                        <f:selectItems value="#{servicesController.allServices}" var="service" itemLabel="#{service.name}" itemValue="#{service.id}"/>
                     </h:selectManyCheckbox>
                     <h:inputHidden id="servicesWithReservation" value="#{servicesController.serviceIdWithRequiredReservation}"/>
                 </h:form>

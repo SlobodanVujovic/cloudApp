@@ -1,7 +1,6 @@
 var numberOfChoosenServicesWithReservation = 0;
 function checkIfServiceRequireReservation(checkbox) {
     var checkboxValue = checkbox.value;
-    checkboxValue = checkboxValue.replace(" ", "");
     var servicesWithReservation = document.getElementById("servicesCheckboxes:servicesWithReservation").value;
     var isServiceWithReservation = false;
     if (servicesWithReservation.includes(checkboxValue)) {

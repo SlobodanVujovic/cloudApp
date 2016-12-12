@@ -124,7 +124,7 @@ public class LogInController implements Serializable {
                 clientOrderPresenter = new ClientOrderPresenter();
                 clientOrderPresenter.setId(tempClientOrder.getId());
                 clientOrderPresenter.setClientName(tempClientOrder.getClientName());
-                clientOrderPresenter.setOrderedService(tempClientOrder.getOrderedService());
+                clientOrderPresenter.setOrderedService(tempClientOrder.getServicesId().getName());
                 clientOrderPresenter.setClientPhone(tempClientOrder.getClientPhone());
                 clientOrderPresenter.setClientEmail(tempClientOrder.getClientEmail());
                 

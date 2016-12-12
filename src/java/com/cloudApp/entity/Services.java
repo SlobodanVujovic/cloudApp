@@ -6,7 +6,9 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,9 +18,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -34,6 +38,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Services.findByReservation", query = "SELECT s FROM Services s WHERE s.reservation = :reservation"),
     @NamedQuery(name = "Services.findByCompanyOrderId", query = "SELECT s FROM Services s WHERE s.companyOrderId = :companyOrderId")})
 public class Services implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicesId")
+    private List<ClientOrders> clientOrdersList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -112,6 +119,15 @@ public class Services implements Serializable {
     @Override
     public String toString() {
         return "com.cloudApp.entity.Services[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public List<ClientOrders> getClientOrdersList() {
+        return clientOrdersList;
+    }
+
+    public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
+        this.clientOrdersList = clientOrdersList;
     }
     
 }

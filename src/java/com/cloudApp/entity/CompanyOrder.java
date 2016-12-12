@@ -71,6 +71,8 @@ public class CompanyOrder implements Serializable {
     private int notification = 0;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
     private List<ClientOrders> clientOrdersList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
+    private List<Services> servicesList;
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Companies companiesId;
@@ -129,6 +131,15 @@ public class CompanyOrder implements Serializable {
     public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
         this.clientOrdersList = clientOrdersList;
     }
+     
+    @XmlTransient
+    public List<Services> getServicesList() {
+        return servicesList;
+    }
+
+    public void setServicesList(List<Services> servicesList) {
+        this.servicesList = servicesList;
+    }
 
     public Companies getCompaniesId() {
         return companiesId;
@@ -170,5 +181,5 @@ public class CompanyOrder implements Serializable {
     public String toString() {
         return "com.cloudApp.entity.CompanyOrder[ id=" + id + " ]";
     }
-    
+
 }

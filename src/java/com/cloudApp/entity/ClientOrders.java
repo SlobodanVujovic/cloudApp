@@ -33,7 +33,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ClientOrders.findAll", query = "SELECT c FROM ClientOrders c"),
     @NamedQuery(name = "ClientOrders.findById", query = "SELECT c FROM ClientOrders c WHERE c.id = :id"),
-    @NamedQuery(name = "ClientOrders.findByOrderedService", query = "SELECT c FROM ClientOrders c WHERE c.orderedService = :orderedService"),
     @NamedQuery(name = "ClientOrders.findByClientName", query = "SELECT c FROM ClientOrders c WHERE c.clientName = :clientName"),
     @NamedQuery(name = "ClientOrders.findByClientPhone", query = "SELECT c FROM ClientOrders c WHERE c.clientPhone = :clientPhone"),
     @NamedQuery(name = "ClientOrders.findByClientEmail", query = "SELECT c FROM ClientOrders c WHERE c.clientEmail = :clientEmail"),
@@ -48,9 +47,6 @@ public class ClientOrders implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 45)
-    @Column(name = "ordered_service")
-    private String orderedService;
     @Size(max = 45)
     @Column(name = "client_name")
     private String clientName;
@@ -71,6 +67,9 @@ public class ClientOrders implements Serializable {
     @JoinColumn(name = "company_order_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private CompanyOrder companyOrderId;
+    @JoinColumn(name = "services_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Services servicesId;
 
     public ClientOrders() {
     }
@@ -85,14 +84,6 @@ public class ClientOrders implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getOrderedService() {
-        return orderedService;
-    }
-
-    public void setOrderedService(String orderedService) {
-        this.orderedService = orderedService;
     }
 
     public String getClientName() {
@@ -151,6 +142,14 @@ public class ClientOrders implements Serializable {
         this.companyOrderId = companyOrderId;
     }
 
+    public Services getServicesId() {
+        return servicesId;
+    }
+
+    public void setServicesId(Services servicesId) {
+        this.servicesId = servicesId;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -175,7 +174,7 @@ public class ClientOrders implements Serializable {
     public String toString() {
         return "ClientOrders:"
                 + "id=" + id
-                + "ordered_service=" + orderedService
+                + "servicesId=" + servicesId
                 + "clientName=" + clientName
                 + "clientPhone=" + clientPhone
                 + "clientEmail=" + clientEmail
@@ -183,5 +182,5 @@ public class ClientOrders implements Serializable {
                 + "reservationTime=" + reservationTime
                 + "agentsId=" + agentsId;
     }
-
+    
 }
