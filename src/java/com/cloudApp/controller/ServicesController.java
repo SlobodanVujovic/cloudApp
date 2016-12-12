@@ -2,28 +2,25 @@ package com.cloudApp.controller;
 
 import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.ClientOrders;
-import com.cloudApp.entity.ClientOrdersAgents;
-import com.cloudApp.entity.ClientOrdersReservations;
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.AgentsFacade;
-import com.cloudApp.sessions.ClientOrdersAgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
-import com.cloudApp.sessions.ClientOrdersReservationsFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 
 // TODO Ne moze kroz isti browser da se zakazuje vise razlicitih servisa, zato sto je ServicesController session scoped.
+// Trebalo bi koristiti ViewScoped ali nesto nece.
 @Named
-@SessionScoped
+@ViewScoped
 public class ServicesController implements Serializable {
 
     // orderId je u URL-u (tu vrednost uzimamo iz GET-a) i na osnovu ovog parametra odredjujemo sve ostalo sto
@@ -35,9 +32,8 @@ public class ServicesController implements Serializable {
     private String checkedServices;
     private Companies company;
     private List<Agents> allAgents;
+    private Agents selectedAgent;
     private ClientOrders clientOrder;
-    private ClientOrdersAgents clientOrdersAgent;
-    private ClientOrdersReservations clientOrdersReservation;
 
     public ServicesController() {
 
@@ -46,18 +42,12 @@ public class ServicesController implements Serializable {
     @PostConstruct
     public void init() {
         clientOrder = new ClientOrders();
-        clientOrdersReservation = new ClientOrdersReservations();
-        clientOrdersAgent = new ClientOrdersAgents();
     }
 
     @Inject
     private CompanyOrderFacade orderFacade;
     @Inject
     private ClientOrdersFacade clientOrderFacade;
-    @Inject
-    private ClientOrdersAgentsFacade clientOrdersAgentFacade;
-    @Inject
-    private ClientOrdersReservationsFacade clientReservationFacade;
     @Inject
     private ServicesFacade servicesFacade;
     @Inject
@@ -93,17 +83,8 @@ public class ServicesController implements Serializable {
     public String takeClientsOrder() {
         clientOrder.setOrderedService(checkedServices);
         clientOrder.setCompanyOrderId(order);
+        clientOrder.setAgentsId(selectedAgent);
         clientOrderFacade.create(clientOrder);
-        if (clientOrdersReservation.getReservationDate() != null) {
-            clientOrdersReservation.setClientOrdersId(clientOrder);
-            clientReservationFacade.create(clientOrdersReservation);
-            clientOrdersReservation = new ClientOrdersReservations();
-        }
-        if (clientOrdersAgent.getAgentsId()!= null) {
-            clientOrdersAgent.setClientOrdersId(clientOrder);
-            clientOrdersAgentFacade.create(clientOrdersAgent);
-            clientOrdersAgent = new ClientOrdersAgents();
-        }
         clientOrder = new ClientOrders();
         return "";
     }
@@ -143,33 +124,20 @@ public class ServicesController implements Serializable {
         return allAgents;
     }
 
+    public Agents getSelectedAgent() {
+        return selectedAgent;
+    }
+
+    public void setSelectedAgent(Agents selectedAgent) {
+        this.selectedAgent = selectedAgent;
+    }
+    
     public void setClientOrder(ClientOrders clientOrder) {
         this.clientOrder = clientOrder;
     }
 
     public ClientOrders getClientOrder() {
         return clientOrder;
-    }
-
-    public void setClientOrdersReservation(ClientOrdersReservations clientOrdersReservation) {
-        this.clientOrdersReservation = clientOrdersReservation;
-    }
-
-    public ClientOrdersReservations getClientOrdersReservation() {
-        return clientOrdersReservation;
-    }
-
-    public void setClientOrdersAgent(ClientOrdersAgents clientOrdersAgent) {
-        this.clientOrdersAgent = clientOrdersAgent;
-    }
-
-    public ClientOrdersAgents getClientOrdersAgent() {
-        return clientOrdersAgent;
-    }
-
-    // Ovaj metod koristimo samo u result.xhtml str. zarad provere vrednosti array-a kada se cekiraju odredjena polja.
-    public String getAllServicesArrayAsString() {
-        return checkedServices;
     }
 
 }

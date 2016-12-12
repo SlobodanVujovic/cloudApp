@@ -24,13 +24,16 @@ public class DefineServicesController implements Serializable {
     private Services services;
     private String serviceNames;
     private String serviceReservations;
+    private int serviceNotification;
+    private boolean enableNotificationInput;
+    private int numberOfServicesWithReservation;
 
     @PostConstruct
     public void init() {
         companyOrder = new CompanyOrder();
         services = new Services();
     }
-    
+
     @Inject
     private CompanyController companyController;
     @Inject
@@ -42,6 +45,9 @@ public class DefineServicesController implements Serializable {
 
     public void writeToDatabase() {
         companyOrder.setCompaniesId(companyController.getSelectedCompany());
+        if (serviceNotification > 0) {
+            companyOrder.setNotification(serviceNotification);
+        }
         companyOrderFacade.create(companyOrder);
         setPublicUrl();
         String[] servicesArray = serviceNames.split(",");
@@ -101,4 +107,29 @@ public class DefineServicesController implements Serializable {
     public void setServices(Services services) {
         this.services = services;
     }
+
+    public int getServiceNotification() {
+        return serviceNotification;
+    }
+
+    public void setServiceNotification(int serviceNotification) {
+        this.serviceNotification = serviceNotification;
+    }
+
+    public boolean isEnableNotificationInput() {
+        return enableNotificationInput;
+    }
+
+    public void setEnableNotificationInput(boolean enableNotificationInput) {
+        this.enableNotificationInput = enableNotificationInput;
+    }
+
+    public int getNumberOfServicesWithReservation() {
+        return numberOfServicesWithReservation;
+    }
+
+    public void setNumberOfServicesWithReservation(int numberOfServicesWithReservation) {
+        this.numberOfServicesWithReservation = numberOfServicesWithReservation;
+    }
+
 }

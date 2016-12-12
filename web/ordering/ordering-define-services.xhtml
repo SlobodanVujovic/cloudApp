@@ -5,7 +5,8 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
 
     <body>
         <ui:composition template="./../templates/masterTemplate.xhtml">
@@ -17,8 +18,9 @@
 
                             <!-- Form Name -->
                             <legend>Define your services</legend>
-
-                            <!-- Text input-->
+                            <!-- TODO Polja za definisanje servisa uraditi kao dinamicku listu tako da se polja kreiraju i brisu
+                            dinamicki a ne da budu predefinisana u XHTML-u.-->
+                            <!-- Service name 1 text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Service Name" for="service_name_1" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
@@ -38,14 +40,14 @@
                                 </div>
                             </div>
 
-                            <!-- Checkbox-->
+                            <!-- Checkbox for service 1-->
                             <div class="form-group">
                                 <h:outputLabel value="This service need reservation system" class="col-md-4 control-label center-checkbox" for="service_checkbox_1"/>
-                                <h:selectBooleanCheckbox id="service_checkbox_1" class="v_center_checkbox" onclick="#"/>
+                                <h:selectBooleanCheckbox id="service_checkbox_1" onclick="showNotificationCheckbox(this.id)" class="v_center_checkbox"/>
                             </div>
 
+                            <!-- Service name 2 text input-->
                             <div id="service_2">
-                                <!-- Text input-->
                                 <div class="form-group">
                                     <h:outputLabel value="Service Name" for="service_name_2" class="col-md-4 control-label"/>
                                     <div class="col-md-4 inputGroupContainer">
@@ -62,15 +64,15 @@
                                     </div>
                                 </div>
 
-                                <!-- Checkbox-->
+                                <!-- Checkbox for service 2-->
                                 <div class="form-group">
                                     <h:outputLabel value="This service need reservation system" class="col-md-4 control-label center-checkbox" for="service_checkbox_2"/>
-                                    <h:selectBooleanCheckbox id="service_checkbox_2" class="v_center_checkbox" onclick="#"/>
+                                    <h:selectBooleanCheckbox id="service_checkbox_2" onclick="showNotificationCheckbox(this.id)" class="v_center_checkbox"/>
                                 </div>
                             </div>
 
+                            <!-- Service name 3 text input-->
                             <div id="service_3">
-                                <!-- Text input-->
                                 <div class="form-group">
                                     <h:outputLabel value="Service Name" for="service_name_3" class="col-md-4 control-label"/>
                                     <div class="col-md-4 inputGroupContainer">
@@ -86,16 +88,34 @@
                                         <h:message class="label label-danger" for="service_name_3"/>
                                     </div>
                                 </div>
-
-                                <!-- Checkbox-->
+                                <!-- Checkbox for service 3-->
                                 <div class="form-group">
                                     <h:outputLabel value="This service need reservation system" class="col-md-4 control-label center-checkbox" for="service_checkbox_3"/>
-                                    <h:selectBooleanCheckbox id="service_checkbox_3" class="v_center_checkbox" onclick="#"/>
+                                    <h:selectBooleanCheckbox id="service_checkbox_3" onclick="showNotificationCheckbox(this.id)"  class="v_center_checkbox"/>
                                 </div>
                             </div>
                             <h:inputHidden id="hiddenInput1" value="#{defineServicesController.serviceNames}"/>
                             <h:inputHidden id="hiddenInput2" value="#{defineServicesController.serviceReservations}"/>
+                            <!--U ovom polju cuvamo broj cekiranih servisa sa rezervacijama.-->
+                            <h:inputHidden id="hiddenInput3" value="#{defineServicesController.numberOfServicesWithReservation}"/>
 
+                            <!-- Notification period-->
+                            <p:panelGrid columns="4" id="notificationGrid">
+                                <h:selectBooleanCheckbox id="notificationCheckbox" value="#{defineServicesController.enableNotificationInput}">
+                                    <f:ajax event="change" render="notificationValue"/>
+                                </h:selectBooleanCheckbox>
+                                <h:outputLabel value="Send notification to customer" for="notificationValue"/>
+                                <!-- Inicijalno je: enableNotification = false a mi hocemo da disable bude true da bi inputText, inicijalno, bio zasivljen i zato koristimo negaciju. 
+                                Operatori "not" i "!" imaju istu funkciju: #{not defineServicesController.enableNotificationInput} je identicno sa #{!defineServicesController.enableNotificationInput}. -->
+                                <h:inputText id="notificationValue" maxlength="2" size="1" validatorMessage="Value must be betwen 1 and 24."
+                                             disabled="#{not defineServicesController.enableNotificationInput}" value="#{defineServicesController.serviceNotification}">
+                                    <f:validateLongRange for="notificationValue" minimum="1" maximum="24"/>
+                                    <f:ajax event="blur" render="notificationMessage"/>
+                                </h:inputText>
+                                <h:outputLabel value="hour(s) prior service." for="notificationValue"/>
+                            </p:panelGrid>
+                            <h:message id="notificationMessage" for="notificationValue" class="label label-danger"/>
+                            
                             <!-- Buttons -->
                             <div class="form-group">
                                 <h:outputLabel class="col-md-4 control-label"/>
@@ -122,6 +142,7 @@
                                     </h:commandLink>
                                 </div>
                             </div>
+
                         </fieldset>
                     </h:form>
                 </div>

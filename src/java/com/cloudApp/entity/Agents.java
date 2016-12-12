@@ -41,10 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Agents.findByCompanyId", query = "SELECT a FROM Agents a WHERE a.companiesId = :companyId")})
 public class Agents implements Serializable {
 
-    @JoinColumn(name = "companies_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Companies companiesId;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,7 +62,10 @@ public class Agents implements Serializable {
     @Column(name = "email")
     private String email;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "agentsId")
-    private List<ClientOrdersAgents> clientOrdersAgentsList;
+    private List<ClientOrders> clientOrdersList;
+    @JoinColumn(name = "companies_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Companies companiesId;
 
     public Agents() {
     }
@@ -116,12 +115,20 @@ public class Agents implements Serializable {
     }
 
     @XmlTransient
-    public List<ClientOrdersAgents> getClientOrdersAgentsList() {
-        return clientOrdersAgentsList;
+    public List<ClientOrders> getClientOrdersList() {
+        return clientOrdersList;
     }
 
-    public void setClientOrdersAgentsList(List<ClientOrdersAgents> clientOrdersAgentsList) {
-        this.clientOrdersAgentsList = clientOrdersAgentsList;
+    public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
+        this.clientOrdersList = clientOrdersList;
+    }
+
+    public Companies getCompaniesId() {
+        return companiesId;
+    }
+
+    public void setCompaniesId(Companies companiesId) {
+        this.companiesId = companiesId;
     }
 
     @Override
@@ -149,12 +156,4 @@ public class Agents implements Serializable {
         return String.format("%s[id=%d]", getClass().getSimpleName(), getId());
     }
 
-    public Companies getCompaniesId() {
-        return companiesId;
-    }
-
-    public void setCompaniesId(Companies companiesId) {
-        this.companiesId = companiesId;
-    }
-    
 }

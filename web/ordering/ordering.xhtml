@@ -19,22 +19,25 @@
                             <!-- Form Name -->
                             <legend>Company information</legend>
 
-                            <!-- Text input-->
+                            <!-- Company Name text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Company Name" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                        <h:inputText id="company_name" pt:placeholder="Company Name" value="#{companyController.selectedCompany.companyName}" required="true" requiredMessage="First name is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="company_name" pt:placeholder="Company Name" value="#{companyController.selectedCompany.companyName}" required="true" requiredMessage="Company name is required." maxlength="70" styleClass="form-control">
+                                            <!--Cim se iz polja company_name predje na 2 polje izvrsava se sledeci AJAX koji renderuje companyNameMessage tag na osnovu vrednosti atributa requiredMessage u h:inputText polju. Odnosno ne ceka se da se pritisne dugme
+                                            za submit cele forme. -->
+                                            <f:ajax event="blur" render="companyNameMessage"/>
                                             <f:attribute name="message" value="Company Name can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
                                     </div>
-                                    <h:message class="label label-danger" for="company_name"/>
+                                    <h:message id="companyNameMessage" class="label label-danger" for="company_name"/>
                                 </div>
                             </div>
 
-                            <!-- Text input-->
+                            <!-- Phone text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Phone #" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
@@ -45,21 +48,22 @@
                                 </div>
                             </div>
 
-                            <!-- Text input-->
+                            <!-- E-Mail text input-->
                             <div class="form-group">
                                 <h:outputLabel value="E-Mail" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                        <h:inputText id="email" pt:placeholder="company.contact@isp.com" value="#{companyController.companyContact.email}" styleClass="form-control">
+                                        <h:inputText id="email" pt:placeholder="company.contact@isp.com" value="#{companyController.companyContact.email}" required="true" requiredMessage="E-Mail is required." styleClass="form-control">
+                                            <f:ajax event="blur" render="emailMessage"/>
                                             <f:validator validatorId="EmailValidator"/>
                                         </h:inputText>
                                     </div>
-                                    <h:message class="label label-danger" for="email" />
+                                    <h:message id="emailMessage" class="label label-danger" for="email"/>
                                 </div>
                             </div>
 
-                            <!-- Text input-->
+                            <!-- Address text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Address" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
@@ -70,7 +74,7 @@
                                 </div>
                             </div>
 
-                            <!-- Text input-->
+                            <!-- City text input-->
                             <div class="form-group">
                                 <h:outputLabel value="City" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
@@ -81,7 +85,7 @@
                                 </div>
                             </div>
 
-                            <!-- Text input-->
+                            <!-- ZIP Code text input-->
                             <div class="form-group">
                                 <h:outputLabel value="ZIP Code" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
@@ -92,7 +96,7 @@
                                 </div>
                             </div>
 
-                            <!-- Text input-->
+                            <!-- State text input-->
                             <div class="form-group">
                                 <h:outputLabel value="State" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
@@ -103,7 +107,7 @@
                                 </div>
                             </div>
 
-                            <!-- Checkbox-->
+                            <!-- Button za dodavanje agenata.-->
                             <div class="form-group">
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4">
@@ -135,14 +139,34 @@
                                 </h:selectOneRadio>
                                 <h:panelGrid id="oneByOneForm" columns="2" >
                                     <h:outputLabel id="agent_first_name_label" value="First Name" class="previewElement"/>
-                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" value="#{companyController.currentAgent.firstName}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" value="#{companyController.currentAgent.firstName}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="First Name is required.">
+                                        <f:ajax event="blur" render="agent_first_name_message"/>
+                                    </h:inputText>
+                                    <!-- h:inputHidden koristimo samo da bi necim popunili 1. celiju u redu-->
+                                    <h:inputHidden/>
+                                    <h:message id="agent_first_name_message" for="agent_first_name" class="label label-danger"/>
+
                                     <h:outputLabel id="agent_last_name_label" value="Last Name" class="previewElement"/>
-                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" value="#{companyController.currentAgent.lastName}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" value="#{companyController.currentAgent.lastName}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="Last Name is required.">
+                                        <f:ajax event="blur" render="agent_last_name_message"/>
+                                    </h:inputText>
+                                    <h:inputHidden/>
+                                    <h:message id="agent_last_name_message" for="agent_last_name" class="label label-danger"/>
+
                                     <h:outputLabel id="agent_phone_label" value="Phone #" class="previewElement"/>
                                     <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" value="#{companyController.currentAgent.phone}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputHidden/>
+                                    <h:inputHidden/>
+                                    
                                     <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
-                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" value="#{companyController.currentAgent.email}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
-                                    <h:commandLink id="agentWriteButton" styleClass="btn btn-warning" disabled="#{agentInput.inputType != 'oneByOne'}" action="#{companyController.addNewAgent}">Write <span class="glyphicon glyphicon-ok"></span>
+                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" value="#{companyController.currentAgent.email}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="E-mail is required.">
+                                        <f:ajax event="blur" render="agent_email_message"/>
+                                        <f:validator validatorId="EmailValidator"/>
+                                    </h:inputText>
+                                    <h:inputHidden/>
+                                    <h:message id="agent_email_message" for="agent_email" class="label label-danger"/>
+                                    
+                                    <h:commandLink id="agentWriteButton" onclick="return agentInfoValidation()" disabled="#{agentInput.inputType != 'oneByOne'}" action="#{companyController.addNewAgent}" styleClass="btn btn-warning">Write <span class="glyphicon glyphicon-ok"></span>
                                         <f:ajax render="agent_first_name agent_last_name agent_phone agent_email" execute="@form"/>
                                     </h:commandLink>
                                 </h:panelGrid>
@@ -169,7 +193,7 @@
                                     </p:row>
                                 </p:panelGrid>
                                 <button type="button" id="agentOkButton" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); showOrderingInputFields();">OK <span class="glyphicon glyphicon-ok"></span></button>
-                                <button type="button" id="agentCancleButton" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); uncheckElement('agentsCheckbox'); showOrderingInputFields();">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
+                                <button type="button" id="agentCancleButton" class="btn btn-warning" onclick="hidePopupWin('agentPopupBack'); showOrderingInputFields();">Cancel <span class="glyphicon glyphicon-remove-circle"></span></button>
                             </h:form>
                         </div>
                     </div>

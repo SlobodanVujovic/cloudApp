@@ -11,11 +11,14 @@ racunara. -->
       xmlns:p="http://primefaces.org/ui"
       >
     <body>
-        <!-- TODO Napisati JSF validatore za sve input-e koji su obavezni, kao sto postoji kroj JavaScript. -->
+        <!-- TODO Napisati JSF validatore za sve input-e koji su obavezni, kao sto postoji kroz JavaScript. -->
         <f:metadata>
-            <f:viewParam name="poId" value="#{servicesController.orderId}"/>
-
+            <!-- Sluzi za setting, conversion and validation of GET parameters. Uzima request parameter value by name poId and
+            set it as a bean property represented by #{servicesController.orderId} value. Vrednost se set-uje right before the
+            view is rendered. -->
+            <f:viewParam name="poId" value="#{servicesController.orderId}" required="true"/>
         </f:metadata>
+        
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
                 <h:form id="servicesCheckboxes">
@@ -37,15 +40,18 @@ racunara. -->
                         <div id="agentsForm">
                             <h:outputLabel for="agentsList" value="Choose agent"/>
                             <!-- Da bi tag-u, f:selectItems, mogli da dodelimo "Agent" entity (Java object) kao vrednost value atributa i da bi tu vrednost mogli
-                            da prenesemo u value h:selectOneMenu tag-a, koristimo atribut converter="omnifaces.SelectItemsConverter".-->
-                            <h:selectOneMenu id="agentsList" value="#{servicesController.clientOrdersAgent.agentsId}" converter="omnifaces.SelectItemsConverter">
+                            da prenesemo u value h:selectOneMenu tag-a, koristimo atribut converter="omnifaces.SelectItemsConverter". Takodje neophodno je i override-ovati
+                            toString() metod "Agent" objekta tako da se string-ovi razlicitih objekata razlikuju. U ClientOrder objektu promeniti tip promenljive 
+                            reservationTime u string i izbrisati @Temporal anotaciju vezanu za ovo polje. -->
+                            <h:selectOneMenu id="agentsList" value="#{servicesController.selectedAgent}" converter="omnifaces.SelectItemsConverter">
                                 <f:selectItems value="#{servicesController.allAgents}" var="agent" itemLabel="#{agent.firstName.concat(' ')}#{agent.lastName}" itemValue="#{agent}"/>
                             </h:selectOneMenu>
+                            <h:messages showDetail="true"/>
                         </div>
                         <div class="reservationDiv">
                             <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
-                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.clientOrdersReservation.reservationDate}" mindate="today" placeholder=" Pick Date"/>
-                            <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.clientOrdersReservation.reservationTime}" pt:placeholder=" Pick Time"/>
+                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.clientOrder.reservationDate}" mindate="today" placeholder=" Pick Date"/>
+                            <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.clientOrder.reservationTime}" pt:placeholder=" Pick Time"/>
 
                             <!-- Ako zelimo da napravimo vise JSF komponenti onda koristimo <c:forEach> tag. Atributu "items" dodeljujemo
                             kolekciju kroz koju ce se vrsiti iteracija pri kreiranju JSF komponenti. Atribut "var" predstavlja trenutni

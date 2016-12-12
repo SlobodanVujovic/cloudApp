@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CompanyOrder.findByDateCreated", query = "SELECT c FROM CompanyOrder c WHERE c.dateCreated = :dateCreated"),
     @NamedQuery(name = "CompanyOrder.findByUrl", query = "SELECT c FROM CompanyOrder c WHERE c.url = :url"),
     @NamedQuery(name = "CompanyOrder.findByAmount", query = "SELECT c FROM CompanyOrder c WHERE c.amount = :amount"),
+    @NamedQuery(name = "CompanyOrder.findByNotification", query = "SELECT c FROM CompanyOrder c WHERE c.notification = :notification"),
     @NamedQuery(name = "CompanyOrder.findByCompanyId", query = "SELECT c FROM CompanyOrder c WHERE c.companiesId = :companyId")})
 public class CompanyOrder implements Serializable {
 
@@ -59,15 +60,17 @@ public class CompanyOrder implements Serializable {
     @NotNull
     @Size(min = 1, max = 100)
     @Column(name = "url")
-    private String url = "http://www.mds.rs/cloud/CompanyName";
+    private String url = "http://www.mds.rs/INVALID_URL";
     @Basic(optional = false)
     @NotNull
     @Column(name = "amount")
     private int amount = 0;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "notification")
+    private int notification = 0;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
     private List<ClientOrders> clientOrdersList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
-    private List<Services> servicesList;
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Companies companiesId;
@@ -127,21 +130,20 @@ public class CompanyOrder implements Serializable {
         this.clientOrdersList = clientOrdersList;
     }
 
-    @XmlTransient
-    public List<Services> getServicesList() {
-        return servicesList;
-    }
-
-    public void setServicesList(List<Services> servicesList) {
-        this.servicesList = servicesList;
-    }
-
     public Companies getCompaniesId() {
         return companiesId;
     }
 
     public void setCompaniesId(Companies companiesId) {
         this.companiesId = companiesId;
+    }
+
+    public int getNotification() {
+        return notification;
+    }
+
+    public void setNotification(int notification) {
+        this.notification = notification;
     }
 
     @Override

@@ -4,12 +4,13 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <body>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
                 <h:form>
-                    <!-- Button -->
+                    <!-- Logout button -->
                     <div class="col-md-4">
                         <h:commandLink value="Logout " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-out"/></h:commandLink>
                     </div>
@@ -21,130 +22,464 @@
                     <h1>
                         All company data
                     </h1>
+                    <!-- Company Information button za prikaz informacija o firmi.-->
                     <div class="form-group col-md-4">
                         <h:form>
-                            <h:commandLink value="Company Information " onclick="return showCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>
+                            <h:commandLink value="Company Informations " onclick="return showCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>
                         </h:form>
                     </div>
+                    <!-- Svi podaci o firmi (uneti prilikom kreiranja naloga).-->
                     <div id="companyInformations">
-                        <p:panelGrid id="companyInformationsGrid" columns="2">
-                            <h:outputLabel value="Company name" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.company.companyName}"/>
-                            <h:outputLabel value="Company adress" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getCompanysLocation().address}"/>
-                            <h:outputLabel value="Company city" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getCompanysLocation().city}"/>
-                            <h:outputLabel value="Company ZIP code" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getCompanysLocation().zipCode}"/>
-                            <h:outputLabel value="Company state" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getCompanysLocation().state}"/>
-                            <h:outputLabel value="Company phone" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getCompanysContact().phone}"/>
-                            <h:outputLabel value="Company email" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getCompanysContact().email}"/>
-                            <h:outputLabel value="Company owner first name" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getOwner().firstName}"/>
-                            <h:outputLabel value="Company owner last name" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getOwner().lastName}"/>
-                            <h:outputLabel value="Company owner username" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getOwner().username}"/>
-                            <h:outputLabel value="Company owner password" class="col-md-4 control-label"/>
-                            <h:inputText value="#{logInController.getOwner().password}"/>
-                            <h:outputLabel value="Company owner contacts" class="col-md-4 control-label"/>
-                            <h:dataTable value="#{logInController.ownersContacts}" var="ownerContact">
-                                <h:column>
-                                    <f:facet name="header">Phone</f:facet>
-                                    <h:inputText value="#{ownerContact.phone}"/>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Email</f:facet>
-                                    <h:inputText value="#{ownerContact.email}"/>
-                                </h:column>
-                            </h:dataTable>
-                            <h:outputLabel value="Company agents" class="col-md-4 control-label"/>
-                            <h:dataTable value="#{logInController.agents}" var="agent">
-                                <h:column>
-                                    <f:facet name="header">First name</f:facet>
-                                    <h:inputText value="#{agent.firstName}"/>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Last name</f:facet>
-                                    <h:inputText value="#{agent.lastName}"/>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Phone</f:facet>
-                                    <h:inputText value="#{agent.phone}"/>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Email</f:facet>
-                                    <h:inputText value="#{agent.email}"/>
-                                </h:column>
-                            </h:dataTable>
-                            <h:outputLabel value="Company orders" class="col-md-4 control-label"/>
-                            <h:dataTable id="companyOrdersTable" value="#{logInController.companyOrders}" var="order" border="1">
-                                <h:column>
-                                    <f:facet name="header">Creation date</f:facet>
-                                        #{order.dateCreated}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Amount</f:facet>
-                                        #{order.amount}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">URL</f:facet>
-                                        #{order.url}
-                                </h:column>
-                            </h:dataTable>
-                            <h:outputLabel value="Company services" class="col-md-4 control-label"/>
-                            <h:dataTable value="#{logInController.services}" var="service">
-                                <h:column>
-                                    <f:facet name="header">Name</f:facet>
-                                    <h:inputText value="#{service.name}"/>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Reservation</f:facet>
-                                    <h:selectBooleanCheckbox value="#{service.reservation}" onclick="#"/>
-                                </h:column>
-                            </h:dataTable>
-                        </p:panelGrid>
-                        <h:form styleClass="form-group col-md-4">
-                            <h:commandLink value="Update data " styleClass="btn btn-warning"><span class="glyphicon glyphicon-upload"/></h:commandLink>
+                        <h:form prependId="false">
+                            <p:panelGrid id="companyInformationsGrid" columns="2">
+
+                                <!-- Podaci iz companies DB tabele.-->
+                                <h:outputLabel value="Company" class="col-md-4 control-label"/>
+                                <h:dataTable value="#{logInController.company}" var="company">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>
+                                        <h:inputText id="companyName" value="#{company.companyName}" required="true" requiredMessage="Company name is required." maxlength="70" >
+                                            <f:ajax event="blur" render="companyNameMessage"/>
+                                            <f:attribute name="message" value="Company Name can not be empty."/>
+                                            <f:validator validatorId="EmptyInputValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="companyNameMessage" class="label label-danger" for="companyName"/>
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Podaci iz companys_location DB tabele.-->
+                                <h:outputLabel value="Location" class="col-md-4 control-label"/>
+                                <h:dataTable value="#{logInController.companysLocation}" var="companysLocation">
+                                    <h:column>
+                                        <f:facet name="header">Address</f:facet>
+                                        <h:inputText value="#{companysLocation.address}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">City</f:facet>
+                                        <h:inputText value="#{companysLocation.city}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">ZIP code</f:facet>
+                                        <h:inputText value="#{companysLocation.zipCode}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">State</f:facet>
+                                        <h:inputText value="#{companysLocation.state}"/>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Podaci iz companys_contacts DB tabele.-->
+                                <h:outputLabel value="Contacts" class="col-md-4 control-label"/>
+                                <h:dataTable value="#{logInController.companysContact}" var="companysContact">
+                                    <h:column>
+                                        <f:facet name="header">Phone</f:facet>
+                                        <h:inputText value="#{companysContact.phone}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Email</f:facet>
+                                        <h:inputText id="companyEmail" value="#{companysContact.email}" required="true" requiredMessage="E-Mail is required.">
+                                            <f:ajax event="blur" render="companyEmailMessage"/>
+                                            <f:validator validatorId="EmailValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="companyEmailMessage" class="label label-danger" for="companyEmail" />
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Podaci iz owners DB tabele.-->
+                                <h:outputLabel value="Owner" class="col-md-4 control-label"/>
+                                <h:dataTable value="#{logInController.owner}" var="owner">
+                                    <h:column>
+                                        <f:facet name="header">First Name</f:facet>
+                                        <h:inputText id="firstName" value="#{owner.firstName}" required="true" requiredMessage="First name is required." maxlength="70">
+                                            <f:ajax event="blur" render="firstNameMessage"/>
+                                            <f:attribute name="message" value="First name can not be empty."/>
+                                            <f:validator validatorId="EmptyInputValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="firstNameMessage" class="label label-danger" for="firstName" />
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Last Name</f:facet>
+                                        <h:inputText id="lastName" value="#{owner.lastName}" required="true" requiredMessage="Last name is required." maxlength="70">
+                                            <f:ajax event="blur" render="lastNameMessage"/>
+                                            <f:attribute name="message" value="Last name can not be empty."/>
+                                            <f:validator validatorId="EmptyInputValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="lastNameMessage" class="label label-danger" for="lastName"/>
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Username</f:facet>
+                                        <h:inputText id="adminUserName" value="#{owner.username}" required="true" requiredMessage="Username is required." maxlength="70">
+                                            <f:ajax event="blur" render="adminUserNameMessage"/>
+                                            <f:attribute name="message" value="Username can not be empty."/>
+                                            <f:validator validatorId="EmptyInputValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="adminUserNameMessage" class="label label-danger" for="adminUserName"/>
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Password</f:facet>
+                                        <h:inputText id="adminPassword" value="#{owner.password}" required="true" requiredMessage="Password is required." maxlength="50">
+                                            <f:ajax event="blur" render="adminPasswordMessage"/>
+                                            <f:attribute name="message" value="Invalid Password."/>
+                                            <f:validator validatorId="EmptyInputValidator"/>
+                                            <f:validator validatorId="ShortPasswordValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="adminPasswordMessage" class="label label-danger" for="adminPassword"/>
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Podaci iz owners_contacts DB tabele.-->
+                                <h:outputLabel value="Owner Contacts" class="col-md-4 control-label"/>
+                                <h:dataTable value="#{logInController.ownersContacts}" var="ownerContact">
+                                    <h:column>
+                                        <f:facet name="header">Phone</f:facet>
+                                        <h:inputText value="#{ownerContact.phone}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Email</f:facet>
+                                        <h:inputText id="adminEmail" value="#{ownerContact.email}" required="true" requiredMessage="E-Mail is required.">
+                                            <f:ajax event="blur" render="adminEmailMessage"/>
+                                            <f:validator validatorId="EmailValidator"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="adminEmailMessage" class="label label-danger" for="adminEmail"/>
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Podaci iz agents DB tabele.-->
+                                <h:outputLabel value="Agents" class="col-md-4 control-label"/>
+                                <h:dataTable id="agentsTable" value="#{logInController.agents}" var="agent">
+                                    <h:column>
+                                        <f:facet name="header">First Name</f:facet>
+                                        <h:inputText id="agentFirstName" value="#{agent.firstName}" required="true" requiredMessage="First Name is required.">
+                                            <f:ajax event="blur" render="agentFirstNameMessage"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="agentFirstNameMessage" for="agentFirstName" class="label label-danger"/>
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Last Name</f:facet>
+                                        <h:inputText id="agentLastName" value="#{agent.lastName}" required="true" requiredMessage="Last Name is required.">
+                                            <f:ajax event="blur" render="agentLastNameMessage"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="agentLastNameMessage" for="agentLastName" class="label label-danger"/>
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Phone</f:facet>
+                                        <h:inputText value="#{agent.phone}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Email</f:facet>
+                                        <h:inputText id="agentEmail" value="#{agent.email}" required="true" requiredMessage="Email is required.">
+                                            <f:ajax event="blur" render="agentEmailMessage"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="agentEmailMessage" for="agentEmail" class="label label-danger"/>
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header"></f:facet>
+                                        <!-- Render atribut ima vrednost ID-a panelGroup/Grid-a, koji okruzuje tabelu, ili ID same tabele, proveriti koja opcija funkcionise. -->
+                                        <h:commandLink value="Delete " action="#{logInController.deleteAgent(agent)}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/>
+                                            <f:ajax render="companyInformationsGrid"/>
+                                        </h:commandLink>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Button za dodavanje novog agenta, h:outputLabel sluzi samo da bi popunili 1. celiju p:panelGrid-a.-->
+                                <h:outputLabel value=""/>
+                                <h:commandLink value="Add new agent " onclick="showAgentsPopupWin(); return false;" styleClass="btn btn-warning"><span class="glyphicon glyphicon-user"/></h:commandLink>
+
+                                <!-- Podaci iz company_order DB tabele.-->
+                                <h:outputLabel value="Company orders" class="col-md-4 control-label"/>
+                                <h:dataTable id="companyOrdersTable" value="#{logInController.companyOrders}" var="order" border="1">
+                                    <h:column>
+                                        <f:facet name="header">Creation date</f:facet>
+                                            #{order.dateCreated}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Amount</f:facet>
+                                            #{order.amount}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">URL</f:facet>
+                                            #{order.url}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Reminder [h]</f:facet>
+                                        <h:inputText id="reminder" value="#{order.notification}" size="1" title="Valid values are from 1 to 24. If you enter 0, reminder will not be sent."
+                                                     required="true" requiredMessage="Valid values are 1 - 24. If you enter 0, reminder will not be sent." validatorMessage="Valid values are 1 - 24. If you enter 0, reminder will not be sent.">
+                                            <f:validateLongRange minimum="0" maximum="24"/>
+                                            <f:ajax event="blur" render="reminderMessage"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="reminderMessage" for="reminder" class="label label-danger"/>
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Podaci iz services DB tabele.-->
+                                <h:outputLabel value="Services" class="col-md-4 control-label"/>
+                                <h:dataTable id="servicesTable" value="#{logInController.services}" var="service">
+                                    <h:column>
+                                        <f:facet name="header">Name</f:facet>
+                                        <h:inputText id="serviceName" value="#{service.name}" required="true" requiredMessage="Name is required.">
+                                            <f:ajax event="blur" render="serviceNameMessage"/>
+                                        </h:inputText>
+                                        <div>
+                                            <h:message id="serviceNameMessage" for="serviceName" class="label label-danger"/>
+                                        </div>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Reservation</f:facet>
+                                        <h:selectBooleanCheckbox value="#{service.reservation}" onclick="#"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header"></f:facet>
+                                        <div styleClass="form-group col-md-4 deleteButtonForm">
+                                            <h:commandLink value="Delete " action="#{logInController.deleteService(service)}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/>
+                                                <f:ajax render="companyInformationsGrid"/>
+                                            </h:commandLink>
+                                        </div>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Button za dodavanje novih servisa, h:outputLabel sluzi samo da bi popunili 1. celiju p:panelGrid-a.-->
+                                <h:outputLabel value=""/>
+                                <h:commandLink value="Add new service " onclick="showServicePopupWin(); return false;" styleClass="btn btn-warning"><span class="glyphicon glyphicon-tasks"/></h:commandLink>
+
+                                <!-- Button za submit-ovanje cele forme.-->
+                                <h:commandLink value="Hide informations " onclick="return hideCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>    
+                                <h:commandLink value="Update data " action="#{logInController.updateDatabase()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-upload"/>
+                                    <f:ajax render="companyInformationsGrid"/>
+                                </h:commandLink>
+                            </p:panelGrid>
                         </h:form>
                     </div>
                     <br/>
+
                     <div id="clientOrdersDiv">
-                        <p:panelGrid id="clientOrdersGrid" columns="2">
-                            <h:outputLabel value="Client orders" class="col-md-4 control-label"/>
-                            <h:dataTable id="clientOrdersTable" value="#{logInController.clientOrderPresenterList}" var="clientOrderPresenter" rowClasses="evenRows, oddRows">
-                                <h:column>
-                                    <f:facet name="header">Client Name</f:facet>
-                                        #{clientOrderPresenter.clientName}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Ordered Service</f:facet>
-                                        #{clientOrderPresenter.orderedService}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Agent</f:facet>
-                                        #{clientOrderPresenter.agent}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Reservation Date</f:facet>
-                                        #{clientOrderPresenter.reservationDate}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Reservation Time</f:facet>
-                                        #{clientOrderPresenter.reservationTime}
-                                </h:column>
-                                <h:column>
+                        <h:form>
+                            <p:dataTable id="clientOrdersTable" value="#{logInController.clientOrderPresenterList}" var="clientOrderPresenter"
+                                         filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrderTable">
+                                <!--TODO Postaviti naziv tabele na centar.-->
+                                <f:facet name="header">
+                                    Client orders
+                                </f:facet>
+                                <p:column headerText="ID" sortBy="#{clientOrderPresenter.id}" filterBy="#{clientOrderPresenter.id}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.id}"/>
+                                </p:column>
+                                <p:column headerText="Client Name" sortBy="#{clientOrderPresenter.clientName}" filterBy="#{clientOrderPresenter.clientName}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.clientName}"/>
+                                </p:column>
+                                <p:column headerText="Service" sortBy="#{clientOrderPresenter.orderedService}" filterBy="#{clientOrderPresenter.orderedService}" filterMatchMode="contains">
+                                    <!-- Ovo bi koristili ako bi filterMatchMode atribut imao vrednost "in".
+                                    <f:facet name="filter">
+                                        <p:selectCheckboxMenu label="Service" onchange="PF('clientOrderTable').filter()" panelStyle="width:150px" scrollHeight="150">
+                                            <f:selectItems value="#{logInController.servicesNames}"/>
+                                        </p:selectCheckboxMenu>
+                                    </f:facet>-->
+                                    <h:outputText value="#{clientOrderPresenter.orderedService}"/>
+                                </p:column>
+                                <p:column headerText="Agent" sortBy="#{clientOrderPresenter.agent}" filterBy="#{clientOrderPresenter.agent}" filterMatchMode="in">
+                                    <f:facet name="filter">
+                                        <!--TODO Iskljuciti select all checkbox iz padajuce liste.-->
+                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrderTable').filter()">
+                                            <f:selectItems value="#{logInController.agentsNames}"/>
+                                        </p:selectCheckboxMenu>
+                                    </f:facet>
+                                    <h:outputText value="#{clientOrderPresenter.agent}"/>
+                                </p:column>
+                                <p:column headerText="Client Phone" sortBy="#{clientOrderPresenter.clientPhone}" filterBy="#{clientOrderPresenter.clientPhone}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.clientPhone}"/>
+                                </p:column>
+                                <p:column headerText="Client Email" sortBy="#{clientOrderPresenter.clientEmail}" filterBy="#{clientOrderPresenter.clientEmail}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.clientEmail}"/>
+                                </p:column>
+                                <p:column headerText="Reservation Date" sortBy="#{clientOrderPresenter.reservationDate}">
+                                    <!-- TODO Napraviti pretrazivanje po datumu.-->
+                                    <h:outputText value="#{clientOrderPresenter.reservationDate}"/>
+                                </p:column>
+                                <p:column headerText="Reservation Time" sortBy="#{clientOrderPresenter.reservationTime}">
+                                    <h:outputText value="#{clientOrderPresenter.reservationTime}"/>
+                                </p:column>
+                                <p:column>
                                     <f:facet name="header"></f:facet>
-                                    <h:form styleClass="form-group col-md-4 deleteButtonForm">
-                                        <h:commandLink value="Delete " styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/></h:commandLink>
-                                    </h:form>
-                                </h:column>
-                            </h:dataTable>
-                        </p:panelGrid>
+                                    <span class="form-group col-md-4 deleteButtonForm">
+                                        <h:commandLink value="Delete " action="#{logInController.deleteClientOrderFromTable(clientOrderPresenter)}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/>
+                                            <f:ajax render="clientOrdersTable"/>
+                                        </h:commandLink>
+                                    </span>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
                     </div>
+
+                    <!--Popup koji se pojavi kada se dodaje novi agent.-->
+                    <div id="agentPopupBack">
+                        <div id="agentPopup">
+                            <h:form id="agentForm">
+                                <h2>Enter your agents</h2>
+                                <h:selectOneRadio value="#{agentInput.inputType}">
+                                    <f:selectItem itemValue="oneByOne" itemLabel="One by one:"/>
+                                    <f:selectItem itemValue="template" itemLabel="By template:"/>
+                                    <f:ajax event="change" render="oneByOneForm templateForm"/>
+                                </h:selectOneRadio>
+                                <h:panelGrid id="oneByOneForm" columns="2" >
+                                    <!--Agent First name text input.-->
+                                    <h:outputLabel id="agent_first_name_label" value="First Name" class="previewElement"/>
+                                    <h:inputText id="agent_first_name" pt:placeholder="Agent's First Name" value="#{logInController.tempAgentForAdding.firstName}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="First Name is required.">
+                                        <f:ajax event="blur" render="agent_first_name_message"/>
+                                    </h:inputText>
+                                    <!-- h:inputHidden koristimo samo da bi necim popunili 1. celiju u redu-->
+                                    <h:inputHidden/>
+                                    <h:message id="agent_first_name_message" for="agent_first_name" class="label label-danger"/>
+
+                                    <!--Agent Last name text input.-->
+                                    <h:outputLabel id="agent_last_name_label" value="Last Name" class="previewElement"/>
+                                    <h:inputText id="agent_last_name" pt:placeholder="Agents's Last Name" value="#{logInController.tempAgentForAdding.lastName}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="Last Name is required.">
+                                        <f:ajax event="blur" render="agent_last_name_message"/>
+                                    </h:inputText>
+                                    <h:inputHidden/>
+                                    <h:message id="agent_last_name_message" for="agent_last_name" class="label label-danger"/>
+
+                                    <!--Agent Phone text input.-->
+                                    <h:outputLabel id="agent_phone_label" value="Phone #" class="previewElement"/>
+                                    <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" value="#{logInController.tempAgentForAdding.phone}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
+                                    <h:inputHidden/>
+                                    <h:inputHidden/>
+
+                                    <!--Agent Email text input.-->
+                                    <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
+                                    <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" value="#{logInController.tempAgentForAdding.email}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="E-mail is required.">
+                                        <f:ajax event="blur" render="agent_email_message"/>
+                                        <f:validator validatorId="EmailValidator"/>
+                                    </h:inputText>
+                                    <h:inputHidden/>
+                                    <h:message id="agent_email_message" for="agent_email" class="label label-danger"/>
+
+                                    <!--Button koji upisuje nove agente u listu a zatim i u bazu.-->
+                                    <h:commandLink id="agentWriteButton" onclick="return agentInfoValidation()" styleClass="btn btn-warning" disabled="#{agentInput.inputType != 'oneByOne'}" action="#{logInController.addAgent()}">Write <span class="glyphicon glyphicon-ok"></span>
+                                        <f:ajax render="agent_first_name agent_last_name agent_phone agent_email" execute="@form"/>
+                                    </h:commandLink>
+                                </h:panelGrid>
+
+                                <!--Deo koji se tice template upload agenata.-->
+                                <p:panelGrid id="templateForm">
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <ol>
+                                                <li>Download MS Office Excel.</li>
+                                                <li>Fill it according to it's form and save it.</li>
+                                                <li>Upload saved file.</li>
+                                            </ol>
+                                        </p:column>
+                                    </p:row>
+                                    <!-- TODO Implementirati akcije DL i UL button-a-->
+                                    <p:row id="dlButtonRow">
+                                        <p:column>
+                                            <h:commandLink id="agentDownloadTemplateButton" class="btn btn-warning" onclick="agentButtonDownload()" disabled="#{agentInput.inputType != 'template'}">Download <span class="glyphicon glyphicon-download-alt"></span></h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row id="ulButtonRow">
+                                        <p:column>
+                                            <h:commandLink id="agentUploadTemplateButton" class="btn btn-warning" onclick="agentButtonUpload()" disabled="#{agentInput.inputType != 'template'}">Upload <span class="glyphicon glyphicon-cloud-upload"></span></h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+
+                                <!-- Ok i Cancle dugmad na dnu popup prozora. Oba dugmeta iskljucuju popup. Ok dugme, pored toga, dodaje novi red
+                                u tabelu agenata ali bez ucitavanja cele strane (render-uje se samo tabela). Ako smo upisali neke agente sa "Write"
+                                i pritisnuli Cancle, tabela sa agentima se nece render-ovati ali ce se nakon ponovnong ucitavanja stranice, u tabelu 
+                                agenata, dodati agenti koji su uneti sa "Write". -->
+                                <div align="center">
+                                    <h:commandLink id="agentOkButton" action="#{logInController.updateAgents()}" onclick="hidePopupWin('agentPopupBack');" class="btn btn-warning">OK <span class="glyphicon glyphicon-ok"></span>
+                                        <f:ajax event="action" execute="@form" render="agentsTable"/>
+                                    </h:commandLink>
+                                    <h:commandLink id="agentCancleButton" onclick="hidePopupWin('agentPopupBack'); return false;" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!--Popup koji se pojavi kada se dodaje novi servis.-->
+                    <div id="servicesPopupBack">
+                        <div id="servicesPopup">
+                            <h:form id="servicesForm">
+                                <h2>Enter your services</h2>
+                                <p:panelGrid id="servicesOneByOneForm">
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputLabel id="service_name_label" value="Service Name" styleClass="previewElement"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:inputText id="service_name" pt:placeholder="Enter Service Name" value="#{logInController.tempServiceForAdding.name}" required="true" requiredMessage="Service Name is required.">
+                                                <f:ajax event="blur" render="service_name_message"/>
+                                            </h:inputText>
+                                            <h:inputHidden/>
+                                            <div>
+                                                <h:message id="service_name_message" for="service_name" class="label label-danger"/>
+                                            </div>
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
+                                        <p:column colspan="2">
+                                            <h:outputLabel id="service_checkbox_label" value="This service need reservation system" styleClass="previewElement"/>
+                                            <h:selectBooleanCheckbox id="service_checkbox" value="#{logInController.tempServiceForAdding.reservation}"/>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column>
+                                            <h:outputLabel id="order_name_label" value="Order Name" styleClass="previewElement"/>
+                                        </p:column>
+                                        <p:column>
+                                            <h:selectOneMenu id="orderList" value="#{logInController.tempServiceForAdding.companyOrderId}" converter="omnifaces.SelectItemsConverter">
+                                                <f:selectItems value="#{logInController.companyOrders}" var="companyOrders" itemLabel="#{companyOrders.url.substring(51)}" itemValue="#{companyOrders}"/>
+                                            </h:selectOneMenu>
+                                        </p:column>
+                                    </p:row>
+                                    <p:row style="text-align: center;">
+                                        <p:column colspan="2">
+                                            <h:commandLink id="serviceWriteButton" styleClass="btn btn-warning" action="#{logInController.addService()}">Write <span class="glyphicon glyphicon-ok"></span>
+                                                <f:ajax render="service_name service_checkbox" execute="@form"/>
+                                            </h:commandLink>
+                                        </p:column>
+                                    </p:row>
+                                </p:panelGrid>
+                                <div align="center">
+                                    <p:panelGrid>
+                                        <p:row>
+                                            <p:column>
+                                                <h:commandLink id="serviceOkButton" value="OK " styleClass="btn btn-warning" onclick="hidePopupWin('servicesPopupBack');" action="#"><span class="glyphicon glyphicon-ok"></span>
+                                                    <f:ajax render="servicesTable"/>
+                                                </h:commandLink>
+                                            </p:column>
+                                            <p:column>
+                                                <h:commandLink id="serviceCancleButton" value="Cancel " styleClass="btn btn-warning" onclick="hidePopupWin('servicesPopupBack'); return false;"><span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+
                 </div>
             </ui:define>
         </ui:composition>

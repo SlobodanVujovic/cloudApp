@@ -92,12 +92,6 @@ function showReminderPopupWin(checkboxId) {
 }
 
 // Koristi se samo na ordering-service-type.xhtml strani.
-function hidePopupWin(winId) {
-    var inputToShow = document.getElementById(winId);
-    inputToShow.style.display = "none";
-}
-
-// Koristi se samo na ordering-service-type.xhtml strani.
 function uncheckElement(checkboxId) {
     var checkbox = document.getElementById(checkboxId);
     $(checkbox).prop("checked", false);
@@ -227,19 +221,24 @@ function showPopupWin(checkboxId) {
 // ==============================================================================================================
 
 // Odavde krece kod koji se aktivno koristi u aplikaciji.
+function hidePopupWin(winId) {
+    var inputToShow = document.getElementById(winId);
+    inputToShow.style.display = "none";
+}
+
 function showAgentsPopupWin() {
     var inputToShow = document.getElementById("agentPopupBack");
-        inputToShow.style.display = "block";
+    inputToShow.style.display = "block";
 }
 
 function hideOrderingInputFields() {
-        document.getElementById("company_name").style.display = "none";
-        document.getElementById("phone").style.display = "none";
-        document.getElementById("email").style.display = "none";
-        document.getElementById("address").style.display = "none";
-        document.getElementById("city").style.display = "none";
-        document.getElementById("zip").style.display = "none";
-        document.getElementById("state").style.display = "none";
+    document.getElementById("company_name").style.display = "none";
+    document.getElementById("phone").style.display = "none";
+    document.getElementById("email").style.display = "none";
+    document.getElementById("address").style.display = "none";
+    document.getElementById("city").style.display = "none";
+    document.getElementById("zip").style.display = "none";
+    document.getElementById("state").style.display = "none";
 }
 
 function showOrderingInputFields() {
@@ -300,7 +299,7 @@ function showLessServices() {
     return false;
 }
 
-function defineServicesValidation(){
+function defineServicesValidation() {
     var areServicesDefined = false;
     var serviceIds = ["service_name_1", "service_name_2", "service_name_3"];
     for (var i = 0; i < serviceIds.length; i++) {
@@ -309,9 +308,9 @@ function defineServicesValidation(){
             areServicesDefined = true;
         }
     }
-    if(!areServicesDefined){
+    if (!areServicesDefined) {
         alert("Please define at least one Service Name.");
-    } else{
+    } else {
         definedServiceNames();
         definedReservations();
     }
@@ -343,16 +342,16 @@ function definedReservations() {
     document.getElementById("hiddenInput2").value = servicesWithReservation;
 }
 
-function companyInfoValidation(){
+function companyInfoValidation() {
     var isInputValid = true;
     var companyName = document.getElementById("company_name");
-    if(companyName.value === ""){
+    if (companyName.value === "") {
         alert("Please enter Company Name.");
         isInputValid = false;
         return isInputValid;
     }
     var companyEmail = document.getElementById("email");
-    if(companyEmail.value === ""){
+    if (companyEmail.value === "") {
         alert("Please enter E-Mail.");
         isInputValid = false;
         return isInputValid;
@@ -360,44 +359,113 @@ function companyInfoValidation(){
     return isInputValid;
 }
 
-function administratorInfoValidation(){
+function agentInfoValidation() {
+    var isInputValid = true;
+    var firstName = document.getElementById("agentForm:agent_first_name");
+    if (firstName.value === "") {
+        alert("Please enter First Name.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var lastName = document.getElementById("agentForm:agent_last_name");
+    if (lastName.value === "") {
+        alert("Please enter Last Name.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    var agentEmail = document.getElementById("agentForm:agent_email");
+    if (agentEmail.value === "") {
+        alert("Please enter E-Mail.");
+        isInputValid = false;
+        return isInputValid;
+    }
+    return isInputValid;
+}
+
+function administratorInfoValidation() {
     var isInputValid = true;
     var firstName = document.getElementById("first_name");
-    if(firstName.value === ""){
+    if (firstName.value === "") {
         alert("Please enter First Name.");
         isInputValid = false;
         return isInputValid;
     }
     var lastName = document.getElementById("last_name");
-    if(lastName.value === ""){
+    if (lastName.value === "") {
         alert("Please enter Last Name.");
         isInputValid = false;
         return isInputValid;
     }
     var username = document.getElementById("user_name");
-    if(username.value === ""){
+    if (username.value === "") {
         alert("Please enter Username.");
         isInputValid = false;
         return isInputValid;
     }
     var password = document.getElementById("password");
-    if(password.value === ""){
+    if (password.value === "") {
         alert("Please enter Password.");
         isInputValid = false;
         return isInputValid;
     }
     var confirmPassword = document.getElementById("confirm_password");
-    if(confirmPassword.value === ""){
+    if (confirmPassword.value === "") {
         alert("Please enter Confirm Password.");
         isInputValid = false;
         return isInputValid;
     }
     var email = document.getElementById("email");
-    if(email.value === ""){
+    if (email.value === "") {
         alert("Please enter E-Mail.");
         isInputValid = false;
         return isInputValid;
     }
-    
-    
+}
+
+//Metod koji se poziva da bi se prikazao upit o notifikaciji.
+function showNotificationCheckbox(checkboxId) {
+    var hiddenInput3 = document.getElementById("hiddenInput3");
+//    Iz polja koje cuva broj cekiranih servisa sa rezervacijama uzimamo vrednost. Ovo radimo da bi u slucaju kada,
+//    nakon submit-a stranice, JSF validator vrati gresku, da ne bi izgubili broj cekiranih servisa sa rezervacijama.
+    var numberOfServicesWithReservation = hiddenInput3.value;
+    var serviceCheckbox = document.getElementById(checkboxId);
+    var notificationCheckbox = document.getElementById("notificationCheckbox");
+//Zavisno da li je rezervacija za servis cekirana ili ne, menjamo broj servisa sa rezervacijom.
+    if (serviceCheckbox.checked) {
+        ++numberOfServicesWithReservation;
+//        Nakon promene broja, vrednost cuvamo u hiddenInput3 polju.
+        hiddenInput3.value = numberOfServicesWithReservation;
+    } else {
+        --numberOfServicesWithReservation;
+        hiddenInput3.value = numberOfServicesWithReservation;
+    }
+    console.log(numberOfServicesWithReservation);
+    var notificationElement = document.getElementById("notificationGrid");
+//    if ce proci ako je broj servisa veci od 0.
+    if (numberOfServicesWithReservation > 0) {
+//        Proverimo da li je notifikacija vec vidljiva.
+        var notificationIsVisible = $(notificationElement).is(":visible");
+//        Ako nije prikazemo je i 
+        if (!notificationIsVisible) {
+            $(notificationElement).slideDown(500, function () {
+                notificationElement.style.display = "block";
+            });
+        }
+//        A ako je broj servisa sa rezervacijom = 0
+    } else {
+//        proverimo da li je notifikacija vec prikazana
+        var notificationIsVisible = $(notificationElement).is(":visible");
+//       i ako jeste sklonimo je.
+        if (notificationIsVisible) {
+            $(notificationElement).slideUp(500, function () {
+                notificationElement.style.display = "none";
+            });
+//              Kada sklanjamo notifikaciju 1. proverimo da li je notification checkbox cekiran i ako jeste pozivamo
+//              click() metod da bi simulirali klik na checkbox-u, odnosno da bi ga rascekirali. Time se notification
+//              input disable-uje i vrednost se nece slati bean-u.
+            if(notificationCheckbox.checked){
+                notificationCheckbox.click();
+            }
+        }
+    }
 }

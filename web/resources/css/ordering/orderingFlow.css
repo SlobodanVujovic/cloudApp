@@ -81,7 +81,7 @@ article{
 #calendarPopup, #timePopup, #agentPopup, #reminderPopup{
     position: absolute; 
     left: 50%;
-    top: 17%;
+    top: 10%;
     margin-left: -202px;
 }
 
@@ -173,4 +173,30 @@ select:disabled{
 
 .defineServicesButtons a{
     margin-right: 10px;
+}
+
+#notificationGrid {
+    margin-left: 410px;
+    display: none;
+}
+
+#notificationGrid tr{
+    background-color: transparent;
+    border-width: 0px;
+}
+
+#notificationGrid td{
+    border-width: 0px;
+}
+
+#notificationGrid label{
+    padding-left: 0px;
+}
+
+#notificationGrid input[type="checkbox"]{
+    margin-left: 0px;
+}
+
+#notificationMessage{
+    margin-left: 688px;
 }

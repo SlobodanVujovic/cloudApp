@@ -48,12 +48,6 @@ public class Companies implements Serializable {
     @Column(name = "company_name")
     private String companyName;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
-    private List<CompanysLocation> companysLocationList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
-    private List<Owners> ownersList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
-    private List<CompanysContacts> companysContactsList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
     private List<Agents> agentsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
     private List<CompanyOrder> companyOrderList;
@@ -81,36 +75,14 @@ public class Companies implements Serializable {
     public String getCompanyName() {
         return companyName;
     }
-
+    
+    /* Ako se na stranici adminLoginPage.xhtml setuje prazno polje kao ime firme, polje ce biti prazno sve dok se vrednost ne
+    povuce ponovo iz baze jer se setuje vrednost polja u bean-u koji se onda ispisuje na stranici. Da se ovo ne bi 
+    desilo, zabranimo setovanje polja u bean-u ako je vrednost prazno*/    
     public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    @XmlTransient
-    public List<CompanysLocation> getCompanysLocationList() {
-        return companysLocationList;
-    }
-
-    public void setCompanysLocationList(List<CompanysLocation> companysLocationList) {
-        this.companysLocationList = companysLocationList;
-    }
-
-    @XmlTransient
-    public List<Owners> getOwnersList() {
-        return ownersList;
-    }
-
-    public void setOwnersList(List<Owners> ownersList) {
-        this.ownersList = ownersList;
-    }
-
-    @XmlTransient
-    public List<CompanysContacts> getCompanysContactsList() {
-        return companysContactsList;
-    }
-
-    public void setCompanysContactsList(List<CompanysContacts> companysContactsList) {
-        this.companysContactsList = companysContactsList;
+        if(!companyName.isEmpty()){
+            this.companyName = companyName;
+        }
     }
 
     @XmlTransient

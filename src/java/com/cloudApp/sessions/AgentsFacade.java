@@ -31,7 +31,7 @@ public class AgentsFacade extends AbstractFacade<Agents> {
     public AgentsFacade() {
         super(Agents.class);
     }
-    
+
     public List<Agents> getAgentsByCompanyId(Companies company) {
         TypedQuery<Agents> query = getEntityManager().createNamedQuery("Agents.findByCompanyId", Agents.class);
         query.setParameter("companyId", company);
