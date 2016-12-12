@@ -8,6 +8,7 @@ import com.cloudApp.entity.CompanysContacts;
 import com.cloudApp.entity.CompanysLocation;
 import com.cloudApp.entity.Owners;
 import com.cloudApp.entity.OwnersContacts;
+import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
@@ -17,6 +18,7 @@ import com.cloudApp.sessions.CompanysContactsFacade;
 import com.cloudApp.sessions.CompanysLocationFacade;
 import com.cloudApp.sessions.OwnersContactsFacade;
 import com.cloudApp.sessions.OwnersFacade;
+import com.cloudApp.sessions.ReservationsFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -35,7 +37,7 @@ import javax.inject.Named;
 @Named
 @SessionScoped
 public class LogInController implements Serializable {
-    
+
     private String username;
     private String password;
     private Companies company;
@@ -55,11 +57,11 @@ public class LogInController implements Serializable {
     private List<ClientOrderPresenter> filteredClientOrderPresenter;
     private UIComponent usernameComponent;
     private UIComponent passwordComponent;
-    
+
     public LogInController() {
-        
+
     }
-    
+
     @PostConstruct
     public void init() {
         tempAgentForAdding = new Agents();
@@ -67,7 +69,7 @@ public class LogInController implements Serializable {
         servicesNames = new HashSet<>();
         agentsNames = new HashSet<>();
     }
-    
+
     @Inject
     private AgentsFacade agentsFacade;
     @Inject
@@ -88,7 +90,9 @@ public class LogInController implements Serializable {
     private ClientOrdersFacade clientOrdersFacade;
     @Inject
     private CompaniesFacade companiesFacade;
-    
+    @Inject
+    private ReservationsFacade reservationsFacade;
+
     public String validateUsernameAndPassword() {
         owner = ownersFacade.getOwnerByUsername(username);
         if (owner != null) {
@@ -114,7 +118,7 @@ public class LogInController implements Serializable {
             return navigationController.goToLogin();
         }
     }
-    
+
     public void setClientOrderPresenters() {
         clientOrderPresenterList = new ArrayList<>();
         List<ClientOrders> tempClientOrders;
@@ -127,15 +131,16 @@ public class LogInController implements Serializable {
                 clientOrderPresenter.setOrderedService(tempClientOrder.getServicesId().getName());
                 clientOrderPresenter.setClientPhone(tempClientOrder.getClientPhone());
                 clientOrderPresenter.setClientEmail(tempClientOrder.getClientEmail());
-                
+
                 Agents tempAgent = agentsFacade.find(tempClientOrder.getAgentsId().getId());
                 clientOrderPresenter.setAgent(tempAgent.getFirstName() + " " + tempAgent.getLastName());
-                
-                if (tempClientOrder.getReservationDate() != null) {
+                // Za tempClientOrder izvucemo sve rezervacije koje postoje iz Reservations tabele.
+                Reservations tempReservation = reservationsFacade.getReservationByClientOrdersId(tempClientOrder);
+                if (tempReservation != null) {
                     // Podesavanje formata datuma da bi bilo citljivije.
                     DateFormat mediumDf = DateFormat.getDateInstance(DateFormat.MEDIUM);
-                    String reservationDate = mediumDf.format(tempClientOrder.getReservationDate());
-                    String reservationTime = tempClientOrder.getReservationTime();
+                    String reservationDate = mediumDf.format(tempReservation.getReservationDate());
+                    String reservationTime = tempReservation.getReservationTime();
                     clientOrderPresenter.setReservationDate(reservationDate);
                     clientOrderPresenter.setReservationTime(reservationTime);
                 }
@@ -143,7 +148,7 @@ public class LogInController implements Serializable {
             }
         }
     }
-    
+
     public void updateDatabase() {
         updateCompanyInfo();
         updateOwners();
@@ -154,61 +159,67 @@ public class LogInController implements Serializable {
         updateCompanyServices();
         updateCompanyOrder();
     }
-    
+
     public void deleteClientOrderFromTable(ClientOrderPresenter clientOrderPresenter) {
         int clientOrderId = clientOrderPresenter.getId();
         ClientOrders clientOrderForDelete = clientOrdersFacade.find(clientOrderId);
+// Prvo proverimo da li za clientOrderForDelete postoji rezervacija u reservations tabeli i ako postoji 1. nju brisemo
+// pa onda clientOrderForDelete.
+        Reservations reservationForDelete = reservationsFacade.getReservationByClientOrdersId(clientOrderForDelete);
+        if (reservationForDelete != null) {
+            reservationsFacade.remove(reservationForDelete);
+        }
         clientOrdersFacade.remove(clientOrderForDelete);
         clientOrderPresenterList.remove(clientOrderPresenter);
     }
-    
+
     public void deleteAgent(Agents agent) {
         int agentId = agent.getId();
         Agents agentForDelete = agentsFacade.find(agentId);
         agentsFacade.remove(agentForDelete);
         agents.remove(agent);
     }
-    
+
     public void deleteService(Services service) {
         int serviceId = service.getId();
         Services serviceForDelete = servicesFacade.find(serviceId);
         servicesFacade.remove(serviceForDelete);
         services.remove(service);
     }
-    
+
     public void addAgent() {
         tempAgentForAdding.setCompaniesId(company);
         agents.add(tempAgentForAdding);
         agentsFacade.create(tempAgentForAdding);
         tempAgentForAdding = new Agents();
     }
-    
+
     public void addService() {
         services.add(tempServiceForAdding);
         servicesFacade.create(tempServiceForAdding);
         tempServiceForAdding = new Services();
     }
-    
+
     public void updateCompanyInfo() {
         companiesFacade.edit(company);
     }
-    
+
     public void updateOwners() {
         ownersFacade.edit(owner);
     }
-    
+
     public void updateOwnersContacts() {
         ownersContactsFacade.edit(ownersContacts.get(0));
     }
-    
+
     public void updateCompanysLocation() {
         locationFacade.edit(companysLocation);
     }
-    
+
     public void updateCompanysContact() {
         contactsFacade.edit(companysContact);
     }
-    
+
     public void updateAgents() {
         for (int i = 0; i < agents.size(); i++) {
             if (agents.get(i).getId() != null) {
@@ -218,31 +229,31 @@ public class LogInController implements Serializable {
             }
         }
     }
-    
+
     public void updateCompanyServices() {
         for (int i = 0; i < services.size(); i++) {
             servicesFacade.edit(services.get(i));
         }
     }
-    
+
     public void updateCompanyOrder() {
         for (int i = 0; i < companyOrders.size(); i++) {
             orderFacade.edit(companyOrders.get(i));
         }
     }
-    
+
     public void setOwnersContacts() {
         ownersContacts = ownersContactsFacade.getOwnersContactsByOwnerId(owner);
     }
-    
+
     public void setCompanysLocation() {
         companysLocation = locationFacade.getLocationByCompanyId(company);
     }
-    
+
     public void setCompanysContact() {
         companysContact = contactsFacade.getContactByCompanyId(company);
     }
-    
+
     public void setAgents() {
         agents = agentsFacade.getAgentsByCompanyId(company);
         for (Agents tempAgent : agents) {
@@ -250,27 +261,27 @@ public class LogInController implements Serializable {
             agentsNames.add(agentName);
         }
     }
-    
+
     public Agents getTempAgentForAdding() {
         return tempAgentForAdding;
     }
-    
+
     public void setTempAgentForAdding(Agents tempAgentForAdding) {
         this.tempAgentForAdding = tempAgentForAdding;
     }
-    
+
     public Services getTempServiceForAdding() {
         return tempServiceForAdding;
     }
-    
+
     public void setTempServiceForAdding(Services tempServiceForAdding) {
         this.tempServiceForAdding = tempServiceForAdding;
     }
-    
+
     public void setCompanyOrder() {
         companyOrders = orderFacade.getOrdersByCompanyId(company);
     }
-    
+
     public void setCompanyServices() {
         for (CompanyOrder order : companyOrders) {
             services = servicesFacade.getServicesByCompanyOrderId(order);
@@ -279,89 +290,89 @@ public class LogInController implements Serializable {
             servicesNames.add(tempService.getName() + " ");
         }
     }
-    
+
     public UIComponent getUsernameComponent() {
         return usernameComponent;
     }
-    
+
     public void setUsernameComponent(UIComponent usernameComponent) {
         this.usernameComponent = usernameComponent;
     }
-    
+
     public UIComponent getPasswordComponent() {
         return passwordComponent;
     }
-    
+
     public void setPasswordComponent(UIComponent passwordComponent) {
         this.passwordComponent = passwordComponent;
     }
-    
+
     public String getUsername() {
         return username;
     }
-    
+
     public String getPassword() {
         return password;
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public List<ClientOrderPresenter> getClientOrderPresenterList() {
         return clientOrderPresenterList;
     }
-    
+
     public Companies getCompany() {
         return company;
     }
-    
+
     public CompanysLocation getCompanysLocation() {
         return companysLocation;
     }
-    
+
     public CompanysContacts getCompanysContact() {
         return companysContact;
     }
-    
+
     public Owners getOwner() {
         return owner;
     }
-    
+
     public List<OwnersContacts> getOwnersContacts() {
         return ownersContacts;
     }
-    
+
     public List<Agents> getAgents() {
         return agents;
     }
-    
+
     public Set<String> getAgentsNames() {
         return agentsNames;
     }
-    
+
     public List<CompanyOrder> getCompanyOrders() {
         return companyOrders;
     }
-    
+
     public List<Services> getServices() {
         return services;
     }
-    
+
     public Set<String> getServicesNames() {
         return servicesNames;
     }
-    
+
     public List<ClientOrderPresenter> getFilteredClientOrderPresenter() {
         return filteredClientOrderPresenter;
     }
-    
+
     public void setFilteredClientOrderPresenter(List<ClientOrderPresenter> filteredClientOrderPresenter) {
         this.filteredClientOrderPresenter = filteredClientOrderPresenter;
     }
-    
+
 }

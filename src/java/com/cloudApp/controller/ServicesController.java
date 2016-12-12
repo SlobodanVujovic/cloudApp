@@ -4,10 +4,12 @@ import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
+import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
+import com.cloudApp.sessions.ReservationsFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class ServicesController implements Serializable {
     private List<Agents> allAgents;
     private Agents selectedAgent;
     private ClientOrders clientOrder;
+    private Reservations reservation;
 
     public ServicesController() {
 
@@ -42,6 +45,7 @@ public class ServicesController implements Serializable {
     @PostConstruct
     public void init() {
         clientOrder = new ClientOrders();
+        reservation = new Reservations();
     }
 
     @Inject
@@ -52,6 +56,8 @@ public class ServicesController implements Serializable {
     private ServicesFacade servicesFacade;
     @Inject
     private AgentsFacade agentsFacade;
+    @Inject
+    private ReservationsFacade reservationsFacade;
 
     public void setCompanyOrder() {
         order = orderFacade.find(orderId);
@@ -86,7 +92,17 @@ public class ServicesController implements Serializable {
             clientOrder.setCompanyOrderId(order);
             clientOrder.setAgentsId(selectedAgent);
             clientOrderFacade.create(clientOrder);
+//            Proverimo da li servis zahteva rezervaciju.
+            if (tempCheckedService.getReservation()) {
+//                Ako zahteva, proverimo da li je setovani datum.
+                if (reservation.getReservationDate() != null) {
+//                    Ako jeste, upisemo rezervaciju u bazu.
+                    reservation.setClientOrdersId(clientOrder);
+                    reservationsFacade.create(reservation);
+                }
+            }
         }
+        reservation = new Reservations();
         clientOrder = new ClientOrders();
         return "";
     }
@@ -140,6 +156,14 @@ public class ServicesController implements Serializable {
 
     public ClientOrders getClientOrder() {
         return clientOrder;
+    }
+
+    public Reservations getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Reservations reservation) {
+        this.reservation = reservation;
     }
 
 }

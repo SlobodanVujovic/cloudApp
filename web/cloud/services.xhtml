@@ -50,8 +50,8 @@ racunara. -->
                         </div>
                         <div class="reservationDiv">
                             <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
-                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.clientOrder.reservationDate}" mindate="today" placeholder=" Pick Date"/>
-                            <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.clientOrder.reservationTime}" pt:placeholder=" Pick Time"/>
+                            <p:calendar id="reservation_date" class="reservationDate" value="#{servicesController.reservation.reservationDate}" mindate="today" placeholder=" Pick Date"/>
+                            <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.reservation.reservationTime}" pt:placeholder=" Pick Time"/>
 
                             <!-- Ako zelimo da napravimo vise JSF komponenti onda koristimo <c:forEach> tag. Atributu "items" dodeljujemo
                             kolekciju kroz koju ce se vrsiti iteracija pri kreiranju JSF komponenti. Atribut "var" predstavlja trenutni

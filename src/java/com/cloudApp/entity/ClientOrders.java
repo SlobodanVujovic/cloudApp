@@ -6,8 +6,9 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,11 +18,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,8 +37,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ClientOrders.findByClientName", query = "SELECT c FROM ClientOrders c WHERE c.clientName = :clientName"),
     @NamedQuery(name = "ClientOrders.findByClientPhone", query = "SELECT c FROM ClientOrders c WHERE c.clientPhone = :clientPhone"),
     @NamedQuery(name = "ClientOrders.findByClientEmail", query = "SELECT c FROM ClientOrders c WHERE c.clientEmail = :clientEmail"),
-    @NamedQuery(name = "ClientOrders.findByReservationDate", query = "SELECT c FROM ClientOrders c WHERE c.reservationDate = :reservationDate"),
-    @NamedQuery(name = "ClientOrders.findByReservationTime", query = "SELECT c FROM ClientOrders c WHERE c.reservationTime = :reservationTime"),
     @NamedQuery(name = "ClientOrders.findByCompanyOrderId", query = "SELECT c FROM ClientOrders c WHERE c.companyOrderId = :companyOrderId")})
 public class ClientOrders implements Serializable {
 
@@ -56,11 +55,8 @@ public class ClientOrders implements Serializable {
     @Size(max = 45)
     @Column(name = "client_email")
     private String clientEmail;
-    @Column(name = "reservation_date")
-    @Temporal(TemporalType.DATE)
-    private Date reservationDate;
-    @Column(name = "reservation_time")
-    private String reservationTime;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientOrdersId")
+    private List<Reservations> reservationsList;
     @JoinColumn(name = "agents_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Agents agentsId;
@@ -110,20 +106,13 @@ public class ClientOrders implements Serializable {
         this.clientEmail = clientEmail;
     }
 
-    public Date getReservationDate() {
-        return reservationDate;
+    @XmlTransient
+    public List<Reservations> getReservationsList() {
+        return reservationsList;
     }
 
-    public void setReservationDate(Date reservationDate) {
-        this.reservationDate = reservationDate;
-    }
-
-    public String getReservationTime() {
-        return reservationTime;
-    }
-
-    public void setReservationTime(String reservationTime) {
-        this.reservationTime = reservationTime;
+    public void setReservationsList(List<Reservations> reservationsList) {
+        this.reservationsList = reservationsList;
     }
 
     public Agents getAgentsId() {
@@ -178,9 +167,7 @@ public class ClientOrders implements Serializable {
                 + "clientName=" + clientName
                 + "clientPhone=" + clientPhone
                 + "clientEmail=" + clientEmail
-                + "reservationDate=" + reservationDate
-                + "reservationTime=" + reservationTime
                 + "agentsId=" + agentsId;
     }
-    
+
 }
