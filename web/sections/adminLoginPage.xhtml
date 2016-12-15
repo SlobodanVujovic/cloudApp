@@ -287,15 +287,19 @@
                                 <p:column headerText="Client Name" sortBy="#{clientOrderPresenter.clientName}" filterBy="#{clientOrderPresenter.clientName}" filterMatchMode="contains">
                                     <h:outputText value="#{clientOrderPresenter.clientName}"/>
                                 </p:column>
-                                <p:column headerText="Service" sortBy="#{clientOrderPresenter.orderedService}" filterBy="#{clientOrderPresenter.orderedService}" filterMatchMode="contains">
-                                    <!-- Ovo bi koristili ako bi filterMatchMode atribut imao vrednost "in".
+
+                                <!--Service kolona-->
+                                <p:column headerText="Service" sortBy="#{clientOrderPresenter.orderedService}" filterBy="#{clientOrderPresenter.orderedService}" filterMatchMode="in">
                                     <f:facet name="filter">
-                                        <p:selectCheckboxMenu label="Service" onchange="PF('clientOrderTable').filter()" panelStyle="width:150px" scrollHeight="150">
+                                        <!--TODO Iskljuciti select all checkbox iz padajuce liste.-->
+                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrderTable').filter()">
                                             <f:selectItems value="#{logInController.servicesNames}"/>
                                         </p:selectCheckboxMenu>
-                                    </f:facet>-->
+                                    </f:facet>
                                     <h:outputText value="#{clientOrderPresenter.orderedService}"/>
                                 </p:column>
+
+                                <!--Agent kolona-->
                                 <p:column headerText="Agent" sortBy="#{clientOrderPresenter.agent}" filterBy="#{clientOrderPresenter.agent}" filterMatchMode="in">
                                     <f:facet name="filter">
                                         <!--TODO Iskljuciti select all checkbox iz padajuce liste.-->
@@ -305,19 +309,29 @@
                                     </f:facet>
                                     <h:outputText value="#{clientOrderPresenter.agent}"/>
                                 </p:column>
+
+                                <!--Client Phone kolona-->
                                 <p:column headerText="Client Phone" sortBy="#{clientOrderPresenter.clientPhone}" filterBy="#{clientOrderPresenter.clientPhone}" filterMatchMode="contains">
                                     <h:outputText value="#{clientOrderPresenter.clientPhone}"/>
                                 </p:column>
+
+                                <!--Client Email kolona-->
                                 <p:column headerText="Client Email" sortBy="#{clientOrderPresenter.clientEmail}" filterBy="#{clientOrderPresenter.clientEmail}" filterMatchMode="contains">
                                     <h:outputText value="#{clientOrderPresenter.clientEmail}"/>
                                 </p:column>
+                                
+                                <!-- TODO Napraviti pretrazivanje po datumu.-->
+                                <!--Reservation Date kolona-->
                                 <p:column headerText="Reservation Date" sortBy="#{clientOrderPresenter.reservationDate}">
-                                    <!-- TODO Napraviti pretrazivanje po datumu.-->
                                     <h:outputText value="#{clientOrderPresenter.reservationDate}"/>
                                 </p:column>
+
+                                <!--Reservation Time kolona-->
                                 <p:column headerText="Reservation Time" sortBy="#{clientOrderPresenter.reservationTime}">
                                     <h:outputText value="#{clientOrderPresenter.reservationTime}"/>
                                 </p:column>
+
+                                <!--Kolona sa Delete button-om-->
                                 <p:column>
                                     <f:facet name="header"></f:facet>
                                     <span class="form-group col-md-4 deleteButtonForm">
@@ -326,6 +340,7 @@
                                         </h:commandLink>
                                     </span>
                                 </p:column>
+
                             </p:dataTable>
                         </h:form>
                     </div>

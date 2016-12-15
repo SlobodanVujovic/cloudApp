@@ -439,7 +439,7 @@ function showNotificationCheckbox(checkboxId) {
         --numberOfServicesWithReservation;
         hiddenInput3.value = numberOfServicesWithReservation;
     }
-    console.log(numberOfServicesWithReservation);
+    // console.log(numberOfServicesWithReservation);
     var notificationElement = document.getElementById("notificationGrid");
 //    if ce proci ako je broj servisa veci od 0.
     if (numberOfServicesWithReservation > 0) {

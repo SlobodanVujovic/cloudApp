@@ -287,7 +287,7 @@ public class LogInController implements Serializable {
             services = servicesFacade.getServicesByCompanyOrderId(order);
         }
         for (Services tempService : services) {
-            servicesNames.add(tempService.getName() + " ");
+            servicesNames.add(tempService.getName());
         }
     }
 

@@ -6,14 +6,12 @@
 package com.cloudApp.sessions;
 
 import com.cloudApp.entity.ClientOrders;
-import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.Reservations;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.xml.transform.Source;
 
 /**
  *
@@ -43,6 +41,13 @@ public class ReservationsFacade extends AbstractFacade<Reservations> {
         } else {
             return null;
         }
+    }
+
+    public List<Reservations> getReservationBySendingDateAndTime(String currentHour) {
+        TypedQuery<Reservations> query = em.createNamedQuery("Reservations.findBySendingDateAndTime", Reservations.class);
+        query.setParameter("sendingTime", currentHour);
+        List<Reservations> resultList = query.getResultList();
+        return resultList;
     }
 
 }

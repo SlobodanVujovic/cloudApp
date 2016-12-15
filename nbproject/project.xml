@@ -11,6 +11,10 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
+                    <file>${libs.JAVADB_DRIVER_LABEL.classpath}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
                     <file>${libs.OmniFaces-2.5.1.classpath}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
