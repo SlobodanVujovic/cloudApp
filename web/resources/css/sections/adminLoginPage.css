@@ -1,4 +1,4 @@
-#companyInformations, #servicesPopupBack{
+#companyInformations, #servicesPopupBack, #activityPopupBack{
     display: none;
 }
 
@@ -53,7 +53,7 @@ input[type="checkbox"]{
     float: left;
 }
 
-#servicesPopupBack{
+#servicesPopupBack, #activityPopupBack{
     width: 100%;
     height: 100%;
     opacity: 0.95;
@@ -65,14 +65,14 @@ input[type="checkbox"]{
     overflow:auto;
 }
 
-#servicesPopup{
+#servicesPopup, #activityPopup{
     position: absolute; 
     left: 50%;
     top: 17%;
     margin-left: -202px; 
 }
 
-#servicesForm{
+#servicesForm, #activityForm{
     max-width: 500px;
     min-width: 250px;
     padding: 10px 30px;
@@ -82,12 +82,16 @@ input[type="checkbox"]{
     background-color: whitesmoke;
 }
 
-#servicesForm\:serviceOkButton{
+#servicesForm\:serviceOkButton, #activityForm\:activityOkButton{
     padding-left: 24.273px;
     padding-right: 24.273px;
 }
 
-#servicesForm h2{
+#activityForm\:activityOkButton{
+    margin-right: 5px;
+}
+
+#servicesForm h2, #activityForm h4{
     text-align: center;
 }
 
@@ -128,4 +132,8 @@ input[type="checkbox"]{
 #agentForm\:agentOkButton{
     margin-right: 5px;
     width: 82px;
+}
+
+#activityForm\:activityList{
+    margin-bottom: 10px;
 }

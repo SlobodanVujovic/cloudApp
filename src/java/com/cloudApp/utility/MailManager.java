@@ -47,7 +47,7 @@ public class MailManager {
     public void getClientsMailList() {
 
         // TODO Izbaciti naredni red nakon testiranja.
-        currentHour = 12;
+        //currentHour = 12;
 
         // Trazimo listu rezervacija za koje treba poslati podsetnik dana kad se metod pokrece i sata koji
         // je jednak argumentu narednog metoda.
@@ -84,8 +84,8 @@ public class MailManager {
         }
     }
     
-    // TODO Podesiti minute = "5" nakon kraja testiranja.
-    @Schedule(minute = "23", hour = "*", dayOfWeek = "*", persistent = false)
+    // TODO Podesiti minute = "5,35" nakon kraja testiranja.
+    @Schedule(minute = "5,35", hour = "*", dayOfWeek = "*", persistent = false)
     public void sendNotifications() {
         currentHour = LocalTime.now().minusHours(1).getHour();
         getClientsMailList();

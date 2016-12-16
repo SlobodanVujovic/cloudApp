@@ -231,6 +231,11 @@ function showAgentsPopupWin() {
     inputToShow.style.display = "block";
 }
 
+function showActivityPopupWin() {
+    var inputToShow = document.getElementById("activityPopupBack");
+    inputToShow.style.display = "block";
+}
+
 function hideOrderingInputFields() {
     document.getElementById("company_name").style.display = "none";
     document.getElementById("phone").style.display = "none";

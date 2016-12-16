@@ -1,11 +1,13 @@
 package com.cloudApp.controller;
 
+import com.cloudApp.entity.Activity;
 import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
+import com.cloudApp.sessions.ActivityFacade;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
@@ -128,6 +130,9 @@ public class ServicesController implements Serializable {
                     // Vratimo u format koji prihvata baza (Date i String).
                     Date sendingDate = Date.from(sendingLocalDate.atStartOfDay(defaultZoneId).toInstant());
                     String sendingTime = sendingLocalTime.toString();
+                    // TODO Kada isti klijent naruci vise servisa onda za njega ima onoliko unosa u DB koliko je i servisa
+                    // narucio. Samim tim ce i dobiti onoliko obavestenja koliko je narucio servisa. Videti sta da se radi 
+                    // sa ovim.
                     reservation.setSendingDate(sendingDate);
                     reservation.setSendingTime(sendingTime);
                     reservation.setClientOrdersId(clientOrder);

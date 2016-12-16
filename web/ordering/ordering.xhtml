@@ -37,6 +37,18 @@
                                 </div>
                             </div>
 
+                            <!--Company activity input-->
+                            <div class="form-group">
+                                <h:outputLabel value="Company Activity" class="col-md-4 control-label"/>
+                                <div class="col-md-4 inputGroupContainer">
+                                    <div class="input-group">
+                                        <h:selectOneMenu id="activityList" value="#{companyController.selectedActivity}" converter="omnifaces.SelectItemsConverter">
+                                            <f:selectItems value="#{companyController.listOfActivities}" var="activity" itemLabel="#{activity.activity}" itemValue="#{activity}"/>
+                                        </h:selectOneMenu>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Phone text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Phone #" class="col-md-4 control-label"/>
@@ -157,7 +169,7 @@
                                     <h:inputText id="agent_phone" pt:placeholder="Agent's Phone" value="#{companyController.currentAgent.phone}" disabled="#{agentInput.inputType != 'oneByOne'}"/>
                                     <h:inputHidden/>
                                     <h:inputHidden/>
-                                    
+
                                     <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
                                     <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" value="#{companyController.currentAgent.email}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="E-mail is required.">
                                         <f:ajax event="blur" render="agent_email_message"/>
@@ -165,7 +177,7 @@
                                     </h:inputText>
                                     <h:inputHidden/>
                                     <h:message id="agent_email_message" for="agent_email" class="label label-danger"/>
-                                    
+
                                     <h:commandLink id="agentWriteButton" onclick="return agentInfoValidation()" disabled="#{agentInput.inputType != 'oneByOne'}" action="#{companyController.addNewAgent}" styleClass="btn btn-warning">Write <span class="glyphicon glyphicon-ok"></span>
                                         <f:ajax render="agent_first_name agent_last_name agent_phone agent_email" execute="@form"/>
                                     </h:commandLink>

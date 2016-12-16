@@ -1,8 +1,10 @@
 package com.cloudApp.controller;
 
+import com.cloudApp.entity.Activity;
 import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.Companies;
+import com.cloudApp.entity.CompanyActivities;
 import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.CompanysContacts;
 import com.cloudApp.entity.CompanysLocation;
@@ -10,9 +12,11 @@ import com.cloudApp.entity.Owners;
 import com.cloudApp.entity.OwnersContacts;
 import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
+import com.cloudApp.sessions.ActivityFacade;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
 import com.cloudApp.sessions.CompaniesFacade;
+import com.cloudApp.sessions.CompanyActivitiesFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
 import com.cloudApp.sessions.CompanysContactsFacade;
 import com.cloudApp.sessions.CompanysLocationFacade;
@@ -57,6 +61,10 @@ public class LogInController implements Serializable {
     private List<ClientOrderPresenter> filteredClientOrderPresenter;
     private UIComponent usernameComponent;
     private UIComponent passwordComponent;
+    private Set<CompanyActivities> setOfCompanyActivities;
+    private CompanyActivities tempCompanyActivitiesForAdding;
+    private List<Activity> listOfActivities;
+    private Activity choosenActivity;
 
     public LogInController() {
 
@@ -68,6 +76,7 @@ public class LogInController implements Serializable {
         tempServiceForAdding = new Services();
         servicesNames = new HashSet<>();
         agentsNames = new HashSet<>();
+        tempCompanyActivitiesForAdding = new CompanyActivities();
     }
 
     @Inject
@@ -92,6 +101,10 @@ public class LogInController implements Serializable {
     private CompaniesFacade companiesFacade;
     @Inject
     private ReservationsFacade reservationsFacade;
+    @Inject
+    private CompanyActivitiesFacade companyActivitiesFacade;
+    @Inject
+    private ActivityFacade activityFacade;
 
     public String validateUsernameAndPassword() {
         owner = ownersFacade.getOwnerByUsername(username);
@@ -99,6 +112,7 @@ public class LogInController implements Serializable {
             String resultPassword = owner.getPassword();
             if (resultPassword.equals(password)) {
                 company = owner.getCompaniesId();
+                setListOfCompanyActivities();
                 setOwnersContacts();
                 setCompanysLocation();
                 setCompanysContact();
@@ -187,6 +201,13 @@ public class LogInController implements Serializable {
         services.remove(service);
     }
 
+    public void deleteCompanyActivity(CompanyActivities companyActivity) {
+        if (setOfCompanyActivities.size() > 1) {
+            setOfCompanyActivities.remove(companyActivity);
+            companyActivitiesFacade.remove(companyActivity);
+        }
+    }
+
     public void addAgent() {
         tempAgentForAdding.setCompaniesId(company);
         agents.add(tempAgentForAdding);
@@ -226,6 +247,21 @@ public class LogInController implements Serializable {
                 agentsFacade.edit(agents.get(i));
             } else {
                 agentsFacade.create(agents.get(i));
+            }
+        }
+    }
+
+    public void updateActivity() {
+        tempCompanyActivitiesForAdding.setActivityId(choosenActivity);
+        tempCompanyActivitiesForAdding.setCompaniesId(company);
+
+        setOfCompanyActivities.add(tempCompanyActivitiesForAdding);
+        tempCompanyActivitiesForAdding = new CompanyActivities();
+        for (CompanyActivities tempCompanyActivity : setOfCompanyActivities) {
+            if (tempCompanyActivity.getId() != null) {
+                companyActivitiesFacade.edit(tempCompanyActivity);
+            } else {
+                companyActivitiesFacade.create(tempCompanyActivity);
             }
         }
     }
@@ -289,6 +325,10 @@ public class LogInController implements Serializable {
         for (Services tempService : services) {
             servicesNames.add(tempService.getName());
         }
+    }
+
+    public void setListOfCompanyActivities() {
+        setOfCompanyActivities = companyActivitiesFacade.getCompanyActivitiesByCompanyId(company);
     }
 
     public UIComponent getUsernameComponent() {
@@ -373,6 +413,23 @@ public class LogInController implements Serializable {
 
     public void setFilteredClientOrderPresenter(List<ClientOrderPresenter> filteredClientOrderPresenter) {
         this.filteredClientOrderPresenter = filteredClientOrderPresenter;
+    }
+
+    public Set<CompanyActivities> getSetOfCompanyActivities() {
+        return setOfCompanyActivities;
+    }
+
+    public List<Activity> getListOfActivities() {
+        listOfActivities = activityFacade.findAll();
+        return listOfActivities;
+    }
+
+    public Activity getChoosenActivity() {
+        return choosenActivity;
+    }
+
+    public void setChoosenActivity(Activity choosenActivity) {
+        this.choosenActivity = choosenActivity;
     }
 
 }

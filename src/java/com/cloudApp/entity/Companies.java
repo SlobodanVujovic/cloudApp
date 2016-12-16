@@ -51,6 +51,8 @@ public class Companies implements Serializable {
     private List<Agents> agentsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
     private List<CompanyOrder> companyOrderList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companiesId")
+    private List<CompanyActivities> companyActivitiesList;
 
     public Companies() {
     }
@@ -75,16 +77,16 @@ public class Companies implements Serializable {
     public String getCompanyName() {
         return companyName;
     }
-    
+
     /* Ako se na stranici adminLoginPage.xhtml setuje prazno polje kao ime firme, polje ce biti prazno sve dok se vrednost ne
     povuce ponovo iz baze jer se setuje vrednost polja u bean-u koji se onda ispisuje na stranici. Da se ovo ne bi 
-    desilo, zabranimo setovanje polja u bean-u ako je vrednost prazno*/    
+    desilo, zabranimo setovanje polja u bean-u ako je vrednost prazno*/
     public void setCompanyName(String companyName) {
-        if(!companyName.isEmpty()){
+        if (!companyName.isEmpty()) {
             this.companyName = companyName;
         }
     }
-
+    
     @XmlTransient
     public List<Agents> getAgentsList() {
         return agentsList;
@@ -93,14 +95,27 @@ public class Companies implements Serializable {
     public void setAgentsList(List<Agents> agentsList) {
         this.agentsList = agentsList;
     }
-
+    
     @XmlTransient
     public List<CompanyOrder> getCompanyOrderList() {
         return companyOrderList;
+
+
     }
 
     public void setCompanyOrderList(List<CompanyOrder> companyOrderList) {
         this.companyOrderList = companyOrderList;
+
+
+    }
+
+    @XmlTransient
+    public List<CompanyActivities> getCompanyActivitiesList() {
+        return companyActivitiesList;
+    }
+
+    public void setCompanyActivitiesList(List<CompanyActivities> companyActivitiesList) {
+        this.companyActivitiesList = companyActivitiesList;
     }
 
     @Override
@@ -127,5 +142,5 @@ public class Companies implements Serializable {
     public String toString() {
         return "com.cloudApp.entity.Companies[ id=" + id + " ]";
     }
-    
+
 }

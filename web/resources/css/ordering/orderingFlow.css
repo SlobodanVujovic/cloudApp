@@ -200,3 +200,8 @@ select:disabled{
 #notificationMessage{
     margin-left: 688px;
 }
+
+#activityList{
+    border-radius: 4px;
+    height: 34px;
+}

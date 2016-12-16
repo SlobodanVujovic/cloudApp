@@ -49,6 +49,26 @@
                                     </h:column>
                                 </h:dataTable>
 
+                                <!-- Podaci iz company_activities DB tabele.-->
+                                <h:outputLabel value="Company" class="col-md-4 control-label"/>
+                                <h:dataTable id="companyActivityTable" value="#{logInController.setOfCompanyActivities}" var="companyActivity">
+                                    <h:column>
+                                        <f:facet name="header">Activity</f:facet>
+                                            #{companyActivity.getActivityId().getActivity()}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header"></f:facet>
+                                        <!-- Render atribut ima vrednost ID-a panelGroup/Grid-a, koji okruzuje tabelu, ili ID same tabele, proveriti koja opcija funkcionise.--> 
+                                        <h:commandLink value="Delete " action="#{logInController.deleteCompanyActivity(companyActivity)}" onclick="return companyMustHaveAtLeastOneActivity()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/>
+                                            <f:ajax render="companyInformationsGrid"/>
+                                        </h:commandLink>
+                                    </h:column>
+                                </h:dataTable>
+
+                                <!-- Button za dodavanje novog activity-a kompanije, h:outputLabel sluzi samo da bi popunili 1. celiju p:panelGrid-a.-->
+                                <h:outputLabel value=""/>
+                                <h:commandLink value="Add new activity " onclick="showActivityPopupWin(); return false;" styleClass="btn btn-warning"><span class="glyphicon glyphicon-user"/></h:commandLink>
+
                                 <!-- Podaci iz companys_location DB tabele.-->
                                 <h:outputLabel value="Location" class="col-md-4 control-label"/>
                                 <h:dataTable value="#{logInController.companysLocation}" var="companysLocation">
@@ -319,7 +339,7 @@
                                 <p:column headerText="Client Email" sortBy="#{clientOrderPresenter.clientEmail}" filterBy="#{clientOrderPresenter.clientEmail}" filterMatchMode="contains">
                                     <h:outputText value="#{clientOrderPresenter.clientEmail}"/>
                                 </p:column>
-                                
+
                                 <!-- TODO Napraviti pretrazivanje po datumu.-->
                                 <!--Reservation Date kolona-->
                                 <p:column headerText="Reservation Date" sortBy="#{clientOrderPresenter.reservationDate}">
@@ -490,6 +510,27 @@
                                             </p:column>
                                         </p:row>
                                     </p:panelGrid>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!--Popup koji se pojavi kada se dodaje novi activity.-->
+                    <div id="activityPopupBack">
+                        <div id="activityPopup">
+                            <h:form id="activityForm">
+                                <h4>Choose new company activity</h4>
+                                <div class="input-group">
+                                    <h:selectOneMenu id="activityList" value="#{logInController.choosenActivity}" converter="omnifaces.SelectItemsConverter">
+                                        <f:selectItems value="#{logInController.listOfActivities}" var="activity" itemLabel="#{activity.activity}" itemValue="#{activity}"/>
+                                    </h:selectOneMenu>
+                                </div>
+
+                                <div align="center">
+                                    <h:commandLink id="activityOkButton" action="#{logInController.updateActivity()}" onclick="hidePopupWin('activityPopupBack');" class="btn btn-warning">OK <span class="glyphicon glyphicon-ok"></span>
+                                        <f:ajax event="action" execute="@form" render="companyActivityTable"/>
+                                    </h:commandLink>
+                                    <h:commandLink id="activityCancleButton" onclick="hidePopupWin('activityPopupBack'); return false;" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
                                 </div>
                             </h:form>
                         </div>
