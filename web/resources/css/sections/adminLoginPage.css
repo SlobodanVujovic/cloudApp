@@ -18,7 +18,7 @@
     border-color: transparent;
 }
 
-#clientOrdersTable td{
+#clientOrdersTableId td{
     border-right-width: 1px;
     border-right-color: rgb(128, 128, 128);
     border-right-style: solid;
@@ -34,7 +34,7 @@
 }
 
 #clientOrdersDiv{
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 #companyOrdersTable td{

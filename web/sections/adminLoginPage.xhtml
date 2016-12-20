@@ -293,11 +293,11 @@
                     </div>
                     <br/>
 
+                    <!--Podaci iz client_orders tabele.-->
                     <div id="clientOrdersDiv">
                         <h:form>
-                            <p:dataTable id="clientOrdersTable" value="#{logInController.clientOrderPresenterList}" var="clientOrderPresenter"
-                                         filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrderTable">
-                                <!--TODO Postaviti naziv tabele na centar.-->
+                            <p:dataTable id="clientOrdersTableId" value="#{logInController.clientOrderPresenterList}" var="clientOrderPresenter"
+                                         filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrdersWidgetVar">
                                 <f:facet name="header">
                                     Client orders
                                 </f:facet>
@@ -312,7 +312,7 @@
                                 <p:column headerText="Service" sortBy="#{clientOrderPresenter.orderedService}" filterBy="#{clientOrderPresenter.orderedService}" filterMatchMode="in">
                                     <f:facet name="filter">
                                         <!--TODO Iskljuciti select all checkbox iz padajuce liste.-->
-                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrderTable').filter()">
+                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()">
                                             <f:selectItems value="#{logInController.servicesNames}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>
@@ -323,7 +323,7 @@
                                 <p:column headerText="Agent" sortBy="#{clientOrderPresenter.agent}" filterBy="#{clientOrderPresenter.agent}" filterMatchMode="in">
                                     <f:facet name="filter">
                                         <!--TODO Iskljuciti select all checkbox iz padajuce liste.-->
-                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrderTable').filter()">
+                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()">
                                             <f:selectItems value="#{logInController.agentsNames}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>
@@ -355,9 +355,15 @@
                                 <p:column>
                                     <f:facet name="header"></f:facet>
                                     <span class="form-group col-md-4 deleteButtonForm">
-                                        <h:commandLink value="Delete " action="#{logInController.deleteClientOrderFromTable(clientOrderPresenter)}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/>
-                                            <f:ajax render="clientOrdersTable"/>
-                                        </h:commandLink>
+                                        <!-- TODO Kada klijent naruci servis i kada, nakon toga, vlasnik uradi refresh admin strane, ako odmah
+                                        nakon toga pritisne Delete, bilo kog input-a u client order tabeli, client order se nece obrisati, tek nakon
+                                        ponovnog klika na Delete, order ce se izbrisati. Nakon toga brisanje ide posle 1. klika.-->
+                                        
+                                        <!-- Obrati paznju kako je ubacena ikona u p:commandButton. Koristi se Font Awesome jer Bootstrap ima problema oko
+                                        kompatibilnosti sa PrimeFaces-om. Takodje sa "update" atributom radimo ono sto smo radili sa <f:ajax> tag-om. -->
+                                        <p:commandButton value="Delete" action="#{logInController.deleteClientOrderFromTable(clientOrderPresenter)}"
+                                                         update="clientOrdersTableId" oncomplete="PF('clientOrdersWidgetVar').filter()" 
+                                                         icon="fa fa-times-circle-o" iconPos="right"/>
                                     </span>
                                 </p:column>
 

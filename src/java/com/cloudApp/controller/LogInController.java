@@ -177,21 +177,40 @@ public class LogInController implements Serializable {
     public void deleteClientOrderFromTable(ClientOrderPresenter clientOrderPresenter) {
         int clientOrderId = clientOrderPresenter.getId();
         ClientOrders clientOrderForDelete = clientOrdersFacade.find(clientOrderId);
-// Prvo proverimo da li za clientOrderForDelete postoji rezervacija u reservations tabeli i ako postoji 1. nju brisemo
-// pa onda clientOrderForDelete.
+        // Prvo proverimo da li za clientOrderForDelete postoji rezervacija u reservations tabeli i ako postoji 1. nju brisemo
+        // pa onda clientOrderForDelete.
         Reservations reservationForDelete = reservationsFacade.getReservationByClientOrdersId(clientOrderForDelete);
         if (reservationForDelete != null) {
             reservationsFacade.remove(reservationForDelete);
         }
         clientOrdersFacade.remove(clientOrderForDelete);
         clientOrderPresenterList.remove(clientOrderPresenter);
+        System.out.println("POZVAN DELETE CLIENT ORDER FROM TABLE.");
     }
 
+//  TODO Definisati sta se desava kada se brise agent koji se vec nalazi u client_orders input-ima. Trenutno se brisu svi 
+//  input-i iz client_orders i reservations koji sadrze agenta kojeg brisemo.
     public void deleteAgent(Agents agent) {
-        int agentId = agent.getId();
-        Agents agentForDelete = agentsFacade.find(agentId);
-        agentsFacade.remove(agentForDelete);
+        //  Nadjemo sve client orders koji sadrze agenta kojeg brisemo.
+        List<ClientOrders> listOfClientOrders = clientOrdersFacade.getClientOrdersByAgentId(agent);
+        if (listOfClientOrders != null) {
+            for (ClientOrders clientOrder : listOfClientOrders) {
+                // Nadjemo da li client order ima rezervaciju.
+                Reservations reservation = reservationsFacade.getReservationByClientOrdersId(clientOrder);
+                if (reservation != null) {
+                    // Ako ima, uklonimo je iz DB-a.
+                    reservationsFacade.remove(reservation);
+                }
+                // Zatim uklonimo i sam client order.
+                clientOrdersFacade.remove(clientOrder);
+            }
+        }
+        // Na kraju, 1. izbrisemo agenta iz DB-a.
+        agentsFacade.remove(agent);
+        // Zatim ga izbrisemo i iz liste agenata.
         agents.remove(agent);
+        // Kao i iz liste koja sadrzi imena agenata koji cine listu (padajuci meni) u client order tabeli.
+        agentsNames.remove(agent.getFirstName() + " " + agent.getLastName());
     }
 
     public void deleteService(Services service) {

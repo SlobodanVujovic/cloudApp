@@ -32,6 +32,7 @@ import javax.mail.internet.MimeMultipart;
  */
 @Singleton
 public class MailManager {
+
     private Integer currentHour;
     private List<MailArgument> listOfMailArguments;
 
@@ -45,15 +46,11 @@ public class MailManager {
 //    Popunjava listOfMailArguments koju kasnije koristi sendNotifications() metod. Zato ovaj metod mora ici pre
 //    sendNotifications() metoda.
     public void getClientsMailList() {
-
-        // TODO Izbaciti naredni red nakon testiranja.
-        //currentHour = 12;
-
         // Trazimo listu rezervacija za koje treba poslati podsetnik dana kad se metod pokrece i sata koji
         // je jednak argumentu narednog metoda.
         List<Reservations> listOfReservations = reservationsFacade.getReservationBySendingDateAndTime(currentHour.toString());
+        listOfMailArguments = new ArrayList<>();
         if (!listOfReservations.isEmpty()) {
-            listOfMailArguments = new ArrayList<>();
             DateFormat mediumDf = DateFormat.getDateInstance(DateFormat.MEDIUM);
             // Za dobijenu listu rezervacija
             for (Reservations tempReservation : listOfReservations) {
@@ -83,13 +80,12 @@ public class MailManager {
             }
         }
     }
-    
-    // TODO Podesiti minute = "5,35" nakon kraja testiranja.
+
     @Schedule(minute = "5,35", hour = "*", dayOfWeek = "*", persistent = false)
     public void sendNotifications() {
         currentHour = LocalTime.now().minusHours(1).getHour();
         getClientsMailList();
-        if (listOfMailArguments != null) {
+        if (!listOfMailArguments.isEmpty()) {
             for (MailArgument mailArgument : listOfMailArguments) {
                 if (mailArgument.getRecipientEmail() != null) {
                     sentMail(mailArgument);
