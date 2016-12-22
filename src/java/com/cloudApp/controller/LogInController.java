@@ -65,6 +65,8 @@ public class LogInController implements Serializable {
     private CompanyActivities tempCompanyActivitiesForAdding;
     private List<Activity> listOfActivities;
     private Activity choosenActivity;
+    private List<ClientOrders> listOfClientOrders;
+    private List<ClientOrders> filteredClientOrders;
 
     public LogInController() {
 
@@ -77,6 +79,7 @@ public class LogInController implements Serializable {
         servicesNames = new HashSet<>();
         agentsNames = new HashSet<>();
         tempCompanyActivitiesForAdding = new CompanyActivities();
+        listOfClientOrders = new ArrayList<>();
     }
 
     @Inject
@@ -119,6 +122,7 @@ public class LogInController implements Serializable {
                 setAgents();
                 setCompanyOrder();
                 setCompanyServices();
+                setListOfClientOrders();
                 setClientOrderPresenters();
                 return navigationController.goToLoginAdmin();
             } else {
@@ -131,6 +135,17 @@ public class LogInController implements Serializable {
             context.addMessage(usernameComponent.getClientId(), new FacesMessage("Incorrect username."));
             return navigationController.goToLogin();
         }
+    }
+
+    public void setListOfClientOrders() {
+        for (CompanyOrder tempCompanyOrder : companyOrders) {
+            List<ClientOrders> tempClientOrders = clientOrdersFacade.getClientOrdersByCompanyOrderId(tempCompanyOrder);
+            listOfClientOrders.addAll(tempClientOrders);
+        }
+    }
+
+    public List<ClientOrders> getListOfClientOrders() {
+        return listOfClientOrders;
     }
 
     public void setClientOrderPresenters() {
@@ -449,6 +464,14 @@ public class LogInController implements Serializable {
 
     public void setChoosenActivity(Activity choosenActivity) {
         this.choosenActivity = choosenActivity;
+    }
+
+    public List<ClientOrders> getFilteredClientOrders() {
+        return filteredClientOrders;
+    }
+
+    public void setFilteredClientOrders(List<ClientOrders> filteredClientOrders) {
+        this.filteredClientOrders = filteredClientOrders;
     }
 
 }

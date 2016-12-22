@@ -137,3 +137,15 @@ input[type="checkbox"]{
 #activityForm\:activityList{
     margin-bottom: 10px;
 }
+
+#leftForm a{
+    margin-bottom: 5px;
+}
+
+#clientOrdersForm\:clientOrdersTableId\:searchAllPanel{
+    text-align: right;
+}
+
+#clientOrdersForm\:clientOrdersTableId\:globalFilter{
+    width:150px;
+}

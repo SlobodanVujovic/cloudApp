@@ -1,11 +1,12 @@
 #left {
     float: left;
     height: 100%;
+    width: 204px;
 }
 
 #content {
     padding: 0px;
-    margin-left: 201px;
+    margin-left: 204px;
     height: 100%;
 }
 

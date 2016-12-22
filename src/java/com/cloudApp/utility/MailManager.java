@@ -81,7 +81,7 @@ public class MailManager {
         }
     }
 
-    @Schedule(minute = "5,35", hour = "*", dayOfWeek = "*", persistent = false)
+    @Schedule(second = "*", minute = "5,35", hour = "*", persistent = false)
     public void sendNotifications() {
         currentHour = LocalTime.now().minusHours(1).getHour();
         getClientsMailList();

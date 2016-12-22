@@ -9,9 +9,10 @@
     <body>
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
-                <h:form>
-                    <!-- Logout button -->
+                <h:form id="leftForm">
+                    <!-- Logout and Company Informations button -->
                     <div class="col-md-4">
+                        <h:commandLink value="Company Informations " onclick="return showCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>
                         <h:commandLink value="Logout " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-out"/></h:commandLink>
                     </div>
                 </h:form>
@@ -22,12 +23,7 @@
                     <h1>
                         All company data
                     </h1>
-                    <!-- Company Information button za prikaz informacija o firmi.-->
-                    <div class="form-group col-md-4">
-                        <h:form>
-                            <h:commandLink value="Company Informations " onclick="return showCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>
-                        </h:form>
-                    </div>
+
                     <!-- Svi podaci o firmi (uneti prilikom kreiranja naloga).-->
                     <div id="companyInformations">
                         <h:form prependId="false">
@@ -295,11 +291,16 @@
 
                     <!--Podaci iz client_orders tabele.-->
                     <div id="clientOrdersDiv">
-                        <h:form>
+                        <h:form id="clientOrdersForm">
                             <p:dataTable id="clientOrdersTableId" value="#{logInController.clientOrderPresenterList}" var="clientOrderPresenter"
-                                         filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrdersWidgetVar">
+                                         filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrdersWidgetVar"
+                                         editable="true" editMode="cell">
                                 <f:facet name="header">
                                     Client orders
+                                    <p:outputPanel id="searchAllPanel">
+                                        <h:outputText value="Search all fields:"/>
+                                        <p:inputText id="globalFilter" onkeyup="PF('clientOrdersWidgetVar').filter()" placeholder="Enter keyword"/>
+                                    </p:outputPanel>
                                 </f:facet>
                                 <p:column headerText="ID" sortBy="#{clientOrderPresenter.id}" filterBy="#{clientOrderPresenter.id}" filterMatchMode="contains">
                                     <h:outputText value="#{clientOrderPresenter.id}"/>
@@ -327,7 +328,18 @@
                                             <f:selectItems value="#{logInController.agentsNames}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>
-                                    <h:outputText value="#{clientOrderPresenter.agent}"/>
+
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{clientOrderPresenter.agent}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <h:selectOneMenu value="#{clientOrderPresenter.agent}" style="width:100%">
+                                                <!-- TODO Srediti padajucu listu. -->
+                                                <f:selectItems value="#{logInController.agentsNames}" var="agentName" itemLabel="#{agentName.toString()}" itemValue="#{agentName.toString()}" />
+                                            </h:selectOneMenu>
+                                        </f:facet>
+                                    </p:cellEditor>
                                 </p:column>
 
                                 <!--Client Phone kolona-->
@@ -358,7 +370,7 @@
                                         <!-- TODO Kada klijent naruci servis i kada, nakon toga, vlasnik uradi refresh admin strane, ako odmah
                                         nakon toga pritisne Delete, bilo kog input-a u client order tabeli, client order se nece obrisati, tek nakon
                                         ponovnog klika na Delete, order ce se izbrisati. Nakon toga brisanje ide posle 1. klika.-->
-                                        
+
                                         <!-- Obrati paznju kako je ubacena ikona u p:commandButton. Koristi se Font Awesome jer Bootstrap ima problema oko
                                         kompatibilnosti sa PrimeFaces-om. Takodje sa "update" atributom radimo ono sto smo radili sa <f:ajax> tag-om. -->
                                         <p:commandButton value="Delete" action="#{logInController.deleteClientOrderFromTable(clientOrderPresenter)}"
