@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Agents.findByLastName", query = "SELECT a FROM Agents a WHERE a.lastName = :lastName"),
     @NamedQuery(name = "Agents.findByPhone", query = "SELECT a FROM Agents a WHERE a.phone = :phone"),
     @NamedQuery(name = "Agents.findByEmail", query = "SELECT a FROM Agents a WHERE a.email = :email"),
-    @NamedQuery(name = "Agents.findByCompanyId", query = "SELECT a FROM Agents a WHERE a.companiesId = :companyId")})
+    @NamedQuery(name = "Agents.findByInService", query = "SELECT a FROM Agents a WHERE a.inService = :inService"),
+    @NamedQuery(name = "Agents.findByCompanyId", query = "SELECT a FROM Agents a WHERE a.companiesId = :companyId AND a.inService = true")})
 public class Agents implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,6 +62,10 @@ public class Agents implements Serializable {
     @Size(max = 45)
     @Column(name = "email")
     private String email;
+    // Default-na vrednost je true.
+    @Column(name = "in_service")
+    private Boolean inService = Boolean.TRUE;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "agentsId")
     private List<ClientOrders> clientOrdersList;
     @JoinColumn(name = "companies_id", referencedColumnName = "id")
@@ -114,6 +119,14 @@ public class Agents implements Serializable {
         this.email = email;
     }
 
+    public Boolean getInService() {
+        return inService;
+    }
+
+    public void setInService(Boolean inService) {
+        this.inService = inService;
+    }
+    
     @XmlTransient
     public List<ClientOrders> getClientOrdersList() {
         return clientOrdersList;

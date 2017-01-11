@@ -29,3 +29,13 @@ function companyMustHaveAtLeastOneActivity(){
     }
     return moreThenOneRow;
 }
+
+// Za globalFilter polje i p:calendar tag (u okviru "Reservation Date" kolone) u clientOrdersTableId tabeli (na adminLoginPage strani),
+// kada se pritisne Enter key, u slucaju kada u polju ne postoji uneta vrednost, dolazi do pozivanja metoda
+// deleteClientOrderFromTable() cime se brise prvi red u tabeli (razlog nepoznat i neshvacen). Da bi se ovo sprecilo za ova 2 elementa je disable-ovano
+// default ponasanje Enter key-a time sto se ova funkcija poziva kroz "onkeypress" atribut. Enter key ima code = 13.
+function preventEnterBehaviour(event){
+    if (event.keyCode == 13) {
+        event.preventDefault();
+    }
+}

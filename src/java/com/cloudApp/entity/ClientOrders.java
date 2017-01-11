@@ -38,7 +38,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ClientOrders.findByClientPhone", query = "SELECT c FROM ClientOrders c WHERE c.clientPhone = :clientPhone"),
     @NamedQuery(name = "ClientOrders.findByClientEmail", query = "SELECT c FROM ClientOrders c WHERE c.clientEmail = :clientEmail"),
     @NamedQuery(name = "ClientOrders.findByCompanyOrderId", query = "SELECT c FROM ClientOrders c WHERE c.companyOrderId = :companyOrderId"),
-    @NamedQuery(name = "ClientOrders.findByAgentId", query = "SELECT c FROM ClientOrders c WHERE c.agentsId = :agentsId")})
+    @NamedQuery(name = "ClientOrders.findByAgentId", query = "SELECT c FROM ClientOrders c WHERE c.agentsId = :agentsId"),
+    // Ovaj query spaja client_orders tabelu sa reservations tabelom uzimajuci samo record-e sa setovanim companyOrderId-jem i sortira, u rastucem poretku, na osnovu reservationDate kolone iz reservations tabele. Ako neki client order nema
+    // reservations input onda taj record ide na pocetak tabele.
+    @NamedQuery(name = "ClientOrders.joinWithReservationsAndSortByReservationDate", query = "SELECT c FROM ClientOrders c LEFT JOIN c.reservationsList r WHERE c.companyOrderId = :companyOrderId ORDER BY r.reservationDate")})
 public class ClientOrders implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -171,4 +174,27 @@ public class ClientOrders implements Serializable {
                 + "agentsId=" + agentsId;
     }
 
+//    @Override
+//    public int compareTo(ClientOrders otherOrders) {
+//        // Ako ne postoji rezervacija dodelimo datum 1.1.2000. da bi ti zapisi bili na pocetku tabele.
+//        LocalDate date = LocalDate.of(2000, 1, 1);
+//        LocalDate otherDate = LocalDate.of(2000, 1, 1);
+//        List<Reservations> reservations = this.getReservationsList();
+//        if (!reservations.isEmpty()) {
+//            date = reservations.get(0).getReservationDate();
+//        }
+//        List<Reservations> otherReservations = otherOrders.getReservationsList();
+//        if (!otherReservations.isEmpty()) {
+//            otherDate = otherReservations.get(0).getReservationDate();
+//        }
+//        int cmp = date.getYear() - otherDate.getYear();
+//        if (cmp == 0) {
+//            cmp = (date.getMonthValue() - otherDate.getMonthValue());
+//            if (cmp == 0) {
+//                cmp = (date.getDayOfMonth() - otherDate.getDayOfMonth());
+//            }
+//        }
+//        return cmp;
+//    }
+    
 }

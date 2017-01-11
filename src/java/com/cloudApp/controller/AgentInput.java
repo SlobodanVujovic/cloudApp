@@ -1,11 +1,11 @@
 package com.cloudApp.controller;
 
 import java.io.Serializable;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 @Named
-@SessionScoped
+@RequestScoped
 public class AgentInput implements Serializable{
     private String inputType;
     

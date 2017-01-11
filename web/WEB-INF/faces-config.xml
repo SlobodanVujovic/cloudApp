@@ -19,6 +19,26 @@
         <validator-id>EmailValidator</validator-id>
         <validator-class>com.cloudApp.validators.EmailValidator</validator-class>
     </validator>
+    <!-- Sledeci <navigation-rule> tag predstavlja conditional navigation. Kada na login stranici pritisnemo "Log In" dugme poziva se metod adminLogin() koji proverava da
+    li username-u odgovara password, ako da, setuje promenljivu "login" na true a ako ne, ostaje setovana na false. Sa <if> tag-om
+    proveravamo vrednost "login" promenljive i ako je true onda idemo na adminLoginPage stranicu koristeci redirect mehanizam
+    a ako je false vracamo se na login stranicu koristeci forward mehanizam. Mehanizam koji se koristi je bitan zato sto
+    authenticationController ima View scope pa da bi bean opstao i nakon navigacije koristimo forward mehanizam a to nam je potrebno da bi mogao da
+    ispise poruku sta je pogresno uneto. -->
+    <navigation-rule>
+        <from-view-id>/sections/login.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{authenticationController.adminLogin()}</from-action>
+            <if>#{authenticationController.login}</if>
+            <to-view-id>/sections/adminLoginPage.xhtml</to-view-id>                
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{authenticationController.adminLogin()}</from-action>
+            <if>#{!authenticationController.login}</if>
+            <to-view-id>/sections/login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule> 
     <navigation-rule>
         <from-view-id>/*</from-view-id>
         <navigation-case>
@@ -75,6 +95,9 @@
             <to-view-id>/sections/adminLoginPage.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
+    
+     
+    
     <flow-definition id="ordering">
         <view id="ordering">
             <vdl-document>/ordering/ordering.xhtml</vdl-document>
@@ -86,4 +109,8 @@
             <from-outcome>/sections/thanks.xhtml</from-outcome>
         </flow-return>
     </flow-definition>
+    <converter>
+        <converter-id>localDateConverter</converter-id>
+        <converter-class>com.cloudApp.converter.LocalDateConverter</converter-class>      
+    </converter>
 </faces-config>

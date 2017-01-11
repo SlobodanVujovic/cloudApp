@@ -6,7 +6,8 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,8 +19,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -43,6 +42,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 //    hour deo sendingTime-a = argumentu koji se prosledjuje query-ju i
 //    notificationsSent vrednost = false.
     @NamedQuery(name = "Reservations.findBySendingDateAndTime", query = "SELECT r FROM Reservations r WHERE r.sendingDate = CURRENT_DATE AND SUBSTRING(r.sendingTime, 1, 2) = :sendingTime AND r.notificationsSent = false")})
+
 public class Reservations implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,16 +51,16 @@ public class Reservations implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    
     @Column(name = "reservation_date")
-    @Temporal(TemporalType.DATE)
-    private Date reservationDate;
+    private LocalDate reservationDate;
     // reservation_time menjamo u String tip (umesto da ga ostavimo kao Date tip, kako ga NetBeans pravi) i brisemo
     // @Temporal anotaciju.
     @Column(name = "reservation_time")
-    private String reservationTime;
+    private LocalTime reservationTime;
+    
     @Column(name = "sending_date")
-    @Temporal(TemporalType.DATE)
-    private Date sendingDate;
+    private LocalDate sendingDate;
     // sending_time menjamo u String tip (umesto da ga ostavimo kao Date tip, kako ga NetBeans pravi) i brisemo
     // @Temporal anotaciju. Naziv kolone bi pre trebalo da bude "sat_za_koji_se_salje_anotacija" i u ovu kolonu
     // se upisuje vrednost koja je jednaka vreme_rezervacije - koliko_ranije_poslati_notifikaciju - 1. Ovo "- 1"
@@ -68,9 +68,11 @@ public class Reservations implements Serializable {
     // onda ce se ovde upisati 11h jer kad app. salje notifikacije onda uzima trenutni sat - 1 da bi slao za sve
     // iz prethodnog sata. 
     @Column(name = "sending_time")
-    private String sendingTime;
+    private LocalTime sendingTime;
+    
     @Column(name = "notifications_sent")
     private Boolean notificationsSent = Boolean.FALSE;
+    
     @JoinColumn(name = "client_orders_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private ClientOrders clientOrdersId;
@@ -90,35 +92,35 @@ public class Reservations implements Serializable {
         this.id = id;
     }
 
-    public Date getReservationDate() {
+    public LocalDate getReservationDate() {
         return reservationDate;
     }
 
-    public void setReservationDate(Date reservationDate) {
+    public void setReservationDate(LocalDate reservationDate) {
         this.reservationDate = reservationDate;
     }
 
-    public String getReservationTime() {
+    public LocalTime getReservationTime() {
         return reservationTime;
     }
 
-    public void setReservationTime(String reservationTime) {
+    public void setReservationTime(LocalTime reservationTime) {
         this.reservationTime = reservationTime;
     }
 
-    public Date getSendingDate() {
+    public LocalDate getSendingDate() {
         return sendingDate;
     }
 
-    public void setSendingDate(Date sendingDate) {
+    public void setSendingDate(LocalDate sendingDate) {
         this.sendingDate = sendingDate;
     }
 
-    public String getSendingTime() {
+    public LocalTime getSendingTime() {
         return sendingTime;
     }
 
-    public void setSendingTime(String sendingTime) {
+    public void setSendingTime(LocalTime sendingTime) {
         this.sendingTime = sendingTime;
     }
 

@@ -7,6 +7,7 @@ import com.cloudApp.entity.Reservations;
 import com.cloudApp.sessions.ReservationsFacade;
 import java.text.DateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,10 +27,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-/**
- *
- * @author svujovic
- */
 @Singleton
 public class MailManager {
 
@@ -58,7 +55,7 @@ public class MailManager {
                 MailArgument tempMailArgument = new MailArgument();
                 String reservationDate = mediumDf.format(tempReservation.getReservationDate());
                 tempMailArgument.setAppointmentDate((reservationDate));
-                String reservationTime = tempReservation.getReservationTime();
+                String reservationTime = tempReservation.getReservationTime().format(DateTimeFormatter.ofPattern("HH:mm"));
                 tempMailArgument.setAppointmentTime(reservationTime);
                 // Izdvojimo ClientOrders koji odgovara rezervaciji.
                 ClientOrders tempClientOrder = tempReservation.getClientOrdersId();
@@ -91,6 +88,48 @@ public class MailManager {
                     sentMail(mailArgument);
                 }
             }
+        }
+    }
+    
+    public void sendConfirmationAfterServiceSchedule(ConfirmationMailArgument confirmationMail){
+        sentConfirmationMail(confirmationMail);
+    }
+    
+    public void sentConfirmationMail(ConfirmationMailArgument confirmationMail){
+        Properties props = new Properties();
+        // Drugi parametar je ime mail server-a ili njegova IP adresa.
+        props.setProperty("mail.smtp.host", "email.mds.rs");
+
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                // Autentifikacija prilikom slanja mail-ova.
+                return new PasswordAuthentication("cloud@mds.rs", "cloud");
+            }
+        });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setHeader("Content-Type", "text/html; charset=UTF-8");
+            message.setFrom(new InternetAddress("cloud@mds.rs"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(confirmationMail.getRecipientEmail()));
+            message.setSubject("Service schedule confirmation", "UTF-8");
+            message.setSentDate(new Date());
+            BodyPart messageBodyPart = new MimeBodyPart();
+            String mailBody = "Hello " + confirmationMail.getRecipientName() + ",\n"
+                    + "\n"
+                    + "Your reservation has been accepted.\n"
+                    + "\n"
+                    + "Kind Regards,\n"
+                    + confirmationMail.getCompanyName() + ".";
+            messageBodyPart.setText(mailBody);
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+            message.setContent(multipart);
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 

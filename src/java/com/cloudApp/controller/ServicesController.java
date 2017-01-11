@@ -1,34 +1,34 @@
 package com.cloudApp.controller;
 
-import com.cloudApp.entity.Activity;
 import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
 import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
-import com.cloudApp.sessions.ActivityFacade;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
 import com.cloudApp.sessions.ReservationsFacade;
 import com.cloudApp.sessions.ServicesFacade;
+import com.cloudApp.utility.ConfirmationMailArgument;
+import com.cloudApp.utility.MailManager;
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
 
-// TODO Ne moze kroz isti browser da se zakazuje vise razlicitih servisa, zato sto je ServicesController session scoped.
-// Trebalo bi koristiti ViewScoped ali nesto nece.
 @Named
 @ViewScoped
 public class ServicesController implements Serializable {
@@ -45,6 +45,7 @@ public class ServicesController implements Serializable {
     private Agents selectedAgent;
     private ClientOrders clientOrder;
     private Reservations reservation;
+    private static final Logger LOGGER = Logger.getLogger(ServicesController.class.getName());
 
     public ServicesController() {
 
@@ -66,6 +67,8 @@ public class ServicesController implements Serializable {
     private AgentsFacade agentsFacade;
     @Inject
     private ReservationsFacade reservationsFacade;
+    @EJB
+    private MailManager mailManager;
 
     public void setCompanyOrder() {
         order = orderFacade.find(orderId);
@@ -100,23 +103,15 @@ public class ServicesController implements Serializable {
             clientOrder.setCompanyOrderId(order);
             clientOrder.setAgentsId(selectedAgent);
             clientOrderFacade.create(clientOrder);
-//            Proverimo da li servis zahteva rezervaciju.
+            // Proverimo da li servis zahteva rezervaciju.
             if (tempCheckedService.getReservation()) {
-                ZoneId defaultZoneId = ZoneId.systemDefault();
 //              Ako zahteva, proverimo da li je setovani datum.
-                Date reservationDate = reservation.getReservationDate();
+                LocalDate reservationDate = reservation.getReservationDate();
                 if (reservationDate != null) {
-                    Instant instantOfDate = reservationDate.toInstant();
-                    // Konvertujemo reservationDate to LocalDate instancu.
-                    LocalDate reservationLocalDate = instantOfDate.atZone(defaultZoneId).toLocalDate();
-                    String reservationTime = reservation.getReservationTime();
-                    // Split-ujemo reservationTime da bi mogli da napravimo LocalTime.
-                    String[] reservationTimeSplited = reservationTime.split(":");
-                    // Konvertujemo reservationTime to LocalTime instancu.
-                    LocalTime reservationLocalTime = LocalTime.of(Integer.parseInt(reservationTimeSplited[0]), Integer.parseInt(reservationTimeSplited[1]));
+                    LocalTime reservationLocalTime = reservation.getReservationTime();
                     // Kreiramo LocalDateTime da bi od njega oduzeli vreme notifikacije, odnosno da ne bi morali da brinemo 
                     // kada se menja samo vreme a kada i datum.
-                    LocalDateTime reservationLocalDateTime = LocalDateTime.of(reservationLocalDate, reservationLocalTime);
+                    LocalDateTime reservationLocalDateTime = LocalDateTime.of(reservationDate, reservationLocalTime);
                     // Nadjemo notification vrednost.
                     CompanyOrder companyOrder = clientOrder.getCompanyOrderId();
                     int notification = companyOrder.getNotification();
@@ -127,18 +122,39 @@ public class ServicesController implements Serializable {
                     // Nakon odredjivanja trenutnka slanja, razdvojimo na date i time deo.
                     LocalDate sendingLocalDate = sendingLocalDateTime.toLocalDate();
                     LocalTime sendingLocalTime = sendingLocalDateTime.toLocalTime();
-                    // Vratimo u format koji prihvata baza (Date i String).
-                    Date sendingDate = Date.from(sendingLocalDate.atStartOfDay(defaultZoneId).toInstant());
-                    String sendingTime = sendingLocalTime.toString();
                     // TODO Kada isti klijent naruci vise servisa onda za njega ima onoliko unosa u DB koliko je i servisa
                     // narucio. Samim tim ce i dobiti onoliko obavestenja koliko je narucio servisa. Videti sta da se radi 
                     // sa ovim.
-                    reservation.setSendingDate(sendingDate);
-                    reservation.setSendingTime(sendingTime);
+                    reservation.setSendingDate(sendingLocalDate);
+                    reservation.setSendingTime(sendingLocalTime);
                     reservation.setClientOrdersId(clientOrder);
 //                  Upis rezervacije u bazu.
                     reservationsFacade.create(reservation);
                 }
+            }
+        }
+        // Pravimo da li je klijent uneo svoju E-mail adresu.
+        if (!clientOrder.getClientEmail().isEmpty()) {
+            // Proverimo da li je upisan u DB (tako sto vidimo da li mu je dodeljen ID).
+            if (clientOrder.getId() != null) {
+                LOGGER.log(Level.INFO, "Client order with ID = {0} is written to DB.", clientOrder.getId());
+                // Ako jeste pravimo confirmationMailArgument da bi mogli da posaljemo mail da je rezervacija prihvacena ili nije.
+                ConfirmationMailArgument confirmationMailArgument = new ConfirmationMailArgument();
+                confirmationMailArgument.setRecipientEmail(clientOrder.getClientEmail());
+                confirmationMailArgument.setRecipientName(clientOrder.getClientName());
+                confirmationMailArgument.setCompanyName(clientOrder.getCompanyOrderId().getCompaniesId().getCompanyName());
+                mailManager.sendConfirmationAfterServiceSchedule(confirmationMailArgument);
+                // Obavestenje da treba proveriti mail.
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Notification", "Check you e-mail for reservation confirmation.");
+                FacesContext.getCurrentInstance().addMessage(null, msg);
+            // Ako clientOrder nije upisan u DB, izbaci obavestenje o tome.
+            } else{
+                LOGGER.log(Level.WARNING, "Client order with companyOrderId = {0}, agentsId = {1}, servicesId = {2}, clientName = {3}, clientPhone = {4} "
+                        + "and clientEmail = {5} is NOT written to DB!", new Object[] {clientOrder.getCompanyOrderId().getId(), 
+                            clientOrder.getAgentsId().getId(), clientOrder.getServicesId().getId(), clientOrder.getClientName(), 
+                            clientOrder.getClientPhone(), clientOrder.getClientEmail()});
+                FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Notification", "Your reservation is not accepted. Try again later.");
+                FacesContext.getCurrentInstance().addMessage(null, msg);
             }
         }
         reservation = new Reservations();

@@ -46,4 +46,11 @@ public class ClientOrdersFacade extends AbstractFacade<ClientOrders> {
         List<ClientOrders> resultList = query.getResultList();
         return resultList;
     }
+    
+    public List<ClientOrders> getClientOrdersWithReservations(CompanyOrder companyOrder){
+        TypedQuery<ClientOrders> query = getEntityManager().createNamedQuery("ClientOrders.joinWithReservationsAndSortByReservationDate", ClientOrders.class);
+        query.setParameter("companyOrderId", companyOrder);
+        List<ClientOrders> resultList = query.getResultList();
+        return resultList;
+    }
 }

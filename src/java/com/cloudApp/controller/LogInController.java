@@ -25,25 +25,26 @@ import com.cloudApp.sessions.OwnersFacade;
 import com.cloudApp.sessions.ReservationsFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
-import java.text.DateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.logging.*;
+import javax.faces.context.FacesContext;
+import org.primefaces.event.RowEditEvent;
 
 @Named
-@SessionScoped
+@ViewScoped
 public class LogInController implements Serializable {
 
-    private String username;
-    private String password;
+    private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
     private Companies company;
     private List<Agents> agents;
     private Set<String> agentsNames;
@@ -56,17 +57,17 @@ public class LogInController implements Serializable {
     private List<Services> services;
     private Set<String> servicesNames;
     private Services tempServiceForAdding;
-    private ClientOrderPresenter clientOrderPresenter;
-    private List<ClientOrderPresenter> clientOrderPresenterList;
-    private List<ClientOrderPresenter> filteredClientOrderPresenter;
-    private UIComponent usernameComponent;
-    private UIComponent passwordComponent;
     private Set<CompanyActivities> setOfCompanyActivities;
     private CompanyActivities tempCompanyActivitiesForAdding;
     private List<Activity> listOfActivities;
     private Activity choosenActivity;
     private List<ClientOrders> listOfClientOrders;
     private List<ClientOrders> filteredClientOrders;
+    // Ukazuje na redni broj u listOfClientOrders koji se koristi adminLoginPage kako bi odatle poceo prikaz u clientOrder
+    // tabeli.
+    private int firstRowToShow;
+    private int pageRows;
+    private long todayAsLong = LocalDate.now().toEpochDay();
 
     public LogInController() {
 
@@ -79,7 +80,7 @@ public class LogInController implements Serializable {
         servicesNames = new HashSet<>();
         agentsNames = new HashSet<>();
         tempCompanyActivitiesForAdding = new CompanyActivities();
-        listOfClientOrders = new ArrayList<>();
+        setAllData();
     }
 
     @Inject
@@ -95,8 +96,6 @@ public class LogInController implements Serializable {
     @Inject
     private ServicesFacade servicesFacade;
     @Inject
-    private NavigationController navigationController;
-    @Inject
     private OwnersContactsFacade ownersContactsFacade;
     @Inject
     private ClientOrdersFacade clientOrdersFacade;
@@ -109,73 +108,21 @@ public class LogInController implements Serializable {
     @Inject
     private ActivityFacade activityFacade;
 
-    public String validateUsernameAndPassword() {
-        owner = ownersFacade.getOwnerByUsername(username);
-        if (owner != null) {
-            String resultPassword = owner.getPassword();
-            if (resultPassword.equals(password)) {
-                company = owner.getCompaniesId();
-                setListOfCompanyActivities();
-                setOwnersContacts();
-                setCompanysLocation();
-                setCompanysContact();
-                setAgents();
-                setCompanyOrder();
-                setCompanyServices();
-                setListOfClientOrders();
-                setClientOrderPresenters();
-                return navigationController.goToLoginAdmin();
-            } else {
-                FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(passwordComponent.getClientId(), new FacesMessage("Incorrect password."));
-                return navigationController.goToLogin();
-            }
-        } else {
-            FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(usernameComponent.getClientId(), new FacesMessage("Incorrect username."));
-            return navigationController.goToLogin();
-        }
-    }
-
-    public void setListOfClientOrders() {
-        for (CompanyOrder tempCompanyOrder : companyOrders) {
-            List<ClientOrders> tempClientOrders = clientOrdersFacade.getClientOrdersByCompanyOrderId(tempCompanyOrder);
-            listOfClientOrders.addAll(tempClientOrders);
-        }
-    }
-
-    public List<ClientOrders> getListOfClientOrders() {
-        return listOfClientOrders;
-    }
-
-    public void setClientOrderPresenters() {
-        clientOrderPresenterList = new ArrayList<>();
-        List<ClientOrders> tempClientOrders;
-        for (CompanyOrder tempCompanyOrder : companyOrders) {
-            tempClientOrders = clientOrdersFacade.getClientOrdersByCompanyOrderId(tempCompanyOrder);
-            for (ClientOrders tempClientOrder : tempClientOrders) {
-                clientOrderPresenter = new ClientOrderPresenter();
-                clientOrderPresenter.setId(tempClientOrder.getId());
-                clientOrderPresenter.setClientName(tempClientOrder.getClientName());
-                clientOrderPresenter.setOrderedService(tempClientOrder.getServicesId().getName());
-                clientOrderPresenter.setClientPhone(tempClientOrder.getClientPhone());
-                clientOrderPresenter.setClientEmail(tempClientOrder.getClientEmail());
-
-                Agents tempAgent = agentsFacade.find(tempClientOrder.getAgentsId().getId());
-                clientOrderPresenter.setAgent(tempAgent.getFirstName() + " " + tempAgent.getLastName());
-                // Za tempClientOrder izvucemo sve rezervacije koje postoje iz Reservations tabele.
-                Reservations tempReservation = reservationsFacade.getReservationByClientOrdersId(tempClientOrder);
-                if (tempReservation != null) {
-                    // Podesavanje formata datuma da bi bilo citljivije.
-                    DateFormat mediumDf = DateFormat.getDateInstance(DateFormat.MEDIUM);
-                    String reservationDate = mediumDf.format(tempReservation.getReservationDate());
-                    String reservationTime = tempReservation.getReservationTime();
-                    clientOrderPresenter.setReservationDate(reservationDate);
-                    clientOrderPresenter.setReservationTime(reservationTime);
-                }
-                clientOrderPresenterList.add(clientOrderPresenter);
-            }
-        }
+//  Methods for all data.
+    public void setAllData() {
+        // Uzimamo owner-a, koji se ulog-ovao iz map-e flash scope-a.
+        owner = (Owners) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("owner");
+        company = owner.getCompaniesId();
+        setListOfCompanyActivities();
+        setOwnersContacts();
+        setCompanysLocation();
+        setCompanysContact();
+        setAgents();
+        setCompanyOrder();
+        setCompanyServices();
+        listOfClientOrders = setListOfClientOrders();
+        setFirstRowToShow();
+        LOGGER.log(Level.INFO, "Method setAllData() finished successfully.");
     }
 
     public void updateDatabase() {
@@ -189,8 +136,37 @@ public class LogInController implements Serializable {
         updateCompanyOrder();
     }
 
-    public void deleteClientOrderFromTable(ClientOrderPresenter clientOrderPresenter) {
-        int clientOrderId = clientOrderPresenter.getId();
+//  ClientOrders methods.
+    public List<ClientOrders> setListOfClientOrders() {
+        List<ClientOrders> tempList = new ArrayList<>();
+        for (CompanyOrder tempCompanyOrder : companyOrders) {
+            List<ClientOrders> tempClientOrders = clientOrdersFacade.getClientOrdersWithReservations(tempCompanyOrder);
+            tempList.addAll(tempClientOrders);
+        }
+        return tempList;
+    }
+    
+    public void refreshListOfClientOrders(){
+        /* 
+        Ako je adminLoginPage pokrenuta i korisnik naruci servis, pozivanjem ovog metoda ce se naruceni servis dodati u client
+        orders tabelu. Medjutim ako se client orders tabela na neki nacin izmeni u medjuvremenu (filtrira se po nekoj 
+        vrednosti, sortira po nekoj koloni) onda, kada korisnik naruci servis, ponovnim pozivanjem ovog metoda
+        se taj servis nece dodati u tabelu. Razlog je sto se ne poziva getListOfClientOrders() metod nakon set-ovanja nove liste
+        listOfClientOrders. Neophodno je dodati sledeci red da bi se getListOfClientOrders() pozivao i nakon izmene tabele. 
+        Ista stvar je se javljala i nakon brisanja reda ali je resenje za to bilo izbacivanje:
+        oncomplete="PF('clientOrdersWidgetVar').filter()"
+        iz <p:commandButton value="Delete" .../> tag-a u client orders tabeli.
+        */
+        filteredClientOrders = null;
+        listOfClientOrders = setListOfClientOrders();
+    }
+
+    public List<ClientOrders> getListOfClientOrders() {
+        return listOfClientOrders;
+    }
+
+    public void deleteClientOrderFromTable(ClientOrders clientOrder) {
+        int clientOrderId = clientOrder.getId();
         ClientOrders clientOrderForDelete = clientOrdersFacade.find(clientOrderId);
         // Prvo proverimo da li za clientOrderForDelete postoji rezervacija u reservations tabeli i ako postoji 1. nju brisemo
         // pa onda clientOrderForDelete.
@@ -199,60 +175,120 @@ public class LogInController implements Serializable {
             reservationsFacade.remove(reservationForDelete);
         }
         clientOrdersFacade.remove(clientOrderForDelete);
-        clientOrderPresenterList.remove(clientOrderPresenter);
-        System.out.println("POZVAN DELETE CLIENT ORDER FROM TABLE.");
+        listOfClientOrders.remove(clientOrder);
     }
 
-//  TODO Definisati sta se desava kada se brise agent koji se vec nalazi u client_orders input-ima. Trenutno se brisu svi 
-//  input-i iz client_orders i reservations koji sadrze agenta kojeg brisemo.
-    public void deleteAgent(Agents agent) {
-        //  Nadjemo sve client orders koji sadrze agenta kojeg brisemo.
-        List<ClientOrders> listOfClientOrders = clientOrdersFacade.getClientOrdersByAgentId(agent);
-        if (listOfClientOrders != null) {
-            for (ClientOrders clientOrder : listOfClientOrders) {
-                // Nadjemo da li client order ima rezervaciju.
-                Reservations reservation = reservationsFacade.getReservationByClientOrdersId(clientOrder);
-                if (reservation != null) {
-                    // Ako ima, uklonimo je iz DB-a.
-                    reservationsFacade.remove(reservation);
-                }
-                // Zatim uklonimo i sam client order.
-                clientOrdersFacade.remove(clientOrder);
-            }
-        }
-        // Na kraju, 1. izbrisemo agenta iz DB-a.
-        agentsFacade.remove(agent);
-        // Zatim ga izbrisemo i iz liste agenata.
+//  Agents methods.
+//  Kada se klikne na "Delete" dugme na adminLoginPage str. poziva se ovaj metod.
+    public void agentOutOfService(Agents agent) {
+        // Nadjemo agenta iz argumenta.
+        Agents outOfServiceAgent = agentsFacade.find(agent.getId());
+        // Setujemo polje "inService" na false.
+        outOfServiceAgent.setInService(Boolean.FALSE);
+        // Upisemo agenta u DB.
+        agentsFacade.edit(outOfServiceAgent);
+        // Zatim izbrisemo agenta iz liste agenata koji su prikazani na adminLoginPage.
         agents.remove(agent);
         // Kao i iz liste koja sadrzi imena agenata koji cine listu (padajuci meni) u client order tabeli.
         agentsNames.remove(agent.getFirstName() + " " + agent.getLastName());
-    }
-
-    public void deleteService(Services service) {
-        int serviceId = service.getId();
-        Services serviceForDelete = servicesFacade.find(serviceId);
-        servicesFacade.remove(serviceForDelete);
-        services.remove(service);
-    }
-
-    public void deleteCompanyActivity(CompanyActivities companyActivity) {
-        if (setOfCompanyActivities.size() > 1) {
-            setOfCompanyActivities.remove(companyActivity);
-            companyActivitiesFacade.remove(companyActivity);
-        }
     }
 
     public void addAgent() {
         tempAgentForAdding.setCompaniesId(company);
         agents.add(tempAgentForAdding);
         agentsFacade.create(tempAgentForAdding);
+        addAgentName(tempAgentForAdding);
         tempAgentForAdding = new Agents();
+    }
+
+    public void updateAgents() {
+        for (int i = 0; i < agents.size(); i++) {
+            if (agents.get(i).getId() != null) {
+                agentsFacade.edit(agents.get(i));
+            } else {
+                agentsFacade.create(agents.get(i));
+            }
+        }
+    }
+
+    public void setAgents() {
+        agents = agentsFacade.getAgentsByCompanyId(company);
+        for (Agents tempAgent : agents) {
+            addAgentName(tempAgent);
+        }
+    }
+
+    public void addAgentName(Agents agent) {
+        String agentName = agent.getFirstName() + " " + agent.getLastName();
+        agentsNames.add(agentName);
+    }
+
+    public List<Agents> getAgents() {
+        return agents;
+    }
+
+    public Set<String> getAgentsNames() {
+        return agentsNames;
+    }
+
+    public Agents getTempAgentForAdding() {
+        return tempAgentForAdding;
+    }
+
+    public void setTempAgentForAdding(Agents tempAgentForAdding) {
+        this.tempAgentForAdding = tempAgentForAdding;
+    }
+
+//  Services methods.
+    public void unavailableService(Services service) {
+        int serviceId = service.getId();
+        Services serviceForDelete = servicesFacade.find(serviceId);
+        serviceForDelete.setServiceAvailable(Boolean.FALSE);
+        servicesFacade.edit(serviceForDelete);
+        services.remove(service);
+        deleteServiceName(service);
+    }
+
+    public void deleteServiceName(Services service) {
+        servicesNames.remove(service.getName());
     }
 
     public void addService() {
         services.add(tempServiceForAdding);
         servicesFacade.create(tempServiceForAdding);
+        addServiceName(tempServiceForAdding);
         tempServiceForAdding = new Services();
+    }
+
+    public void updateCompanyServices() {
+        for (int i = 0; i < services.size(); i++) {
+            servicesFacade.edit(services.get(i));
+        }
+    }
+
+    public void setCompanyServices() {
+        for (CompanyOrder order : companyOrders) {
+            services = servicesFacade.getServicesByCompanyOrderId(order);
+        }
+        for (Services tempService : services) {
+            addServiceName(tempService);
+        }
+    }
+
+    public void addServiceName(Services services) {
+        servicesNames.add(services.getName());
+    }
+
+    public Services getTempServiceForAdding() {
+        return tempServiceForAdding;
+    }
+
+    public void setTempServiceForAdding(Services tempServiceForAdding) {
+        this.tempServiceForAdding = tempServiceForAdding;
+    }
+
+    public List<Services> getServices() {
+        return services;
     }
 
     public void updateCompanyInfo() {
@@ -275,16 +311,6 @@ public class LogInController implements Serializable {
         contactsFacade.edit(companysContact);
     }
 
-    public void updateAgents() {
-        for (int i = 0; i < agents.size(); i++) {
-            if (agents.get(i).getId() != null) {
-                agentsFacade.edit(agents.get(i));
-            } else {
-                agentsFacade.create(agents.get(i));
-            }
-        }
-    }
-
     public void updateActivity() {
         tempCompanyActivitiesForAdding.setActivityId(choosenActivity);
         tempCompanyActivitiesForAdding.setCompaniesId(company);
@@ -300,9 +326,10 @@ public class LogInController implements Serializable {
         }
     }
 
-    public void updateCompanyServices() {
-        for (int i = 0; i < services.size(); i++) {
-            servicesFacade.edit(services.get(i));
+    public void deleteCompanyActivity(CompanyActivities companyActivity) {
+        if (setOfCompanyActivities.size() > 1) {
+            setOfCompanyActivities.remove(companyActivity);
+            companyActivitiesFacade.remove(companyActivity);
         }
     }
 
@@ -324,81 +351,12 @@ public class LogInController implements Serializable {
         companysContact = contactsFacade.getContactByCompanyId(company);
     }
 
-    public void setAgents() {
-        agents = agentsFacade.getAgentsByCompanyId(company);
-        for (Agents tempAgent : agents) {
-            String agentName = tempAgent.getFirstName() + " " + tempAgent.getLastName();
-            agentsNames.add(agentName);
-        }
-    }
-
-    public Agents getTempAgentForAdding() {
-        return tempAgentForAdding;
-    }
-
-    public void setTempAgentForAdding(Agents tempAgentForAdding) {
-        this.tempAgentForAdding = tempAgentForAdding;
-    }
-
-    public Services getTempServiceForAdding() {
-        return tempServiceForAdding;
-    }
-
-    public void setTempServiceForAdding(Services tempServiceForAdding) {
-        this.tempServiceForAdding = tempServiceForAdding;
-    }
-
     public void setCompanyOrder() {
         companyOrders = orderFacade.getOrdersByCompanyId(company);
     }
 
-    public void setCompanyServices() {
-        for (CompanyOrder order : companyOrders) {
-            services = servicesFacade.getServicesByCompanyOrderId(order);
-        }
-        for (Services tempService : services) {
-            servicesNames.add(tempService.getName());
-        }
-    }
-
     public void setListOfCompanyActivities() {
         setOfCompanyActivities = companyActivitiesFacade.getCompanyActivitiesByCompanyId(company);
-    }
-
-    public UIComponent getUsernameComponent() {
-        return usernameComponent;
-    }
-
-    public void setUsernameComponent(UIComponent usernameComponent) {
-        this.usernameComponent = usernameComponent;
-    }
-
-    public UIComponent getPasswordComponent() {
-        return passwordComponent;
-    }
-
-    public void setPasswordComponent(UIComponent passwordComponent) {
-        this.passwordComponent = passwordComponent;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<ClientOrderPresenter> getClientOrderPresenterList() {
-        return clientOrderPresenterList;
     }
 
     public Companies getCompany() {
@@ -421,32 +379,12 @@ public class LogInController implements Serializable {
         return ownersContacts;
     }
 
-    public List<Agents> getAgents() {
-        return agents;
-    }
-
-    public Set<String> getAgentsNames() {
-        return agentsNames;
-    }
-
     public List<CompanyOrder> getCompanyOrders() {
         return companyOrders;
     }
 
-    public List<Services> getServices() {
-        return services;
-    }
-
     public Set<String> getServicesNames() {
         return servicesNames;
-    }
-
-    public List<ClientOrderPresenter> getFilteredClientOrderPresenter() {
-        return filteredClientOrderPresenter;
-    }
-
-    public void setFilteredClientOrderPresenter(List<ClientOrderPresenter> filteredClientOrderPresenter) {
-        this.filteredClientOrderPresenter = filteredClientOrderPresenter;
     }
 
     public Set<CompanyActivities> getSetOfCompanyActivities() {
@@ -472,6 +410,81 @@ public class LogInController implements Serializable {
 
     public void setFilteredClientOrders(List<ClientOrders> filteredClientOrders) {
         this.filteredClientOrders = filteredClientOrders;
+    }
+
+    public ReservationsFacade getReservationsFacade() {
+        return reservationsFacade;
+    }
+
+    public void onRowEdit(RowEditEvent event) {
+        ClientOrders tempClientOrders = (ClientOrders) event.getObject();
+        clientOrdersFacade.edit(tempClientOrders);
+        LOGGER.log(Level.INFO, "Method onCellEdit() finished successfully.");
+    }
+
+    // Ovaj metod ne radi nista, na taj nacin se nece sacuvati vrednosti koje su set-ovane, nego ce ostati vrednosti koje
+    // su bile pre edit-ovanja reda.
+    public void onRowCancel(RowEditEvent event) {
+
+    }
+
+    public int getFirstRowToShow() {
+        return firstRowToShow;
+    }
+
+    public void setFirstRowToShow() {
+        LocalDate today = LocalDate.now();
+        for (int i = 0; i < listOfClientOrders.size(); i++) {
+            ClientOrders tempClientOrder = listOfClientOrders.get(i);
+            if (!tempClientOrder.getReservationsList().isEmpty()) {
+                LocalDate tempReservationDate = tempClientOrder.getReservationsList().get(0).getReservationDate();
+                if (today.isEqual(tempReservationDate)) {
+                    firstRowToShow = i;
+                    setPageRows();
+                    break;
+                }
+            }
+        }
+    }
+
+    public int getPageRows() {
+        return pageRows;
+    }
+
+    public void setPageRows() {
+        if (firstRowToShow <= 10 && firstRowToShow != 0) {
+            pageRows = firstRowToShow;
+        } else if (firstRowToShow > 10 && firstRowToShow < 20) {
+            pageRows = 10;
+        } else if (firstRowToShow >= 20) {
+            pageRows = 20;
+        }
+    }
+
+    public long getTodayAsLong() {
+        return todayAsLong;
+    }
+
+//  Parametar "value" je ono sto je ispisano u tabeli (odnosno ono sto je iscitano iz baze). Parametar "filter" je ona vrednost
+//  na osnovu koje filtriramo podatke (odnosno vrednost iz p:calendar tag-a u header-u).
+    public boolean filterByDate(Object value, Object filter, Locale locale) {
+        // Ako filter nije podesen onda se ispisuju sve vrednosti.
+        if (filter == null) {
+            return true;
+        }
+        // Ako poredimo sa null vrednoscu onda kazemo da nema poklapanja (odbacujemo taj red).
+        if (value == null) {
+            return false;
+        }
+        // Prvo cast-ujemo "value" u svoju klasu.
+        LocalDate valueLocaleDate = (LocalDate) value;
+        // Zatim cast-ujemo "filter" u svoju klasu.
+        Date filterDate = (Date) filter;
+        // Zatim prebacujemo "filter" u LocalDate klasu. Koristimo klasu java.sql.Date
+        // koja extend-uje java.util.Date.
+        LocalDate filterLocalDate = new java.sql.Date(filterDate.getTime()).toLocalDate();
+        // I na kraju poredimo datume.
+        return filterLocalDate.isEqual(valueLocaleDate);
     }
 
 }

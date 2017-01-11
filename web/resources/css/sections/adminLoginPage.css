@@ -142,10 +142,32 @@ input[type="checkbox"]{
     margin-bottom: 5px;
 }
 
-#clientOrdersForm\:clientOrdersTableId\:searchAllPanel{
+#clientOrdersForm\:clientOrdersTableId\:tableGlobalComponents{
     text-align: right;
 }
 
 #clientOrdersForm\:clientOrdersTableId\:globalFilter{
     width:150px;
+}
+
+#clientOrdersForm\:clientOrdersTableId select, #clientOrdersForm\:clientOrdersTableId a{
+    color: #4f4f4f;
+}
+
+#clientOrdersForm\:clientOrdersTableId tr:hover,
+#clientOrdersForm\:clientOrdersTableId a:hover{
+    background: linear-gradient(to bottom, #f0ad4e 0%, #eb9316 100%);
+    color: #fff;
+}
+
+#clientOrdersForm\:clientOrdersTableId table{
+    margin-bottom: 0px;
+}
+
+.pastDays{
+    background: #ffdd7b;
+}
+
+.futureDays{
+    background: #83ccff;
 }

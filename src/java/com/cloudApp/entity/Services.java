@@ -36,7 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Services.findById", query = "SELECT s FROM Services s WHERE s.id = :id"),
     @NamedQuery(name = "Services.findByName", query = "SELECT s FROM Services s WHERE s.name = :name"),
     @NamedQuery(name = "Services.findByReservation", query = "SELECT s FROM Services s WHERE s.reservation = :reservation"),
-    @NamedQuery(name = "Services.findByCompanyOrderId", query = "SELECT s FROM Services s WHERE s.companyOrderId = :companyOrderId")})
+    @NamedQuery(name = "Services.findByServiceAvailable", query = "SELECT s FROM Services s WHERE s.serviceAvailable = :serviceAvailable"),
+    @NamedQuery(name = "Services.findByCompanyOrderId", query = "SELECT s FROM Services s WHERE s.companyOrderId = :companyOrderId AND s.serviceAvailable = true")})
 public class Services implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "servicesId")
@@ -53,6 +54,9 @@ public class Services implements Serializable {
     private String name;
     @Column(name = "reservation")
     private Boolean reservation;
+    @Column(name = "service_available")
+    private Boolean serviceAvailable = Boolean.TRUE;
+    
     @JoinColumn(name = "company_order_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private CompanyOrder companyOrderId;
@@ -94,6 +98,14 @@ public class Services implements Serializable {
 
     public void setCompanyOrderId(CompanyOrder companyOrderId) {
         this.companyOrderId = companyOrderId;
+    }
+
+    public Boolean getServiceAvailable() {
+        return serviceAvailable;
+    }
+
+    public void setServiceAvailable(Boolean serviceAvailable) {
+        this.serviceAvailable = serviceAvailable;
     }
 
     @Override
