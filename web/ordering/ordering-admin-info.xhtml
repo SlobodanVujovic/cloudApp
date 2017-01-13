@@ -46,16 +46,17 @@
                                 </div>
                             </div>
 
-                            <!-- TODO Username treba proveriti pre unosa u bazu da se ne desi da 2 razlicita korisnika imaju
-                            isti username, jer se prema njemu trazi password u bazi i vraca se samo 1 rezultat koji se poredi
-                            sa password-om koji je korisnik uneo u login page kada zeli da se loguje na cloud.-->
                             <!-- Text input-->
                             <div class="form-group">
                                 <h:outputLabel value="Username" class="col-md-4 control-label"/>
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="user_name" pt:placeholder="Username" value="#{adminController.owner.username}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
+                                        <!-- Obrati paznju kako se proverava da li je username vec zauzet. Atributu "validator" dodeljujemo metod koji se
+                                        nalazi u CDI bean-u a ne u @FacesValidator klasi, kako bi trebalo. Ovo radimo jer nam je potreban prisutp bazi,
+                                        odnosno OwnersFacade-u ali @Inject se ne moze koristi u @FacesValidator-u. Moci ce od JSF 2.3 verzije.-->
+                                        <h:inputText id="user_name" pt:placeholder="Username" value="#{adminController.owner.username}" required="true"
+                                                     requiredMessage="Username is required." validator="#{usernameInUseControler.validate}" maxlength="70" styleClass="form-control">
                                             <f:attribute name="message" value="Username can not be empty."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
@@ -106,7 +107,7 @@
                                     <h:message class="label label-danger" for="email" />
                                 </div>
                             </div>
-                            
+
                             <!-- Buttons -->
                             <!-- In h:commandButton can not be put icon so I use h:commandLink -->
                             <div class="form-group">
