@@ -72,6 +72,7 @@ racunara. -->
                             <h:outputLabel for="clientPhone" value="Enter your phone"/>
                             <h:inputText id="clientPhone" value="#{servicesController.clientOrder.clientPhone}" pt:placeholder=" 064 51 11 423"/>
                             <br/>
+                            <!-- TODO Kada se unese email klijenta i poruci servis, ako narucilac servisa nije u MDS mrezi, dobija se exception.-->
                             <h:outputLabel for="clientEmail" value="Enter your e-mail"/>
                             <h:inputText id="clientEmail" value="#{servicesController.clientOrder.clientEmail}" pt:placeholder=" john@gmail.com" title="Enter E-mail to receive notification about your reservation."/>
                         </div>

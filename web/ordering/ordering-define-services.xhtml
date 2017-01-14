@@ -17,86 +17,37 @@
 
                             <!-- Form Name -->
                             <legend>Define your services</legend>
-                            <!-- TODO Polja za definisanje servisa uraditi kao dinamicku listu tako da se polja kreiraju i brisu
-                            dinamicki a ne da budu predefinisana u XHTML-u.-->
-                            <!-- Service name 1 text input-->
-                            <div class="form-group">
-                                <h:outputLabel value="Service Name" for="service_name_1" class="col-md-4 control-label"/>
-                                <div class="col-md-4 inputGroupContainer">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="glyphicon glyphicon-wrench"></i></span>
-                                        <!-- TODO Ako se stave JSF validatori na input polja (kodovi koji su zakomentarisani u nastavku strane)
-                                        onda se, cak iako input polja nisu vidljiva, kada se pritisne Submit button, validacija primenjuje
-                                        na poljima i ne moze da se predje na sledecu stranicu. Uradjena JavaScript validacija. -->
-                                        <!-- U h:inputText treba ubaciti:
-                                        required="true" requiredMessage="Service name is required." maxlength="70"-->
-                                        <h:inputText id="service_name_1" pt:placeholder="Service Name" styleClass="form-control">
-                                            <!-- <f:attribute name="message" value="Service Name can not be empty."/>
-                                            <f:validator validatorId="EmptyInputValidator"/>-->
-                                        </h:inputText>
-                                    </div>
-                                    <h:message class="label label-danger" for="service_name_1"/>
-                                </div>
-                            </div>
+                            
+                            <!-- Tabela u kojoj se definisu servisi.-->
+                            <p:dataTable id="serviceDefinitionTableId" value="#{defineServicesController.listOfBasicServices}" var="basicService">
+                                <p:column headerText="Service Name">
+                                    <p:inputText id="service_name" value="#{basicService.serviceName}" required="true" requiredMessage="Service name is required." maxlength="70" pt:placeholder="Service Name" styleClass="form-control">
+                                        <f:attribute name="message" value="Service Name can not be empty."/>
+                                        <f:validator validatorId="EmptyInputValidator"/>
+                                    </p:inputText>
+                                    <h:message class="label label-danger" for="service_name"/>
+                                </p:column>
+                                <p:column headerText="Reservation required?" width="16%" style="text-align: center; padding-top: 9px" >      
+                                    <p:selectBooleanCheckbox id="service_checkbox" value="#{basicService.reservationRequired}" onchange="serviceWithReservation(this.id)"/>
+                                </p:column>
+                                <p:column width="18%">
+                                    <f:facet name="header"></f:facet>
+                                    <span class="form-group col-md-4 deleteButtonForm">
+                                        <!-- Obrati paznju kako je ubacena ikona u p:commandButton. Koristi se Font Awesome jer Bootstrap ima problema oko
+                                        kompatibilnosti sa PrimeFaces-om. Takodje sa "update" atributom radimo ono sto smo radili sa <f:ajax> tag-om.
+                                        Posto koristimo immediate="true" prilikom brisanja reda brisu se i vrednosti svih checkbox-ova koji su setovani
+                                        nakon poslednjeg klika na "More services" dugme. -->
+                                        <p:commandButton value="Delete" action="#{defineServicesController.remove(basicService)}"
+                                                         update="serviceDefinitionTableId" icon="fa fa-times-circle-o" iconPos="right"
+                                                         onclick="return confirm('Are you sure?')" immediate="true"/>
+                                    </span>
+                                </p:column>
+                            </p:dataTable>
 
-                            <!-- Checkbox for service 1-->
-                            <div class="form-group">
-                                <h:outputLabel value="This service need reservation system" class="col-md-4 control-label center-checkbox" for="service_checkbox_1"/>
-                                <h:selectBooleanCheckbox id="service_checkbox_1" onclick="showNotificationCheckbox(this.id)" class="v_center_checkbox"/>
+                            <div id="defineServicesAddButtonDiv" class="form-group col-md-4 defineServicesButtons">
+                                <p:commandButton value="More services " id="defineServicesAddButton" action="#{defineServicesController.add}" 
+                                                 update="serviceDefinitionTableId" styleClass="btn btn-warning" icon="fa fa-plus-circle" iconPos="right"/>
                             </div>
-
-                            <!-- Service name 2 text input-->
-                            <div id="service_2">
-                                <div class="form-group">
-                                    <h:outputLabel value="Service Name" for="service_name_2" class="col-md-4 control-label"/>
-                                    <div class="col-md-4 inputGroupContainer">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="glyphicon glyphicon-wrench"></i></span>
-                                            <!-- U h:inputText treba ubaciti:
-                                            required="true" requiredMessage="Service name is required." maxlength="70"-->
-                                            <h:inputText id="service_name_2" pt:placeholder="Service Name" styleClass="form-control">
-                                                <!-- <f:attribute name="message" value="Service Name can not be empty."/>
-                                                <f:validator validatorId="EmptyInputValidator"/>-->
-                                            </h:inputText>
-                                        </div>
-                                        <h:message class="label label-danger" for="service_name_2"/>
-                                    </div>
-                                </div>
-
-                                <!-- Checkbox for service 2-->
-                                <div class="form-group">
-                                    <h:outputLabel value="This service need reservation system" class="col-md-4 control-label center-checkbox" for="service_checkbox_2"/>
-                                    <h:selectBooleanCheckbox id="service_checkbox_2" onclick="showNotificationCheckbox(this.id)" class="v_center_checkbox"/>
-                                </div>
-                            </div>
-
-                            <!-- Service name 3 text input-->
-                            <div id="service_3">
-                                <div class="form-group">
-                                    <h:outputLabel value="Service Name" for="service_name_3" class="col-md-4 control-label"/>
-                                    <div class="col-md-4 inputGroupContainer">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="glyphicon glyphicon-wrench"></i></span>
-                                            <!-- U h:inputText treba ubaciti:
-                                            required="true" requiredMessage="Service name is required." maxlength="70"-->
-                                            <h:inputText id="service_name_3" pt:placeholder="Service Name" styleClass="form-control">
-                                                <!-- <f:attribute name="message" value="Service Name can not be empty."/>
-                                                <f:validator validatorId="EmptyInputValidator"/>-->
-                                            </h:inputText>
-                                        </div>
-                                        <h:message class="label label-danger" for="service_name_3"/>
-                                    </div>
-                                </div>
-                                <!-- Checkbox for service 3-->
-                                <div class="form-group">
-                                    <h:outputLabel value="This service need reservation system" class="col-md-4 control-label center-checkbox" for="service_checkbox_3"/>
-                                    <h:selectBooleanCheckbox id="service_checkbox_3" onclick="showNotificationCheckbox(this.id)"  class="v_center_checkbox"/>
-                                </div>
-                            </div>
-                            <h:inputHidden id="hiddenInput1" value="#{defineServicesController.serviceNames}"/>
-                            <h:inputHidden id="hiddenInput2" value="#{defineServicesController.serviceReservations}"/>
-                            <!--U ovom polju cuvamo broj cekiranih servisa sa rezervacijama.-->
-                            <h:inputHidden id="hiddenInput3" value="#{defineServicesController.numberOfServicesWithReservation}"/>
 
                             <!-- Notification period-->
                             <p:panelGrid columns="4" id="notificationGrid">
@@ -115,31 +66,19 @@
                             </p:panelGrid>
                             <h:message id="notificationMessage" for="notificationValue" class="label label-danger"/>
                             
-                            <!-- Buttons -->
-                            <div class="form-group">
-                                <h:outputLabel class="col-md-4 control-label"/>
-                                <div class="col-md-4 defineServicesButtons">
-                                    <h:commandLink value="More services " immediate="true" id="defineServicesMoreButton" onclick="return showMoreServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-down"/></h:commandLink>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <h:outputLabel class="col-md-4 control-label"/>
-                                <div class="col-md-4 defineServicesButtons">
-                                    <h:commandLink value="Less services " immediate="true" id="defineServicesLessButton" onclick="return showLessServices()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-up"/></h:commandLink>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <h:outputLabel class="col-md-4 control-label"/>
-                                <div class="col-md-4 defineServicesButtons">
-                                    <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="ordering-admin-info" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
-                                    <!-- TODO Ako korisnik pritisne Submit i ode na Thanks stranicu i onda pritisne Back na browseru i to ga vrati na Define services
-                                    ako opet pritisne submit, izbacuje se ContextNotActiveException, ovo treba handlovati.-->
-                                    <h:commandLink value="Submit " id="defineServicesSubmitButton" action="exitToThanks" onclick="return defineServicesValidation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/>
-                                        <f:actionListener binding="#{companyController.writeToDatabase()}"/>
-                                        <f:actionListener binding="#{adminController.writeToDatabase()}"/>
-                                        <f:actionListener binding="#{defineServicesController.writeToDatabase()}"/>
-                                    </h:commandLink>
-                                </div>
+                            <!--U ovom polju cuvamo broj cekiranih servisa sa rezervacijama.-->
+                            <h:inputText id="hiddenInput3" value="#{defineServicesController.numberOfServicesWithReservation}" onchange="showNotificationCheckbox()"/>
+                            
+                            <!--Buttons--> 
+                            <div id="backAndSubmitButtons" class="form-group col-md-4 defineServicesButtons">
+                                <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="ordering-admin-info" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
+                                <!-- TODO Ako korisnik pritisne Submit i ode na Thanks stranicu i onda pritisne Back na browseru i to ga vrati na Define services
+                                ako opet pritisne submit, izbacuje se ContextNotActiveException, ovo treba handlovati.-->
+                                <h:commandLink value="Submit " id="defineServicesSubmitButton" action="exitToThanks" onclick="return defineServicesValidation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/>
+                                    <f:actionListener binding="#{companyController.writeToDatabase()}"/>
+                                    <f:actionListener binding="#{adminController.writeToDatabase()}"/>
+                                    <f:actionListener binding="#{defineServicesController.writeToDatabase()}"/>
+                                </h:commandLink>
                             </div>
 
                         </fieldset>

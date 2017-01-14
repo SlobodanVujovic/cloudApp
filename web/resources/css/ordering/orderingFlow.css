@@ -175,9 +175,19 @@ select:disabled{
     margin-right: 10px;
 }
 
+#defineServicesAddButtonDiv {
+    width: 100%;
+    margin-left: 25%;
+    padding-left: 0px;
+}
+
+#defineServicesAddButton{
+    height: 34px;
+}
+
 #notificationGrid {
-    margin-left: 410px;
     display: none;
+    margin-left: 25%;
 }
 
 #notificationGrid tr{
@@ -187,6 +197,7 @@ select:disabled{
 
 #notificationGrid td{
     border-width: 0px;
+    padding: 3px;
 }
 
 #notificationGrid label{
@@ -195,6 +206,7 @@ select:disabled{
 
 #notificationGrid input[type="checkbox"]{
     margin-left: 0px;
+    margin-top: 9px;
 }
 
 #notificationMessage{
@@ -204,4 +216,22 @@ select:disabled{
 #activityList{
     border-radius: 4px;
     height: 34px;
+}
+
+#serviceDefinitionTableId table{
+    margin-left: 0px;
+}
+
+#serviceDefinitionTableId{
+    width: 50%;
+    margin-left: 25%;      
+}
+
+#hiddenInput3{
+    display: none;
+}
+
+#backAndSubmitButtons{
+    width: 100%;
+    margin-left: 40%;
 }

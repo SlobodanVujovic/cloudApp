@@ -264,49 +264,14 @@ $(function () {
     $('#timepicker').timepicker();
 });
 
-function showMoreServices() {
-    var serviceIds = ["service_2", "service_3"];
-    var serviceId;
-    var divToShow;
-    for (var i = 0; i < serviceIds.length; i++) {
-        serviceId = serviceIds[i];
-        var serviceDiv = document.getElementById(serviceId);
-        //jQuery za proveravanje da li je element vidljiv (vidljiv je ako ima sirinu ili visinu >0).
-        var divIsVisible = $(serviceDiv).is(":visible");
-        if (!divIsVisible) {
-            break;
-        }
-    }
-    divToShow = document.getElementById(serviceId);
-    $(divToShow).slideDown(500, function () {
-        (divToShow).style.display = "block";
-    });
-    return false;
-}
-
-function showLessServices() {
-    var serviceIds = ["service_3", "service_2"];
-    var serviceId;
-    var divToShow;
-    for (var i = 0; i < serviceIds.length; i++) {
-        serviceId = serviceIds[i];
-        var serviceDiv = document.getElementById(serviceId);
-        //jQuery za proveravanje da li je element vidljiv (vidljiv je ako ima sirinu ili visinu >0).
-        var divIsVisible = $(serviceDiv).is(":visible");
-        if (divIsVisible) {
-            break;
-        }
-    }
-    divToShow = document.getElementById(serviceId);
-    $(divToShow).slideUp(500, function () {
-        (divToShow).style.display = "none";
-    });
-    return false;
-}
-
 function defineServicesValidation() {
     var areServicesDefined = false;
-    var serviceIds = ["service_name_1", "service_name_2", "service_name_3"];
+    var serviceIds = [];
+    var rowNumber = document.getElementById("serviceDefinitionTableId_data").getElementsByTagName("tr");
+    for (var i = 0; i < rowNumber.length; i++) {
+        var tempServiceId = "serviceDefinitionTableId:" + i + ":service_name";
+        serviceIds.push(tempServiceId);
+    }
     for (var i = 0; i < serviceIds.length; i++) {
         var element = document.getElementById(serviceIds[i]);
         if (element.value !== "") {
@@ -315,36 +280,8 @@ function defineServicesValidation() {
     }
     if (!areServicesDefined) {
         alert("Please define at least one Service Name.");
-    } else {
-        definedServiceNames();
-        definedReservations();
     }
     return areServicesDefined;
-}
-
-function definedServiceNames() {
-    var serviceNames = [];
-    var serviceIds = ["service_name_1", "service_name_2", "service_name_3"];
-    for (var i = 0; i < serviceIds.length; i++) {
-        var element = document.getElementById(serviceIds[i]);
-        if (element.value) {
-            serviceNames.push(element.value);
-        }
-    }
-    document.getElementById("hiddenInput1").value = serviceNames;
-}
-
-function definedReservations() {
-    var servicesWithReservation = [];
-    var reservationIds = ["service_checkbox_1", "service_checkbox_2", "service_checkbox_3"];
-    for (var i = 0; i < reservationIds.length; i++) {
-        var element = document.getElementById(reservationIds[i]);
-        if (element.checked) {
-            var serviceId = reservationIds[i].substr(reservationIds[i].length - 1, 1);
-            servicesWithReservation.push(serviceId);
-        }
-    }
-    document.getElementById("hiddenInput2").value = servicesWithReservation;
 }
 
 function companyInfoValidation() {
@@ -428,24 +365,34 @@ function administratorInfoValidation() {
 }
 
 //Metod koji se poziva da bi se prikazao upit o notifikaciji.
-function showNotificationCheckbox(checkboxId) {
+function serviceWithReservation(checkboxId) {
     var hiddenInput3 = document.getElementById("hiddenInput3");
 //    Iz polja koje cuva broj cekiranih servisa sa rezervacijama uzimamo vrednost. Ovo radimo da bi u slucaju kada,
 //    nakon submit-a stranice, JSF validator vrati gresku, da ne bi izgubili broj cekiranih servisa sa rezervacijama.
     var numberOfServicesWithReservation = hiddenInput3.value;
     var serviceCheckbox = document.getElementById(checkboxId);
-    var notificationCheckbox = document.getElementById("notificationCheckbox");
 //Zavisno da li je rezervacija za servis cekirana ili ne, menjamo broj servisa sa rezervacijom.
     if (serviceCheckbox.checked) {
         ++numberOfServicesWithReservation;
 //        Nakon promene broja, vrednost cuvamo u hiddenInput3 polju.
         hiddenInput3.value = numberOfServicesWithReservation;
+        // Kada menjamo vrednost komponente kroz JS to ne izaziva HTML DOM event "onchange" tako da se metod koji
+        // je mozda dodeljen ovom atributu u tag-u komponent se nece pozvati. Da bi izazvali "onchange" event
+        // potrebno je pozvati onchange() metod nad komponentom ciju vrednost smo podesili.
+        hiddenInput3.onchange();
     } else {
         --numberOfServicesWithReservation;
         hiddenInput3.value = numberOfServicesWithReservation;
+        hiddenInput3.onchange();
     }
     // console.log(numberOfServicesWithReservation);
+}
+
+function showNotificationCheckbox() {
+    var hiddenInput3 = document.getElementById("hiddenInput3");
+    var numberOfServicesWithReservation = hiddenInput3.value;
     var notificationElement = document.getElementById("notificationGrid");
+    var notificationCheckbox = document.getElementById("notificationCheckbox");
 //    if ce proci ako je broj servisa veci od 0.
     if (numberOfServicesWithReservation > 0) {
 //        Proverimo da li je notifikacija vec vidljiva.
@@ -468,7 +415,7 @@ function showNotificationCheckbox(checkboxId) {
 //              Kada sklanjamo notifikaciju 1. proverimo da li je notification checkbox cekiran i ako jeste pozivamo
 //              click() metod da bi simulirali klik na checkbox-u, odnosno da bi ga rascekirali. Time se notification
 //              input disable-uje i vrednost se nece slati bean-u.
-            if(notificationCheckbox.checked){
+            if (notificationCheckbox.checked) {
                 notificationCheckbox.click();
             }
         }

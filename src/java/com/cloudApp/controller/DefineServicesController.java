@@ -6,11 +6,13 @@ import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.CompanyOrderFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
+import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
 import javax.faces.flow.FlowScoped;
+import org.primefaces.context.RequestContext;
 
 @Named
 @FlowScoped(value = "ordering")
@@ -22,16 +24,19 @@ public class DefineServicesController implements Serializable {
 
     private CompanyOrder companyOrder;
     private Services services;
-    private String serviceNames;
-    private String serviceReservations;
     private int serviceNotification;
     private boolean enableNotificationInput;
     private int numberOfServicesWithReservation;
+    private List<BasicServiceInfo> listOfBasicServices;
+    private BasicServiceInfo initialBasicService;
 
     @PostConstruct
     public void init() {
         companyOrder = new CompanyOrder();
         services = new Services();
+        listOfBasicServices = new ArrayList();
+        initialBasicService = new BasicServiceInfo();
+        listOfBasicServices.add(initialBasicService);
     }
 
     @Inject
@@ -50,10 +55,9 @@ public class DefineServicesController implements Serializable {
         }
         companyOrderFacade.create(companyOrder);
         setPublicUrl();
-        String[] servicesArray = serviceNames.split(",");
-        for (int i = 0; i < servicesArray.length; i++) {
-            services.setName(servicesArray[i]);
-            if (serviceReservations.contains(i + 1 + "")) {
+        for (BasicServiceInfo tempBasicService : listOfBasicServices) {
+            services.setName(tempBasicService.getServiceName());
+            if (tempBasicService.isReservationRequired()) {
                 services.setReservation(true);
             } else {
                 services.setReservation(false);
@@ -74,22 +78,6 @@ public class DefineServicesController implements Serializable {
             companyOrderFacade.edit(lastOrder);
             publicUrlController.setUrl(url);
         }
-    }
-
-    public String getServiceReservations() {
-        return serviceReservations;
-    }
-
-    public void setServiceReservations(String serviceReservations) {
-        this.serviceReservations = serviceReservations;
-    }
-
-    public String getServiceNames() {
-        return serviceNames;
-    }
-
-    public void setServiceNames(String serviceNames) {
-        this.serviceNames = serviceNames;
     }
 
     public CompanyOrder getCompanyOrder() {
@@ -130,6 +118,30 @@ public class DefineServicesController implements Serializable {
 
     public void setNumberOfServicesWithReservation(int numberOfServicesWithReservation) {
         this.numberOfServicesWithReservation = numberOfServicesWithReservation;
+    }
+
+    public List<BasicServiceInfo> getListOfBasicServices() {
+        return listOfBasicServices;
+    }
+
+    public void setListOfBasicServices(List<BasicServiceInfo> listOfBasicServices) {
+        this.listOfBasicServices = listOfBasicServices;
+    }
+
+    public void add() {
+        listOfBasicServices.add(new BasicServiceInfo());
+    }
+
+    public void remove(BasicServiceInfo service) {
+        if (service.isReservationRequired()) {
+            --numberOfServicesWithReservation;
+        }
+        // Obrati paznju kako se iz bean-a update-uje komponenta u JSF-u.
+        RequestContext.getCurrentInstance().update("hiddenInput3");
+        // Obrati paznju kako se poziva JavaScript funkcija iz bean-a. Mora se koristiti PrimeFaces jer standardna JSF
+        // specifikacija ne podrzava ovo (moci ce u JSF 2.3).
+        RequestContext.getCurrentInstance().execute("showNotificationCheckbox();");
+        listOfBasicServices.remove(service);
     }
 
 }
