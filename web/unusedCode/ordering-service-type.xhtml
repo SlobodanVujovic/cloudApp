@@ -88,7 +88,6 @@
                             </ul>
 
                             <!-- Buttons -->
-                            <!-- TODO Definisati validator koji nece dozvoljavati prelazak na sledecu stranicu ako nije izabran neki servis.-->
                             <h:commandLink value="Back " id="serviceTypesBackButton" immediate="true" action="#" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
                             <h:commandLink value="Submit " id="serviceTypesButton" action="#" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/></h:commandLink>
                             <h:inputHidden id="selectedBricks"/>
@@ -112,9 +111,6 @@
                                         <f:selectItem itemLabel="Foo John" itemValue="fooJohn"/>
                                     </h:selectOneMenu>
                                 </p:panelGrid>
-                                <!-- TODO "agentpicker" je dropdown lista koja treba da se popunjava iz DB-a. Ovde sam samo rucno uneo vrednosti u listi.
-                                    U "Internet stranice/JSF" folderu ima stranica "How to populate options of h_selectOneMenu from database"
-                                    koju treba koristiti kao referencu za ovo.-->
                             </div>
                             <div id="reminderPanel">
                                 <p>Reminder Preview:</p>
@@ -159,13 +155,6 @@
                                     <h:outputLabel id="problem_description_label" for="problem_description" value="Problem Description" class="previewElement"/>
                                     <h:inputTextarea id="problem_description" pt:placeholder=" Describe your problem."/>
                                 </h:panelGrid>
-                                <!-- TODO Proveriti zasto "client_address" ne prikazuje mapu, testGoogleMaps prikazuje
-                                al' ovde se nista ne prikazuje iako je isti kod. Kada se stranica generise, ovoj stranici
-                                nedostaju script-ovi koji se ticu Maps-a a koji se generisu u test stranici.
-                                Site: "http://www.primefaces.org/showcase/ui/data/gmap/geocode.xhtml"-->
-
-                                <!--TODO Za listu "emergency_level" kreirati prozor gde ce moci 
-                                da se definisu nivoi, bilo da su to brojevi ili string-ovi-->
                             </div>
                         </article>
                     </h:form>

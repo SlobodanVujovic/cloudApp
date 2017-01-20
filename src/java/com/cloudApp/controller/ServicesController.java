@@ -24,7 +24,11 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.lifecycle.ClientWindow;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
@@ -46,6 +50,9 @@ public class ServicesController implements Serializable {
     private ClientOrders clientOrder;
     private Reservations reservation;
     private static final Logger LOGGER = Logger.getLogger(ServicesController.class.getName());
+    // Ovaj property koristimo da bi odredili da li je potrebna validacija polja u koja se unose datum i
+    // vreme rezervacije servisa.
+    private String validateDateAndTime;
 
     public ServicesController() {
 
@@ -105,7 +112,7 @@ public class ServicesController implements Serializable {
             clientOrderFacade.create(clientOrder);
             // Proverimo da li servis zahteva rezervaciju.
             if (tempCheckedService.getReservation()) {
-//              Ako zahteva, proverimo da li je setovani datum.
+                // Ako zahteva, proverimo da li je setovani datum.
                 LocalDate reservationDate = reservation.getReservationDate();
                 if (reservationDate != null) {
                     LocalTime reservationLocalTime = reservation.getReservationTime();
@@ -115,20 +122,17 @@ public class ServicesController implements Serializable {
                     // Nadjemo notification vrednost.
                     CompanyOrder companyOrder = clientOrder.getCompanyOrderId();
                     int notification = companyOrder.getNotification();
-//                  Oduzimamo "notification + 1", a ovo "+1" je iz razloga sto kada saljmo notifikaciju, kroz sendNotifications()
-//                  metodu, za trenutno vreme uzimamo pravo trenutno vreme -1h sto znaci da i notifikacija treba da bude 1h ranije
-//                  nego sto bi inace bila.
+                    // Oduzimamo "notification + 1", a ovo "+1" je iz razloga sto kada saljmo notifikaciju, kroz sendNotifications()
+                    // metodu, za trenutno vreme uzimamo pravo trenutno vreme -1h sto znaci da i notifikacija treba da bude 1h ranije
+                    // nego sto bi inace bila.
                     LocalDateTime sendingLocalDateTime = reservationLocalDateTime.minusHours(notification + 1);
                     // Nakon odredjivanja trenutnka slanja, razdvojimo na date i time deo.
                     LocalDate sendingLocalDate = sendingLocalDateTime.toLocalDate();
                     LocalTime sendingLocalTime = sendingLocalDateTime.toLocalTime();
-                    // TODO Kada isti klijent naruci vise servisa onda za njega ima onoliko unosa u DB koliko je i servisa
-                    // narucio. Samim tim ce i dobiti onoliko obavestenja koliko je narucio servisa. Videti sta da se radi 
-                    // sa ovim.
                     reservation.setSendingDate(sendingLocalDate);
                     reservation.setSendingTime(sendingLocalTime);
                     reservation.setClientOrdersId(clientOrder);
-//                  Upis rezervacije u bazu.
+                    // Upis rezervacije u bazu.
                     reservationsFacade.create(reservation);
                 }
             }
@@ -147,11 +151,11 @@ public class ServicesController implements Serializable {
                 // Obavestenje da treba proveriti mail.
                 FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Notification", "Check you e-mail for reservation confirmation.");
                 FacesContext.getCurrentInstance().addMessage(null, msg);
-            // Ako clientOrder nije upisan u DB, izbaci obavestenje o tome.
-            } else{
+                // Ako clientOrder nije upisan u DB, izbaci obavestenje o tome.
+            } else {
                 LOGGER.log(Level.WARNING, "Client order with companyOrderId = {0}, agentsId = {1}, servicesId = {2}, clientName = {3}, clientPhone = {4} "
-                        + "and clientEmail = {5} is NOT written to DB!", new Object[] {clientOrder.getCompanyOrderId().getId(), 
-                            clientOrder.getAgentsId().getId(), clientOrder.getServicesId().getId(), clientOrder.getClientName(), 
+                        + "and clientEmail = {5} is NOT written to DB!", new Object[]{clientOrder.getCompanyOrderId().getId(),
+                            clientOrder.getAgentsId().getId(), clientOrder.getServicesId().getId(), clientOrder.getClientName(),
                             clientOrder.getClientPhone(), clientOrder.getClientEmail()});
                 FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Notification", "Your reservation is not accepted. Try again later.");
                 FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -159,6 +163,7 @@ public class ServicesController implements Serializable {
         }
         reservation = new Reservations();
         clientOrder = new ClientOrders();
+        
         return "";
     }
 
@@ -221,4 +226,19 @@ public class ServicesController implements Serializable {
         this.reservation = reservation;
     }
 
+    // Ovde samo upisujemo vrednost iz input polja u property bean-a. Posto je ovo metod koji se poziva iz
+    // valueChangeListener-a, on mora imati ValueChangeEvent kao parametar.
+    public void setValidateDateAndTime(ValueChangeEvent e) {
+        validateDateAndTime = (String) e.getNewValue();
+    }
+
+    // Proverimo vrednost property-a "validateDateAndTime" i na osnovu njega vratimo
+    // boolean koji govori da li je potrebno validirati polje ili ne.
+    public boolean doRequiredOnDateAndTime() {
+        if (validateDateAndTime != null) {
+            return validateDateAndTime.equals("true");
+        } else {
+            return false;
+        }
+    }
 }

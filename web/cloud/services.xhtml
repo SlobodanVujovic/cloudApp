@@ -11,12 +11,11 @@ racunara. -->
       xmlns:p="http://primefaces.org/ui"
       >
     <body>
-        <!-- TODO Napisati JSF validatore za sve input-e koji su obavezni, kao sto postoji kroz JavaScript. -->
         <f:metadata>
             <!-- Sluzi za setting, conversion and validation of GET parameters. Uzima request parameter value by name poId and
             set it as a bean property represented by #{servicesController.orderId} value. Vrednost se set-uje right before the
             view is rendered. -->
-            <f:viewParam name="poId" value="#{servicesController.orderId}" required="true"/>
+            <f:viewParam id="orderId" name="poId" value="#{servicesController.orderId}"/>
         </f:metadata>
 
         <ui:composition template="./../templates/masterTemplate.xhtml">
@@ -24,9 +23,10 @@ racunara. -->
                 <h:form id="servicesCheckboxes">
                     <h:outputLabel value="Services" id="servicesLabel"/>
                     <hr/>
-                    <h:selectManyCheckbox layout="pageDirection" onclick="checkIfServiceRequireReservation(this); transferValueToTextInput(this)">
+                    <h:selectManyCheckbox id="allServices" onclick="checkIfServiceRequireReservation(this); transferValueToTextInput(this)" layout="pageDirection">
                         <f:selectItems value="#{servicesController.allServices}" var="service" itemLabel="#{service.name}" itemValue="#{service.id}"/>
                     </h:selectManyCheckbox>
+                    <h:message id="selectedServicesMessage" for="selectedServices" class="label label-danger"/>
                     <h:inputHidden id="servicesWithReservation" value="#{servicesController.serviceIdWithRequiredReservation}"/>
                 </h:form>
             </ui:define>
@@ -36,8 +36,16 @@ racunara. -->
                         #{servicesController.company.companyName}
                     </h1>
                     <h:form prependId="false">
+                        <!-- Ovaj tag je notification widget i koristi se za prikaz FacesMessages-a poput h:messages tag-a.-->
                         <p:growl id="msgs" showDetail="true"/>
-                        <h:inputHidden id="selectedServices" value="#{servicesController.checkedServices}"/>
+                        <!-- Da bi bili sigurni da je izabran bar 1 servis validiramo vrednost polja u kome se cuvaju imena servisa koja su izabrana. Poruka
+                        koja se generise pri neuspesnoj validaciji se ispisuje u h:message tag-u cije id="selectedServicesMessage".-->
+                        <h:inputHidden id="selectedServices" value="#{servicesController.checkedServices}" required="true" requiredMessage="Please choose at least one service."/>
+                        <!-- Kada izaberemo neki servis, ako taj servis zahteva rezervaciju, u ovo polje se upisuje string "true" a ako se rascekiraju svi
+                        servisi koji zahtevaju rezervaciju upisuje se string "false". Pri promeni vrednosti poziva se metod setValidateDateAndTime().-->
+                        <h:inputText id="dateValidationRequired" valueChangeListener="#{servicesController.setValidateDateAndTime}">
+                            <f:ajax event="change"/>
+                        </h:inputText>
                         <div id="agentsForm">
                             <h:outputLabel for="agentsList" value="Choose agent"/>
                             <!-- Da bi tag-u, f:selectItems, mogli da dodelimo "Agent" entity (Java object) kao vrednost value atributa i da bi tu vrednost mogli
@@ -50,10 +58,14 @@ racunara. -->
                         </div>
                         <div class="reservationDiv">
                             <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
-                            <p:calendar id="reservation_date" value="#{servicesController.reservation.reservationDate}" mindate="today" placeholder=" Pick Date" pattern="dd-MM-yyyy" class="reservationDate">
+                            <!-- Obrati paznju kako se odredjuje da li je potrebna validacija ovog polja. Atributu "required" dodeljujemo vrednost kroz
+                            EL (pozivamo metod koji vraca boolean, na taj nacin govorimo da li je potrebno raditi validaciju ili ne).-->
+                            <p:calendar id="reservation_date" value="#{servicesController.reservation.reservationDate}" mindate="today" placeholder=" Pick Date" 
+                                        pattern="dd-MM-yyyy" required="#{servicesController.doRequiredOnDateAndTime()}" requiredMessage="Date is required." class="reservationDate">
                                 <f:converter converterId="localDateConverter"/>
                             </p:calendar>
-                            <h:inputText id="reservation_time" class="reservationTime" value="#{servicesController.reservation.reservationTime}" pt:placeholder=" Pick Time"/>
+                            <h:inputText id="reservation_time" value="#{servicesController.reservation.reservationTime}" required="#{servicesController.doRequiredOnDateAndTime()}" requiredMessage="Time is required."
+                                         pt:placeholder=" Pick Time" class="reservationTime"/>
 
                             <!-- Ako zelimo da napravimo vise JSF komponenti onda koristimo <c:forEach> tag. Atributu "items" dodeljujemo
                             kolekciju kroz koju ce se vrsiti iteracija pri kreiranju JSF komponenti. Atribut "var" predstavlja trenutni
@@ -67,17 +79,25 @@ racunara. -->
                         </div>
                         <div class="clientNameDiv">
                             <h:outputLabel for="clientName" value="Enter your name"/>
-                            <h:inputText id="clientName" value="#{servicesController.clientOrder.clientName}" pt:placeholder=" Yout Name"/>
+                            <h:inputText id="clientName" value="#{servicesController.clientOrder.clientName}" pt:placeholder=" Yout Name" required="true" requiredMessage="Your name is required.">
+                                <f:attribute name="message" value="Your Name can not be empty."/>
+                                <f:validator validatorId="EmptyInputValidator"/>
+                            </h:inputText>
+                            <h:message id="clientNameMessage" for="clientName" class="label label-danger"/>
                             <br/>
                             <h:outputLabel for="clientPhone" value="Enter your phone"/>
-                            <h:inputText id="clientPhone" value="#{servicesController.clientOrder.clientPhone}" pt:placeholder=" 064 51 11 423"/>
+                            <h:inputText id="clientPhone" value="#{servicesController.clientOrder.clientPhone}" pt:placeholder=" 064 51 11 423" required="true" requiredMessage="Your phone is required.">
+                                <f:attribute name="message" value="Your Phone can not be empty."/>
+                                <f:validator validatorId="EmptyInputValidator"/>
+                            </h:inputText>
+                            <h:message id="clientPhoneMessage" for="clientPhone" class="label label-danger"/>
                             <br/>
-                            <!-- TODO Kada se unese email klijenta i poruci servis, ako narucilac servisa nije u MDS mrezi, dobija se exception.-->
                             <h:outputLabel for="clientEmail" value="Enter your e-mail"/>
+                            <!-- Ovo polje nema validator jer nije obavezno. -->
                             <h:inputText id="clientEmail" value="#{servicesController.clientOrder.clientEmail}" pt:placeholder=" john@gmail.com" title="Enter E-mail to receive notification about your reservation."/>
                         </div>
                         <div class="buttonDiv col-md-4">
-                            <h:commandLink value="Schedule " onclick="return isAllInputOk();" action="#{servicesController.takeClientsOrder()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-check"/></h:commandLink>
+                            <h:commandLink value="Schedule " action="#{servicesController.takeClientsOrder}" onclick="return isAllInputOk();" styleClass="btn btn-warning"><span class="glyphicon glyphicon-check"/></h:commandLink>
                             <h:commandLink value="Home " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-home"/></h:commandLink>
                         </div>
                     </h:form>

@@ -1,4 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<root>
+<faces-config version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
     
-</root>
+    <!-- Ovde konfigurisemo flow. Ako bi imali vise flow-ova, svaki bi imao svoj konfiguracioni file
+    sto bi bilo lakse za odrzavanje.-->
+    <flow-definition id="ordering">
+        <view id="ordering">
+            <vdl-document>/ordering/ordering.xhtml</vdl-document>
+        </view>
+        <flow-return id="exitToHome">
+            <from-outcome>/sections/home.xhtml</from-outcome>
+        </flow-return>
+        <flow-return id="exitToThanks">
+            <from-outcome>/sections/thanks.xhtml</from-outcome>
+        </flow-return>
+    </flow-definition>
+    
+</faces-config>

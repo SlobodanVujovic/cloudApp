@@ -5,9 +5,17 @@
         <param-value>Development</param-value>
     </context-param>
     <context-param>
-        <param-name>facelets.SKIP_COMMENTS</param-name>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
+    <!-- Kada se koriste flow-ovi, onda se ovaj mod automatski ukljucuje. Da se prilikom deploy-menta ne bi izbacivao
+    warning o promeni moda, odmah ga set-ujemo i gledamo da log-ovi nemaju ni 1 warning. Jedino tako mezemo biti sigurni
+    da aplikacija radi onako kako zelimo a ne da se u pozadini nesto promenilo a da mi toga nismo svesni.-->
+    <context-param>
+        <param-name>javax.faces.CLIENT_WINDOW_MODE</param-name>
+        <param-value>url</param-value>
+    </context-param>
+    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -22,9 +30,35 @@
             30
         </session-timeout>
     </session-config>
+    
     <welcome-file-list>
         <welcome-file>faces/sections/home.xhtml</welcome-file>
     </welcome-file-list>
+    
+    <!-- Ovako definisemo koja strana ce se ucitati kada se prepozna navedena greska ili exception.
+    Obrati paznju da je potrebno ukljuciti i "/faces" u putanju ka view-u. U suprotnom .xhtml ne prolazi kroz Faces Servlet
+    i stranica se ne renderuje kako bi trebalo. -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/faces/error/error.xhtml</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/faces/error/error.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>org.jboss.weld.context.ContextNotActiveException</exception-type>
+        <location>/faces/error/error.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/faces/error/error.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/faces/error/error.xhtml</location>
+    </error-page>
+    
     <!-- Kada koristimo JPA API za komunikaciju sa bazom onda se u okviru persistence.xml-a definise
     resource reference tako da <resource-ref> tag ovde nije potreban (proveriti)-->
     <resource-ref>

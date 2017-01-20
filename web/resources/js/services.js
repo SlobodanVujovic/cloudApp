@@ -1,5 +1,7 @@
 var numberOfChoosenServicesWithReservation = 0;
 function checkIfServiceRequireReservation(checkbox) {
+    // U ovaj element cemo upisati vrednost zavisno od toga da li su elementi date i time vidljivi ili su sakriveni.
+    var dateValidationElement = document.getElementById("dateValidationRequired");
     var checkboxValue = checkbox.value;
     var servicesWithReservation = document.getElementById("servicesCheckboxes:servicesWithReservation").value;
     var isServiceWithReservation = false;
@@ -20,6 +22,10 @@ function checkIfServiceRequireReservation(checkbox) {
             });
             $(reservationLabelElement).slideDown(500, function () {
                 reservationLabelElement.style.display = "block";
+                // Posto su date i time komponente vidljive upisujemo "true".
+                dateValidationElement.value = "true";
+                // Na ovaj nacin trigerujemo HTML DOM change event.
+                $("#dateValidationRequired").trigger("change");
             });
         } else {
             --numberOfChoosenServicesWithReservation;
@@ -34,6 +40,10 @@ function checkIfServiceRequireReservation(checkbox) {
                 });
                 $(reservationLabelElement).slideUp(500, function () {
                     reservationTimeElement.style.display = "none";
+                    // Posto su date i time komponente sakrivene upisujemo "false".
+                    dateValidationElement.value = "false";
+                    // Na ovaj nacin trigerujemo HTML DOM change event.
+                    $("#dateValidationRequired").trigger("change");
                 });
             }
         }
@@ -159,5 +169,3 @@ function checkIfThisIsServicesPage() {
 window.onload = checkIfThisIsServicesPage;
 
 var today = new Date();
-
-//console.log(checkboxValue);

@@ -35,8 +35,10 @@
                                     <span class="form-group col-md-4 deleteButtonForm">
                                         <!-- Obrati paznju kako je ubacena ikona u p:commandButton. Koristi se Font Awesome jer Bootstrap ima problema oko
                                         kompatibilnosti sa PrimeFaces-om. Takodje sa "update" atributom radimo ono sto smo radili sa <f:ajax> tag-om.
-                                        Posto koristimo immediate="true" prilikom brisanja reda brisu se i vrednosti svih checkbox-ova koji su setovani
-                                        nakon poslednjeg klika na "More services" dugme. -->
+                                        Posto koristimo immediate="true" u UICommand komponenti, prilikom brisanja reda brisu se i vrednosti svih checkbox-ova koji su setovani
+                                        nakon poslednjeg klika na "More services" dugme. Razlog je to sto using immediate, in UICommand components, causes
+                                        the component ActionListener or action-method to be executed at the end of the apply-request-values phase, ie before
+                                        any non-immediate value validation and before any backing bean updates (update-model phase).-->
                                         <p:commandButton value="Delete" action="#{defineServicesController.remove(basicService)}"
                                                          update="serviceDefinitionTableId" icon="fa fa-times-circle-o" iconPos="right"
                                                          onclick="return confirm('Are you sure?')" immediate="true"/>
@@ -72,8 +74,6 @@
                             <!--Buttons--> 
                             <div id="backAndSubmitButtons" class="form-group col-md-4 defineServicesButtons">
                                 <h:commandLink value="Back " id="defineServicesBackButton" immediate="true" action="ordering-admin-info" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-left"/></h:commandLink>
-                                <!-- TODO Ako korisnik pritisne Submit i ode na Thanks stranicu i onda pritisne Back na browseru i to ga vrati na Define services
-                                ako opet pritisne submit, izbacuje se ContextNotActiveException, ovo treba handlovati.-->
                                 <h:commandLink value="Submit " id="defineServicesSubmitButton" action="exitToThanks" onclick="return defineServicesValidation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"/>
                                     <f:actionListener binding="#{companyController.writeToDatabase()}"/>
                                     <f:actionListener binding="#{adminController.writeToDatabase()}"/>

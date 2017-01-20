@@ -17,7 +17,6 @@
                     </div>
                 </h:form>
             </ui:define>
-            <!-- TODO Ne dozvoljava refresh niti reload stranice, mozda zato sto je logInContorller ViewScoped.-->
             <ui:define name="content">
                 <div id="adminLoginContainer" class="container">
                     <h1>
@@ -304,7 +303,7 @@
                             <p:dataTable id="clientOrdersTableId" value="#{logInController.listOfClientOrders}" var="clientOrder"
                                          filteredValue="#{logInController.filteredClientOrders}" widgetVar="clientOrdersWidgetVar"
                                          editable="true" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                         rowsPerPageTemplate="5,10,15" rows="#{logInController.pageRows}" paginatorPosition="bottom" first="#{logInController.firstRowToShow}"
+                                         rowsPerPageTemplate="#{logInController.firstRowToShow},5,10,15" rows="#{logInController.pageRows}" paginatorPosition="bottom" first="#{logInController.firstRowToShow}"
                                          rowStyleClass="#{tempRes = logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder); tempRes != null ? (tempRes.reservationDate.toEpochDay() lt logInController.todayAsLong ? 'pastDays' : (tempRes.reservationDate.toEpochDay() gt logInController.todayAsLong ? 'futureDays' : null )) : 'pastDays'}" 
                                          rowIndexVar="rowIndex">
                                 <f:facet name="header">
@@ -330,8 +329,10 @@
                                 <!--Service kolona-->
                                 <p:column headerText="Service" sortBy="#{clientOrder.servicesId.name}" filterBy="#{clientOrder.servicesId.name}" filterMatchMode="in">
                                     <f:facet name="filter">
-                                        <!--TODO Iskljuciti select all checkbox iz padajuce liste.-->
-                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()">
+                                        <!-- Obrati paznju na atribut "showHeader". Njegova default vrednost je true, kada setujemo false onda se
+                                        iskljucuje zaglavlje u kome imamo select all checkbox, search box i cancel dugme. Iskljuceno je jer pravi
+                                        problem kada se cekira select all pa se zabroravi da je cekirano a predje se na drugi filtar.-->
+                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()" showHeader="false">
                                             <f:selectItems value="#{logInController.servicesNames}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>
@@ -342,8 +343,7 @@
                                 <p:column headerText="Agent" sortBy="#{clientOrder.agentsId.firstName.concat(' ').concat(clientOrder.agentsId.lastName)}"
                                           filterBy="#{clientOrder.agentsId.firstName.concat(' ').concat(clientOrder.agentsId.lastName)}" filterMatchMode="in">
                                     <f:facet name="filter">
-                                        <!-- TODO Iskljuciti select all checkbox iz padajuce liste.-->
-                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()">
+                                        <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()" showHeader="false">
                                             <f:selectItems value="#{logInController.agentsNames}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>

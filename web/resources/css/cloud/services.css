@@ -18,7 +18,7 @@ table{
     margin-bottom: 5px;
 }
 
-.reservationDate, .reservationTime, .reservationLabel{
+.reservationDate, .reservationTime, .reservationLabel, #dateValidationRequired{
     display: none;
 }
 
@@ -87,5 +87,9 @@ hr{
 .buttonDiv{
     float: left;
     margin-top: 38px;
+    margin-left: 10px;
+}
+
+#servicesCheckboxes\:selectedServicesMessage, #clientNameMessage, #clientPhoneMessage{
     margin-left: 10px;
 }

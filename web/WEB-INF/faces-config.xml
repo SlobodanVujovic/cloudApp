@@ -19,6 +19,7 @@
         <validator-id>EmailValidator</validator-id>
         <validator-class>com.cloudApp.validators.EmailValidator</validator-class>
     </validator>
+    
     <!-- Sledeci <navigation-rule> tag predstavlja conditional navigation. Kada na login stranici pritisnemo "Log In" dugme poziva se metod adminLogin() koji proverava da
     li username-u odgovara password, ako da, setuje promenljivu "login" na true a ako ne, ostaje setovana na false. Sa <if> tag-om
     proveravamo vrednost "login" promenljive i ako je true onda idemo na adminLoginPage stranicu koristeci redirect mehanizam
@@ -38,7 +39,8 @@
             <if>#{!authenticationController.login}</if>
             <to-view-id>/sections/login.xhtml</to-view-id>
         </navigation-case>
-    </navigation-rule> 
+    </navigation-rule>
+    
     <navigation-rule>
         <from-view-id>/*</from-view-id>
         <navigation-case>
@@ -96,21 +98,14 @@
         </navigation-case>
     </navigation-rule>
     
-     
+    <!-- Na ovaj nacin samo kazemo JSF-u da negde u aplikaciji koristimo 1 ili vise flow-ova. Prava konfiguracija flow-a
+    se nalazi u posebnom .xml file-u u folderu flow-a.-->
+    <faces-flow-definition>
+    </faces-flow-definition>
     
-    <flow-definition id="ordering">
-        <view id="ordering">
-            <vdl-document>/ordering/ordering.xhtml</vdl-document>
-        </view>
-        <flow-return id="exitToHome">
-            <from-outcome>/sections/home.xhtml</from-outcome>
-        </flow-return>
-        <flow-return id="exitToThanks">
-            <from-outcome>/sections/thanks.xhtml</from-outcome>
-        </flow-return>
-    </flow-definition>
     <converter>
         <converter-id>localDateConverter</converter-id>
         <converter-class>com.cloudApp.converter.LocalDateConverter</converter-class>      
     </converter>
+
 </faces-config>

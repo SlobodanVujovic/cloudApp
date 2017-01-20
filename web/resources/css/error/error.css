@@ -1,0 +1,12 @@
+#errorHeader{
+    text-align: center;
+    padding-top: 4em;
+}
+
+#fallingMonkey{
+    margin-left: 29%;
+    padding-top: 40px;
+    width: 600px;
+    height: 450px;
+    background: rgba(0, 0, 0, 0) url(../../images/fallingMonkey.gif) no-repeat center center;
+}
