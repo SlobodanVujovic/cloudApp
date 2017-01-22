@@ -290,7 +290,7 @@ public class LogInController implements Serializable {
     public List<Services> getServices() {
         return services;
     }
-
+    
     public void updateCompanyInfo() {
         companiesFacade.edit(company);
     }
@@ -415,11 +415,12 @@ public class LogInController implements Serializable {
     public ReservationsFacade getReservationsFacade() {
         return reservationsFacade;
     }
-
+    
+//    TODO 1. promeni bazu.
     public void onRowEdit(RowEditEvent event) {
         ClientOrders tempClientOrders = (ClientOrders) event.getObject();
         clientOrdersFacade.edit(tempClientOrders);
-        LOGGER.log(Level.INFO, "Method onCellEdit() finished successfully.");
+        LOGGER.log(Level.INFO, "Method onRowEdit() finished successfully.");
     }
 
     // Ovaj metod ne radi nista, na taj nacin se nece sacuvati vrednosti koje su set-ovane, nego ce ostati vrednosti koje

@@ -60,13 +60,17 @@
                                 <!-- Inicijalno je: enableNotification = false a mi hocemo da disable bude true da bi inputText, inicijalno, bio zasivljen i zato koristimo negaciju. 
                                 Operatori "not" i "!" imaju istu funkciju: #{not defineServicesController.enableNotificationInput} je identicno sa #{!defineServicesController.enableNotificationInput}. -->
                                 <h:inputText id="notificationValue" maxlength="2" size="1" validatorMessage="Value must be betwen 1 and 24."
-                                             disabled="#{not defineServicesController.enableNotificationInput}" value="#{defineServicesController.serviceNotification}">
-                                    <f:validateLongRange for="notificationValue" minimum="1" maximum="24"/>
+                                             disabled="#{not defineServicesController.enableNotificationInput}" value="#{defineServicesController.serviceNotification}"
+                                             title="Valid values are from 1 to 24. If you enter 0, reminder will not be sent.">
+                                    <f:validateLongRange for="notificationValue" minimum="0" maximum="24"/>
                                     <f:ajax event="blur" render="notificationMessage"/>
                                 </h:inputText>
                                 <h:outputLabel value="hour(s) prior service." for="notificationValue"/>
+                                <!-- Posto p:panelGrid ima 4 kolone, da bi h:message tag bio u 2. koloni, sledeci h:outputLabel
+                                tag je tu da bi popunio 1. kolonu.-->
+                                <h:outputLabel/>
+                                <h:message id="notificationMessage" for="notificationValue" class="label label-danger"/>
                             </p:panelGrid>
-                            <h:message id="notificationMessage" for="notificationValue" class="label label-danger"/>
                             
                             <!--U ovom polju cuvamo broj cekiranih servisa sa rezervacijama.-->
                             <h:inputText id="hiddenInput3" value="#{defineServicesController.numberOfServicesWithReservation}" onchange="showNotificationCheckbox()"/>

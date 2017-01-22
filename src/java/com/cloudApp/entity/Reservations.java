@@ -54,14 +54,14 @@ public class Reservations implements Serializable {
     
     @Column(name = "reservation_date")
     private LocalDate reservationDate;
-    // reservation_time menjamo u String tip (umesto da ga ostavimo kao Date tip, kako ga NetBeans pravi) i brisemo
+    // reservation_time menjamo u LocalTime tip (umesto da ga ostavimo kao Date tip, kako ga NetBeans pravi) i brisemo
     // @Temporal anotaciju.
     @Column(name = "reservation_time")
     private LocalTime reservationTime;
     
     @Column(name = "sending_date")
     private LocalDate sendingDate;
-    // sending_time menjamo u String tip (umesto da ga ostavimo kao Date tip, kako ga NetBeans pravi) i brisemo
+    // sending_time menjamo u LocalTime tip (umesto da ga ostavimo kao Date tip, kako ga NetBeans pravi) i brisemo
     // @Temporal anotaciju. Naziv kolone bi pre trebalo da bude "sat_za_koji_se_salje_anotacija" i u ovu kolonu
     // se upisuje vrednost koja je jednaka vreme_rezervacije - koliko_ranije_poslati_notifikaciju - 1. Ovo "- 1"
     // je da bi se slale notifikacije za prethodni cas. Odnosno ako je sada 13h i notifikacije se salje 1h ranije,

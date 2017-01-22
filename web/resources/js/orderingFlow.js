@@ -1,3 +1,4 @@
+// Unused code:
 // Koristi se samo na ordering-service-type.xhtml strani.
 function hideOrShowPreviewElement(checkboxId) {
     var isChecked = document.getElementById(checkboxId).checked;
@@ -220,6 +221,7 @@ function showPopupWin(checkboxId) {
 
 // ==============================================================================================================
 
+// Used code
 // Odavde krece kod koji se aktivno koristi u aplikaciji.
 function hidePopupWin(winId) {
     var inputToShow = document.getElementById(winId);
@@ -364,7 +366,8 @@ function administratorInfoValidation() {
     }
 }
 
-//Metod koji se poziva da bi se prikazao upit o notifikaciji.
+// Metod koji se poziva kada se cekira "Reservation required" checkbox. Ovaj metod setuje ukupna broj servisa 
+// koji zahtevaju rezervaciju.
 function serviceWithReservation(checkboxId) {
     var hiddenInput3 = document.getElementById("hiddenInput3");
 //    Iz polja koje cuva broj cekiranih servisa sa rezervacijama uzimamo vrednost. Ovo radimo da bi u slucaju kada,
@@ -388,36 +391,63 @@ function serviceWithReservation(checkboxId) {
     // console.log(numberOfServicesWithReservation);
 }
 
+// Metod koji proverava da li postoji servis koji zahteva rezervaciju i na osnovu toga prikazuje ili sakriva
+// notification div.
 function showNotificationCheckbox() {
     var hiddenInput3 = document.getElementById("hiddenInput3");
-    var numberOfServicesWithReservation = hiddenInput3.value;
-    var notificationElement = document.getElementById("notificationGrid");
-    var notificationCheckbox = document.getElementById("notificationCheckbox");
+    // Proverimo da li hiddenInput3 postoji.
+    if (hiddenInput3) {
+        var numberOfServicesWithReservation = hiddenInput3.value;
+        var notificationElement = document.getElementById("notificationGrid");
+        var notificationCheckbox = document.getElementById("notificationCheckbox");
 //    if ce proci ako je broj servisa veci od 0.
-    if (numberOfServicesWithReservation > 0) {
+        if (numberOfServicesWithReservation > 0) {
 //        Proverimo da li je notifikacija vec vidljiva.
-        var notificationIsVisible = $(notificationElement).is(":visible");
+            var notificationIsVisible = $(notificationElement).is(":visible");
 //        Ako nije prikazemo je i 
-        if (!notificationIsVisible) {
-            $(notificationElement).slideDown(500, function () {
-                notificationElement.style.display = "block";
-            });
-        }
+            if (!notificationIsVisible) {
+                $(notificationElement).slideDown(500, function () {
+                    notificationElement.style.display = "block";
+                });
+            }
 //        A ako je broj servisa sa rezervacijom = 0
-    } else {
+        } else {
 //        proverimo da li je notifikacija vec prikazana
-        var notificationIsVisible = $(notificationElement).is(":visible");
+            var notificationIsVisible = $(notificationElement).is(":visible");
 //       i ako jeste sklonimo je.
-        if (notificationIsVisible) {
-            $(notificationElement).slideUp(500, function () {
-                notificationElement.style.display = "none";
-            });
+            if (notificationIsVisible) {
+                $(notificationElement).slideUp(500, function () {
+                    notificationElement.style.display = "none";
+                });
 //              Kada sklanjamo notifikaciju 1. proverimo da li je notification checkbox cekiran i ako jeste pozivamo
 //              click() metod da bi simulirali klik na checkbox-u, odnosno da bi ga rascekirali. Time se notification
 //              input disable-uje i vrednost se nece slati bean-u.
-            if (notificationCheckbox.checked) {
-                notificationCheckbox.click();
+                if (notificationCheckbox.checked) {
+                    notificationCheckbox.click();
+                }
             }
         }
+    }
+}
+
+// Ovako pozivamo funkciju kada se stranica ucita. Mana je sto se ovo poziva pri svakoj ucitanoj stranici.
+// Zato u metodu koji pozivamo 1. proverimo da li smo na odgovarajucoj stranici pa onda izvravamo logiku.
+// Shorthand za 
+// $(document).ready(function () { 
+// je
+// $(function() {
+$(document).ready(function () {
+    checkIfThisIsOrderingDefineServicesPage();
+});
+
+// Zelimo da izvrsavamo metod kada smo na ordering-define-services.xtml (odnosno ordering-admin-info.xhtml).
+function checkIfThisIsOrderingDefineServicesPage() {
+    var pathname = window.location.pathname;
+    // Medjutim posto koristimo POST mehanizam za navigaciju u flow-u, u URL-u se prikazuje adresa prethodne stranice
+    // ("one URL behind" problem). Zato i testiramo na "ordering-admin-info.xhtml" stranicu. Ali ako se pri submit-u
+    // javi validaciona greska, stranica se rerenderuje i URL ce sadrzati "ordering-define-services.xhtml" pa testiramo
+    // i ovu vrednost.
+    if (pathname.indexOf("/ordering-admin-info.xhtml") !== -1 || pathname.indexOf("/ordering-define-services.xhtml") !== -1) {
+        showNotificationCheckbox();
     }
 }

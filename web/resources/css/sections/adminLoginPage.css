@@ -171,3 +171,7 @@ input[type="checkbox"]{
 .futureDays{
     background: #83ccff;
 }
+
+.dateInputInAdminTable{
+    margin-left: 5px;
+}

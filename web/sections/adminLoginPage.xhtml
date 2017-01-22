@@ -69,19 +69,27 @@
                                 <h:dataTable value="#{logInController.companysLocation}" var="companysLocation">
                                     <h:column>
                                         <f:facet name="header">Address</f:facet>
-                                        <h:inputText value="#{companysLocation.address}"/>
+                                        <h:inputText value="#{companysLocation.address}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">City</f:facet>
-                                        <h:inputText value="#{companysLocation.city}"/>
+                                        <h:inputText value="#{companysLocation.city}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">ZIP code</f:facet>
-                                        <h:inputText value="#{companysLocation.zipCode}"/>
+                                        <h:inputText value="#{companysLocation.zipCode}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">State</f:facet>
-                                        <h:inputText value="#{companysLocation.state}"/>
+                                        <h:inputText value="#{companysLocation.state}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                 </h:dataTable>
 
@@ -90,7 +98,9 @@
                                 <h:dataTable value="#{logInController.companysContact}" var="companysContact">
                                     <h:column>
                                         <f:facet name="header">Phone</f:facet>
-                                        <h:inputText value="#{companysContact.phone}"/>
+                                        <h:inputText value="#{companysContact.phone}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">Email</f:facet>
@@ -159,7 +169,9 @@
                                 <h:dataTable value="#{logInController.ownersContacts}" var="ownerContact">
                                     <h:column>
                                         <f:facet name="header">Phone</f:facet>
-                                        <h:inputText value="#{ownerContact.phone}"/>
+                                        <h:inputText value="#{ownerContact.phone}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">Email</f:facet>
@@ -196,7 +208,9 @@
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">Phone</f:facet>
-                                        <h:inputText value="#{agent.phone}"/>
+                                        <h:inputText value="#{agent.phone}">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">Email</f:facet>
@@ -263,13 +277,15 @@
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">Reservation</f:facet>
-                                        <h:selectBooleanCheckbox value="#{service.reservation}" onclick="#"/>
+                                        <h:selectBooleanCheckbox value="#{service.reservation}">
+                                            <f:ajax event="change"/>
+                                        </h:selectBooleanCheckbox>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header"></f:facet>
                                         <div styleClass="form-group col-md-4 deleteButtonForm">
                                             <h:commandLink value="Delete " action="#{logInController.unavailableService(service)}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-remove-circle"/>
-                                                <f:ajax render="companyInformationsGrid :clientOrdersForm:clientOrdersTableId"/>
+                                                <f:ajax render="companyInformationsGrid:clientOrdersForm:clientOrdersTableId"/>
                                             </h:commandLink>
                                         </div>
                                     </h:column>
@@ -386,12 +402,25 @@
                                           filterBy="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}" 
                                           filterFunction="#{logInController.filterByDate}">
                                     <f:facet name="filter">
-                                        <p:calendar pattern="dd-MM-yyyy" size="10" onkeypress="preventEnterBehaviour(event)">
+                                        <p:calendar locale="en_GB" pattern="dd-MM-yyyy" size="10" onkeypress="preventEnterBehaviour(event)">
                                             <p:ajax event="dateSelect" oncomplete="PF('clientOrdersWidgetVar').filter()" update="clientOrdersTableId"/>
                                             <p:ajax event="change" oncomplete="PF('clientOrdersWidgetVar').filter()" update="clientOrdersTableId"/> 
                                         </p:calendar>
                                     </f:facet>
-                                    <h:outputText value="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}"/>
+
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:calendar value="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}" 
+                                                        onkeypress="preventEnterBehaviour(event)" locale="en_GB" pattern="dd-MM-yyyy" size="10"
+                                                        class="dateInputInAdminTable">
+                                                <p:ajax event="change"/>
+                                                <f:converter converterId="localDateConverter"/>
+                                            </p:calendar>
+                                        </f:facet>
+                                    </p:cellEditor>
                                 </p:column>
 
                                 <!--Reservation Time kolona-->
@@ -410,7 +439,8 @@
                                         <!-- Obrati paznju kako je ubacena ikona u p:commandButton. Koristi se Font Awesome jer Bootstrap ima problema oko
                                         kompatibilnosti sa PrimeFaces-om. Takodje sa "update" atributom radimo ono sto smo radili sa <f:ajax> tag-om. -->
                                         <p:commandButton value="Delete" action="#{logInController.deleteClientOrderFromTable(clientOrder)}"
-                                                         update="clientOrdersTableId" icon="fa fa-times-circle-o" iconPos="right" onclick="return confirm('Are you sure?')"/>
+                                                         update="clientOrdersTableId" icon="fa fa-times-circle-o" iconPos="right" 
+                                                         onclick="return confirm('Are you sure?')"/>
                                     </span>
                                 </p:column>
 
