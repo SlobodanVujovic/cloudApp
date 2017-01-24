@@ -44,7 +44,10 @@ public class MailManager {
     public MailManager() {
 
     }
-
+    
+    // Kada se proverava kome sve traba poslati mail, gleda se samo broj casova, ne i minuti. To znaci da ce se notifikacija za
+    // servise narucene u xx:30h slati 30' ranije u odnosu na setovano vreme slana notifikacije (ako je podeseno da se salje 2h
+    // ranije, u ovom slucaju slace se 2h i 30' ranije). Trenutno, to ne smatram problemom.
     @Schedule(second = "0", minute = "5", hour = "*", persistent = false)
     public void sendNotifications() {
         LOGGER.log(Level.INFO, "sendNotifications() started at: {0}", LocalTime.now());

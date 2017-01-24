@@ -7,12 +7,14 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <body>
+        <!-- TODO Namestiti da radi refresh.-->
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
                 <h:form id="leftForm">
                     <!-- Logout and Company Informations button -->
                     <div class="col-md-4">
                         <h:commandLink value="Company Informations " onclick="return showCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>
+                        <!-- TODO Ovaj logout ne valja, treba da postoji terminacija sesije.-->
                         <h:commandLink value="Logout " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-out"/></h:commandLink>
                     </div>
                 </h:form>
@@ -316,16 +318,16 @@
                             Ako jeste primenimo klasu "pastDays", a ako nije proveravamo da li je vrednost vece od trenutnog dana. Ako jeste koristimo klasu "futureDays". Ako
                             nije onda ne redimo nista jer to znaci da su vrednosti jednake i te redove ostavljamo u default stanju. Ako je vrednost "tempRes" promenljive pak,
                             jednaka null vrednosti, primenjujemo klasu "pastDays".-->
-                            <p:dataTable id="clientOrdersTableId" value="#{logInController.listOfClientOrders}" var="clientOrder"
-                                         filteredValue="#{logInController.filteredClientOrders}" widgetVar="clientOrdersWidgetVar"
+                            <p:dataTable id="clientOrdersTableId" value="#{logInController.listOfClientOrderPresenters}" var="clientOrderPresenter"
+                                         filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrdersWidgetVar"
                                          editable="true" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                          rowsPerPageTemplate="#{logInController.firstRowToShow},5,10,15" rows="#{logInController.pageRows}" paginatorPosition="bottom" first="#{logInController.firstRowToShow}"
-                                         rowStyleClass="#{tempRes = logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder); tempRes != null ? (tempRes.reservationDate.toEpochDay() lt logInController.todayAsLong ? 'pastDays' : (tempRes.reservationDate.toEpochDay() gt logInController.todayAsLong ? 'futureDays' : null )) : 'pastDays'}" 
+                                         rowStyleClass="#{tempRes = clientOrderPresenter.getReservation(); tempRes != null ? (tempRes.reservationDate.toEpochDay() lt logInController.todayAsLong ? 'pastDays' : (tempRes.reservationDate.toEpochDay() gt logInController.todayAsLong ? 'futureDays' : null )) : 'pastDays'}" 
                                          rowIndexVar="rowIndex">
                                 <f:facet name="header">
                                     Client orders
                                     <p:outputPanel id="tableGlobalComponents">
-                                        <p:commandButton value="Get orders " action="#{logInController.refreshListOfClientOrders()}" update="clientOrdersTableId"
+                                        <p:commandButton value="Get orders " action="#{logInController.refreshListOfClientOrderPresenters()}" update="clientOrdersForm:clientOrdersTableId"
                                                          icon="fa fa-pencil" iconPos="right"/>
                                         <h:outputText value="Search all fields:"/>
                                         <p:inputText id="globalFilter" onkeyup="PF('clientOrdersWidgetVar').filter()" onkeypress="preventEnterBehaviour(event)" placeholder="Enter keyword"/>
@@ -335,15 +337,15 @@
                                 <p:ajax event="rowEdit" listener="#{logInController.onRowEdit}"/>
                                 <p:ajax event="rowEditCancel" listener="#{logInController.onRowCancel}"/>
 
-                                <p:column headerText="ID" sortBy="#{clientOrder.id}" filterBy="#{clientOrder.id}" filterMatchMode="contains">
-                                    <h:outputText value="#{clientOrder.id}"/>
+                                <p:column headerText="ID" sortBy="#{clientOrderPresenter.clientOrder.id}" filterBy="#{clientOrderPresenter.clientOrder.id}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.clientOrder.id}"/>
                                 </p:column>
-                                <p:column headerText="Client Name" sortBy="#{clientOrder.clientName}" filterBy="#{clientOrder.clientName}" filterMatchMode="contains">
-                                    <h:outputText value="#{clientOrder.clientName}"/>
+                                <p:column headerText="Client Name" sortBy="#{clientOrderPresenter.clientOrder.clientName}" filterBy="#{clientOrderPresenter.clientOrder.clientName}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.clientOrder.clientName}"/>
                                 </p:column>
 
                                 <!--Service kolona-->
-                                <p:column headerText="Service" sortBy="#{clientOrder.servicesId.name}" filterBy="#{clientOrder.servicesId.name}" filterMatchMode="in">
+                                <p:column headerText="Service" sortBy="#{clientOrderPresenter.clientOrder.servicesId.name}" filterBy="#{clientOrderPresenter.clientOrder.servicesId.name}" filterMatchMode="in">
                                     <f:facet name="filter">
                                         <!-- Obrati paznju na atribut "showHeader". Njegova default vrednost je true, kada setujemo false onda se
                                         iskljucuje zaglavlje u kome imamo select all checkbox, search box i cancel dugme. Iskljuceno je jer pravi
@@ -352,12 +354,12 @@
                                             <f:selectItems value="#{logInController.servicesNames}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>
-                                    <h:outputText value="#{clientOrder.servicesId.name}"/>
+                                    <h:outputText value="#{clientOrderPresenter.clientOrder.servicesId.name}"/>
                                 </p:column>
 
                                 <!--Agent kolona-->
-                                <p:column headerText="Agent" sortBy="#{clientOrder.agentsId.firstName.concat(' ').concat(clientOrder.agentsId.lastName)}"
-                                          filterBy="#{clientOrder.agentsId.firstName.concat(' ').concat(clientOrder.agentsId.lastName)}" filterMatchMode="in">
+                                <p:column headerText="Agent" sortBy="#{clientOrderPresenter.clientOrder.agentsId.firstName.concat(' ').concat(clientOrderPresenter.clientOrder.agentsId.lastName)}"
+                                          filterBy="#{clientOrderPresenter.clientOrder.agentsId.firstName.concat(' ').concat(clientOrderPresenter.clientOrder.agentsId.lastName)}" filterMatchMode="in">
                                     <f:facet name="filter">
                                         <p:selectCheckboxMenu label="" onchange="PF('clientOrdersWidgetVar').filter()" showHeader="false">
                                             <f:selectItems value="#{logInController.agentsNames}"/>
@@ -366,10 +368,10 @@
 
                                     <p:cellEditor>
                                         <f:facet name="output">
-                                            <h:outputText value="#{clientOrder.agentsId.firstName.concat(' ').concat(clientOrder.agentsId.lastName)}"/>
+                                            <h:outputText value="#{clientOrderPresenter.clientOrder.agentsId.firstName.concat(' ').concat(clientOrderPresenter.clientOrder.agentsId.lastName)}"/>
                                         </f:facet>
                                         <f:facet name="input">
-                                            <h:selectOneMenu value="#{clientOrder.agentsId}" converter="omnifaces.SelectItemsConverter" hideNoSelectionOption="true" style="width:100%">
+                                            <h:selectOneMenu value="#{clientOrderPresenter.clientOrder.agentsId}" converter="omnifaces.SelectItemsConverter" hideNoSelectionOption="true" style="width:100%">
                                                 <f:selectItem itemValue="#{null}" itemLabel="Choose agent:" noSelectionOption="true"/>
                                                 <f:selectItems value="#{logInController.agents}" var="agent" itemLabel="#{agent.firstName.concat(' ').concat(agent.lastName)}" itemValue="#{agent}"/>
                                             </h:selectOneMenu>
@@ -378,16 +380,16 @@
                                 </p:column>
 
                                 <!--Client Phone kolona-->
-                                <p:column headerText="Client Phone" sortBy="#{clientOrder.clientPhone}" filterBy="#{clientOrder.clientPhone}" filterMatchMode="contains">
-                                    <h:outputText value="#{clientOrder.clientPhone}"/>
+                                <p:column headerText="Client Phone" sortBy="#{clientOrderPresenter.clientOrder.clientPhone}" filterBy="#{clientOrderPresenter.clientOrder.clientPhone}" filterMatchMode="contains">
+                                    <h:outputText value="#{clientOrderPresenter.clientOrder.clientPhone}"/>
                                 </p:column>
 
                                 <!--Client Email kolona-->
-                                <p:column headerText="Client Email" sortBy="#{clientOrder.clientEmail}" filterBy="#{clientOrder.clientEmail}" filterMatchMode="contains">
+                                <p:column headerText="Client Email" sortBy="#{clientOrderPresenter.clientOrder.clientEmail}" filterBy="#{clientOrderPresenter.clientOrder.clientEmail}" filterMatchMode="contains">
                                     <!-- Pravimo link koji, kada kliknemo, otvara prozor za slanje mail-a u default-nom mail klijentu. Da bi se to izvelo potrebno je koristiti
                                         standardnu HTML "mailto: link" sintaksu.-->
-                                    <h:outputLink value="mailto:#{clientOrder.clientEmail}">
-                                        <h:outputText value="#{clientOrder.clientEmail}"/>
+                                    <h:outputLink value="mailto:#{clientOrderPresenter.clientOrder.clientEmail}">
+                                        <h:outputText value="#{clientOrderPresenter.clientOrder.clientEmail}"/>
                                     </h:outputLink>
                                 </p:column>
 
@@ -398,8 +400,8 @@
                                 "filter" i u njemu p:calendar tag koji daje filter vrednost koju koristimo u metodi iz bean-a. AJAX u p:calendar tag-u omogucava
                                 edit-ovanje tabele pri promeni vrednosti p:calendar tag-a. Obrati paznju na metod koji se poziva kroz "onkeypress" atribut i na objasnjenje
                                 koje postoji za njega kod definicije istog. -->
-                                <p:column headerText="Reservation Date" sortBy="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}" 
-                                          filterBy="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}" 
+                                <p:column headerText="Reservation Date" sortBy="#{clientOrderPresenter.reservation.reservationDate}" 
+                                          filterBy="#{clientOrderPresenter.reservation.reservationDate}" 
                                           filterFunction="#{logInController.filterByDate}">
                                     <f:facet name="filter">
                                         <p:calendar locale="en_GB" pattern="dd-MM-yyyy" size="10" onkeypress="preventEnterBehaviour(event)">
@@ -407,13 +409,12 @@
                                             <p:ajax event="change" oncomplete="PF('clientOrdersWidgetVar').filter()" update="clientOrdersTableId"/> 
                                         </p:calendar>
                                     </f:facet>
-
                                     <p:cellEditor>
                                         <f:facet name="output">
-                                            <h:outputText value="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}"/>
+                                            <h:outputText value="#{clientOrderPresenter.reservation.reservationDate}"/>
                                         </f:facet>
                                         <f:facet name="input">
-                                            <p:calendar value="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationDate}" 
+                                            <p:calendar value="#{clientOrderPresenter.reservation.reservationDate}" rendered="#{clientOrderPresenter.reservation != null}" mindate="today" placeholder="Pick new date."
                                                         onkeypress="preventEnterBehaviour(event)" locale="en_GB" pattern="dd-MM-yyyy" size="10"
                                                         class="dateInputInAdminTable">
                                                 <p:ajax event="change"/>
@@ -424,8 +425,19 @@
                                 </p:column>
 
                                 <!--Reservation Time kolona-->
-                                <p:column headerText="Reservation Time" sortBy="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationTime}">
-                                    <h:outputText value="#{logInController.reservationsFacade.getReservationByClientOrdersId(clientOrder).reservationTime}"/>
+                                <p:column headerText="Reservation Time" sortBy="#{clientOrderPresenter.reservation.reservationTime}">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{clientOrderPresenter.reservation.reservationTime}"/>
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <h:inputText id="changeReservationTime" value="#{clientOrderPresenter.reservation.reservationTime}"
+                                                         rendered="#{clientOrderPresenter.reservation != null}" onclick="showReservationTimeList();"
+                                                         pt:placeholder=" Pick Time" class="adminReservationTime">
+                                                <p:ajax event="change"/>
+                                            </h:inputText>
+                                        </f:facet>
+                                    </p:cellEditor>
                                 </p:column>
 
                                 <p:column style="width:32px">
@@ -438,7 +450,7 @@
                                     <span class="form-group col-md-4 deleteButtonForm">
                                         <!-- Obrati paznju kako je ubacena ikona u p:commandButton. Koristi se Font Awesome jer Bootstrap ima problema oko
                                         kompatibilnosti sa PrimeFaces-om. Takodje sa "update" atributom radimo ono sto smo radili sa <f:ajax> tag-om. -->
-                                        <p:commandButton value="Delete" action="#{logInController.deleteClientOrderFromTable(clientOrder)}"
+                                        <p:commandButton value="Delete" action="#{logInController.deleteClientOrderPresenterFromTable(clientOrderPresenter)}"
                                                          update="clientOrdersTableId" icon="fa fa-times-circle-o" iconPos="right" 
                                                          onclick="return confirm('Are you sure?')"/>
                                     </span>

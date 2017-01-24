@@ -51,6 +51,7 @@
                             <div class="form-group">
                                 <h:outputLabel class="col-md-4 control-label"/>
                                 <div class="col-md-4">
+                                    <!-- Navigacija za ovaj link je definisana u faces-config.xml file-u pod <navigation-rule> tag-om i koristi se conditional navigation.-->
                                     <h:commandLink value="Log In " action="#{authenticationController.adminLogin()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-in"/></h:commandLink>
                                 </div>
                             </div>

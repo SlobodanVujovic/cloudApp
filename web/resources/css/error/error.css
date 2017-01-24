@@ -1,10 +1,15 @@
-#errorHeader{
+#content .errorHeader{
     text-align: center;
     padding-top: 4em;
+    margin-left: 0px;
+}
+
+.errorParagraph{
+    text-align: center;
 }
 
 #fallingMonkey{
-    margin-left: 29%;
+    margin-left: 27%;
     padding-top: 40px;
     width: 600px;
     height: 450px;

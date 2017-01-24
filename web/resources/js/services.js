@@ -2,10 +2,30 @@ var numberOfChoosenServicesWithReservation = 0;
 function checkIfServiceRequireReservation(checkbox) {
     // U ovaj element cemo upisati vrednost zavisno od toga da li su elementi date i time vidljivi ili su sakriveni.
     var dateValidationElement = document.getElementById("dateValidationRequired");
+    // Vrednost koju dobijamo je tipa string.
     var checkboxValue = checkbox.value;
+    // Da bi mogli da pretrazujemo array po checkboxValue vrednosti moramo je 1. konvertovati u tip number.
+    var checkboxNumber = parseInt(checkboxValue);
+    // Uzimamo vrednost iz h:inputHidden tag-a, medjutim ta vrednost je predstavljena kao string. String predstavlja niz
+    // i potrebno je vrednost prebaciti u niz brojeva.
     var servicesWithReservation = document.getElementById("servicesCheckboxes:servicesWithReservation").value;
+    // Vrednost ima oblik: "[x, y, z]". Prvo skinemo otvorenu uglastu zagradu sa pocetka string-a.
+    servicesWithReservation = servicesWithReservation.substring(1);
+    // Zatim skinemo zatvorenu uglastu zagradu sa kraja string-a. The slice() method extracts parts 
+    // of a string and returns the extracted parts in a new string. Kada je 2. argument negativan
+    // onda se broje karakteri od kraja string-a.
+    servicesWithReservation = servicesWithReservation.slice(0, -1);
+    // The split() method is used to split a string into an array of substrings, and returns the new array.
+    // Funkcija map() primenjuje funkciju, navedenu kao argument, na svaki clan niza string-ova.
+    servicesWithReservation = servicesWithReservation.split(", ").map(function (item) {
+        // 2. argument moze imati vrednost izmedju 2 i 36 i naziva se radix (the base in mathematical numeral systems).
+        // Specify 10 for the decimal numeral system. 
+        return parseInt(item, 10);
+    });
     var isServiceWithReservation = false;
-    if (servicesWithReservation.includes(checkboxValue)) {
+    // Sada konacno mozemo da proverimo da li se id izabranog servisa nalazi u nizu brojeva koji predstavljaju id-jeve
+    // servisa koji zahtevaju rezervaciju.
+    if (servicesWithReservation.indexOf(checkboxNumber) !== -1) {
         isServiceWithReservation = true;
     }
     var reservationLabelElement = document.getElementById("reservation_label");

@@ -2,16 +2,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <!-- TODO Implementiraj "Dealing Gracefully with ViewExpiredException in JSF2 Blog"-->
     <body>
-        
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="content">
 
-                <h1 class="errorHeader">Ooop$, $0methi!g g0ne terrib1y wr0ng...</h1>
-                <div id="fallingMonkey"/>
+                <h1 class="errorHeader">To protect your security, we have taken the liberty of logging you out.</h1>
+                <h4 class="errorParagraph">Please go to Log In page.</h4>
 
             </ui:define>
         </ui:composition>
-
     </body>
 </html>

@@ -39,3 +39,14 @@ function preventEnterBehaviour(event){
         event.preventDefault();
     }
 }
+
+// Biblioteka se nalazi u: C:\Libraries\jquery-timepicker-99cfc2d. Postoje i primeri na index.html stranici.
+// Obrati paznju kako se vrsi selekcija elementa: trazimo elemente tipa "input" koji imaju atribut "id" koji 
+// u sebi sadrzi string "changeReservationTime".
+function showReservationTimeList() {
+    $("input[id*='changeReservationTime']").timepicker({
+        'timeFormat': 'H:i',
+        'minTime': '8:00',
+        'maxTime': '19:30'
+    });
+}

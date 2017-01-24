@@ -62,12 +62,13 @@ public class LogInController implements Serializable {
     private List<Activity> listOfActivities;
     private Activity choosenActivity;
     private List<ClientOrders> listOfClientOrders;
-    private List<ClientOrders> filteredClientOrders;
+    private List<ClientOrderPresenter> filteredClientOrderPresenter;
     // Ukazuje na redni broj u listOfClientOrders koji se koristi adminLoginPage kako bi odatle poceo prikaz u clientOrder
     // tabeli.
     private int firstRowToShow;
     private int pageRows;
     private long todayAsLong = LocalDate.now().toEpochDay();
+    private List<ClientOrderPresenter> listOfClientOrderPresenters;
 
     public LogInController() {
 
@@ -111,6 +112,7 @@ public class LogInController implements Serializable {
 //  Methods for all data.
     public void setAllData() {
         // Uzimamo owner-a, koji se ulog-ovao iz map-e flash scope-a.
+        // TODO Ovde je problem sto ne radi refresh admin strane. Owners je null i onda ode sve do djavola.
         owner = (Owners) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("owner");
         company = owner.getCompaniesId();
         setListOfCompanyActivities();
@@ -121,6 +123,7 @@ public class LogInController implements Serializable {
         setCompanyOrder();
         setCompanyServices();
         listOfClientOrders = setListOfClientOrders();
+        listOfClientOrderPresenters = setListOfClientOrderPresenters();
         setFirstRowToShow();
         LOGGER.log(Level.INFO, "Method setAllData() finished successfully.");
     }
@@ -145,8 +148,8 @@ public class LogInController implements Serializable {
         }
         return tempList;
     }
-    
-    public void refreshListOfClientOrders(){
+
+    public void refreshListOfClientOrderPresenters() {
         /* 
         Ako je adminLoginPage pokrenuta i korisnik naruci servis, pozivanjem ovog metoda ce se naruceni servis dodati u client
         orders tabelu. Medjutim ako se client orders tabela na neki nacin izmeni u medjuvremenu (filtrira se po nekoj 
@@ -156,26 +159,27 @@ public class LogInController implements Serializable {
         Ista stvar je se javljala i nakon brisanja reda ali je resenje za to bilo izbacivanje:
         oncomplete="PF('clientOrdersWidgetVar').filter()"
         iz <p:commandButton value="Delete" .../> tag-a u client orders tabeli.
-        */
-        filteredClientOrders = null;
+         */
+        filteredClientOrderPresenter = null;
         listOfClientOrders = setListOfClientOrders();
+        listOfClientOrderPresenters = setListOfClientOrderPresenters();
     }
 
     public List<ClientOrders> getListOfClientOrders() {
         return listOfClientOrders;
     }
 
-    public void deleteClientOrderFromTable(ClientOrders clientOrder) {
-        int clientOrderId = clientOrder.getId();
-        ClientOrders clientOrderForDelete = clientOrdersFacade.find(clientOrderId);
+    public void deleteClientOrderPresenterFromTable(ClientOrderPresenter clientOrderPresenter) {
+        ClientOrders clientOrderForDelete = clientOrderPresenter.getClientOrder();
         // Prvo proverimo da li za clientOrderForDelete postoji rezervacija u reservations tabeli i ako postoji 1. nju brisemo
         // pa onda clientOrderForDelete.
-        Reservations reservationForDelete = reservationsFacade.getReservationByClientOrdersId(clientOrderForDelete);
+        Reservations reservationForDelete = clientOrderPresenter.getReservation();
         if (reservationForDelete != null) {
             reservationsFacade.remove(reservationForDelete);
         }
         clientOrdersFacade.remove(clientOrderForDelete);
-        listOfClientOrders.remove(clientOrder);
+        listOfClientOrders.remove(clientOrderForDelete);
+        listOfClientOrderPresenters.remove(clientOrderPresenter);
     }
 
 //  Agents methods.
@@ -290,7 +294,7 @@ public class LogInController implements Serializable {
     public List<Services> getServices() {
         return services;
     }
-    
+
     public void updateCompanyInfo() {
         companiesFacade.edit(company);
     }
@@ -404,22 +408,24 @@ public class LogInController implements Serializable {
         this.choosenActivity = choosenActivity;
     }
 
-    public List<ClientOrders> getFilteredClientOrders() {
-        return filteredClientOrders;
+    public List<ClientOrderPresenter> getFilteredClientOrderPresenter() {
+        return filteredClientOrderPresenter;
     }
 
-    public void setFilteredClientOrders(List<ClientOrders> filteredClientOrders) {
-        this.filteredClientOrders = filteredClientOrders;
+    public void setFilteredClientOrderPresenter(List<ClientOrderPresenter> filteredClientOrderPresenter) {
+        this.filteredClientOrderPresenter = filteredClientOrderPresenter;
     }
 
     public ReservationsFacade getReservationsFacade() {
         return reservationsFacade;
     }
-    
-//    TODO 1. promeni bazu.
+
     public void onRowEdit(RowEditEvent event) {
-        ClientOrders tempClientOrders = (ClientOrders) event.getObject();
+        ClientOrderPresenter tempClientOrderPresenter = (ClientOrderPresenter) event.getObject();
+        ClientOrders tempClientOrders = tempClientOrderPresenter.getClientOrder();
+        Reservations temReservations = tempClientOrderPresenter.getReservation();
         clientOrdersFacade.edit(tempClientOrders);
+        reservationsFacade.edit(temReservations);
         LOGGER.log(Level.INFO, "Method onRowEdit() finished successfully.");
     }
 
@@ -435,10 +441,10 @@ public class LogInController implements Serializable {
 
     public void setFirstRowToShow() {
         LocalDate today = LocalDate.now();
-        for (int i = 0; i < listOfClientOrders.size(); i++) {
-            ClientOrders tempClientOrder = listOfClientOrders.get(i);
-            if (!tempClientOrder.getReservationsList().isEmpty()) {
-                LocalDate tempReservationDate = tempClientOrder.getReservationsList().get(0).getReservationDate();
+        for (int i = 0; i < listOfClientOrderPresenters.size(); i++) {
+            ClientOrderPresenter tempClientOrderPresenter = listOfClientOrderPresenters.get(i);
+            if (tempClientOrderPresenter.getReservation() != null) {
+                LocalDate tempReservationDate = tempClientOrderPresenter.getReservation().getReservationDate();
                 if (today.isEqual(tempReservationDate)) {
                     firstRowToShow = i;
                     setPageRows();
@@ -486,6 +492,23 @@ public class LogInController implements Serializable {
         LocalDate filterLocalDate = new java.sql.Date(filterDate.getTime()).toLocalDate();
         // I na kraju poredimo datume.
         return filterLocalDate.isEqual(valueLocaleDate);
+    }
+
+    public List<ClientOrderPresenter> getListOfClientOrderPresenters() {
+        return listOfClientOrderPresenters;
+    }
+
+    public List<ClientOrderPresenter> setListOfClientOrderPresenters() {
+        ClientOrderPresenter tempClientOrderPresenter;
+        List<ClientOrderPresenter> tempList = new ArrayList<>();
+        for(ClientOrders tempClientOrder : listOfClientOrders){
+            tempClientOrderPresenter = new ClientOrderPresenter();
+            tempClientOrderPresenter.setClientOrder(tempClientOrder);
+            Reservations tempReservation = reservationsFacade.getReservationByClientOrdersId(tempClientOrder);
+            tempClientOrderPresenter.setReservation(tempReservation);
+            tempList.add(tempClientOrderPresenter);
+        }
+        return tempList;
     }
 
 }

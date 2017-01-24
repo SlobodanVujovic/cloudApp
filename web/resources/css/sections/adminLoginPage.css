@@ -175,3 +175,9 @@ input[type="checkbox"]{
 .dateInputInAdminTable{
     margin-left: 5px;
 }
+
+.adminReservationTime{
+    width: 80%;
+    margin-left: 10%;
+    color: black;
+}

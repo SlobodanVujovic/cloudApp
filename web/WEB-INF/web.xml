@@ -19,6 +19,10 @@
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <!-- Broj 1 kaze da se init() metod Faces Servlet-a pokrene 1. od svih servlet-a u app.
+        Nakon pokretanja web server-a vrsi se pokretanje servlet kontenjera (Apache Tomcat, WildFly, GlassFish).
+        Zatim, nakon load-a i deploy-a web aplikacija, vrsi se kreiranje ServletContext-a. Zatim se vrsi instantiation servlet-a,
+        filter-a i listener-a. I to servlet-a redom koji govori ovaj broj.-->
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -26,6 +30,10 @@
         <url-pattern>/faces/*</url-pattern>
     </servlet-mapping>
     <session-config>
+        <!-- The HttpSession stays alive until it has not been used for more than the timeout value specified in <session-timeout>.
+        The timeout value defaults to 30 minutes. So, when the client doesn't visit the web app for longer than the time specified,
+        the servlet container trashes the session. Every subsequent request will not have access to the same session anymore; 
+        the servlet container will create a new session.-->
         <session-timeout>
             30
         </session-timeout>
@@ -39,23 +47,22 @@
     Obrati paznju da je potrebno ukljuciti i "/faces" u putanju ka view-u. U suprotnom .xhtml ne prolazi kroz Faces Servlet
     i stranica se ne renderuje kako bi trebalo. -->
     <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/faces/error/expired.xhtml</location>
+    </error-page>
+    <error-page>
         <error-code>404</error-code>
         <location>/faces/error/error.xhtml</location>
     </error-page>
+    <!-- "General" error page should be mapped on <error-code> of 500 instead of an <exception-type> of e.g. java.lang.Exception or 
+    java.lang.Throwable, otherwise all exceptions wrapped in ServletException such as ViewExpiredException would still end up in the 
+    general error page.--> 
     <error-page>
         <error-code>500</error-code>
         <location>/faces/error/error.xhtml</location>
     </error-page>
     <error-page>
         <exception-type>org.jboss.weld.context.ContextNotActiveException</exception-type>
-        <location>/faces/error/error.xhtml</location>
-    </error-page>
-    <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/faces/error/error.xhtml</location>
-    </error-page>
-    <error-page>
-        <exception-type>javax.servlet.ServletException</exception-type>
         <location>/faces/error/error.xhtml</location>
     </error-page>
     

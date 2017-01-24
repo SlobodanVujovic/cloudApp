@@ -6,8 +6,10 @@
 package com.cloudApp.entity;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -97,7 +99,14 @@ public class Reservations implements Serializable {
     }
 
     public void setReservationDate(LocalDate reservationDate) {
+        if(this.reservationDate != null){
+            Period diffPeriod = Period.between(this.reservationDate, reservationDate);
+            Integer diffDays = diffPeriod.getDays();
+            LocalDate changeSendingDate = sendingDate.plusDays(diffDays);
+            setSendingDate(changeSendingDate);
+        }
         this.reservationDate = reservationDate;
+        
     }
 
     public LocalTime getReservationTime() {
@@ -105,6 +114,12 @@ public class Reservations implements Serializable {
     }
 
     public void setReservationTime(LocalTime reservationTime) {
+        if(this.reservationTime != null){
+            Duration diffDuration = Duration.between(this.reservationTime, reservationTime);
+            long diffHours = diffDuration.toHours();
+            LocalTime changeSendingTime = sendingTime.plusHours(diffHours);
+            setSendingTime(changeSendingTime);
+        }
         this.reservationTime = reservationTime;
     }
 
