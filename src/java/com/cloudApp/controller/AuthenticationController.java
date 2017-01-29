@@ -5,52 +5,60 @@ import com.cloudApp.sessions.OwnersFacade;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 @Named
-@RequestScoped
-public class AuthenticationController implements Serializable{
+@SessionScoped
+public class AuthenticationController implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(AuthenticationController.class.getName());
     private boolean login = false;
     private String username;
     private String password;
-    private UIComponent usernameComponent;
-    private UIComponent passwordComponent;
-    
+    private Owners owner;
+
     public AuthenticationController() {
-        
+
     }
-    
+
     @Inject
     private OwnersFacade ownersFacade;
+    @Inject
+    private NavigationController navigationController;
 
     public boolean isLogin() {
         return login;
     }
-    
-    public void adminLogin(){
-        Owners owner = ownersFacade.getOwnerByUsername(username);
+
+    public void adminLogin() {
+        owner = ownersFacade.getOwnerByUsername(username);
         if (owner != null) {
             String resultPassword = owner.getPassword();
             if (resultPassword.equals(password)) {
                 login = true;
-                // Cuvamo owner-a u map-u u flash scope-u koji brise podatke nakon redirekcije.
-                FacesContext.getCurrentInstance().getExternalContext().getFlash().put("owner", owner);
+                HttpSession session = SessionController.getSession();
+                session.setAttribute("username", username);
                 LOGGER.log(Level.INFO, "Password for username: {0} is valid.", username);
             } else {
                 FacesContext context = FacesContext.getCurrentInstance();
-                context.addMessage(passwordComponent.getClientId(), new FacesMessage("Incorrect password."));
+                context.addMessage("logInPassword", new FacesMessage("Incorrect password."));
             }
         } else {
             FacesContext context = FacesContext.getCurrentInstance();
-            context.addMessage(usernameComponent.getClientId(), new FacesMessage("Incorrect username."));
+            context.addMessage("userName", new FacesMessage("Incorrect username."));
         }
+    }
+
+    // Kada se admin izloguje, potrebno je uraditi invalidate session.
+    public String adminLogout() {
+        HttpSession session = SessionController.getSession();
+        session.invalidate();
+        return navigationController.goToLogin();
     }
 
     public String getUsername() {
@@ -69,20 +77,8 @@ public class AuthenticationController implements Serializable{
         this.password = password;
     }
 
-    public UIComponent getUsernameComponent() {
-        return usernameComponent;
+    public Owners getOwner() {
+        return owner;
     }
 
-    public void setUsernameComponent(UIComponent usernameComponent) {
-        this.usernameComponent = usernameComponent;
-    }
-
-    public UIComponent getPasswordComponent() {
-        return passwordComponent;
-    }
-
-    public void setPasswordComponent(UIComponent passwordComponent) {
-        this.passwordComponent = passwordComponent;
-    }
-    
 }

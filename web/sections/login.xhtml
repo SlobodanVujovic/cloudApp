@@ -22,7 +22,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                        <h:inputText id="userName" pt:placeholder="Username" value="#{authenticationController.username}" binding="#{authenticationController.usernameComponent}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
+                                        <h:inputText id="userName" pt:placeholder="Username" value="#{authenticationController.username}" required="true" requiredMessage="Username is required." maxlength="70" styleClass="form-control">
                                          <f:attribute name="message" value="Username can not be empty."/>
                                          <f:validator validatorId="EmptyInputValidator"/>
                                         </h:inputText>
@@ -37,7 +37,7 @@
                                 <div class="col-md-4 inputGroupContainer">
                                     <div class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <h:inputSecret id="logInPassword" pt:placeholder="Password" value="#{authenticationController.password}" binding="#{authenticationController.passwordComponent}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
+                                        <h:inputSecret id="logInPassword" pt:placeholder="Password" value="#{authenticationController.password}" required="true" requiredMessage="Invalid password." maxlength="50" styleClass="form-control">
                                             <f:attribute name="message" value="Invalid Password."/>
                                             <f:validator validatorId="EmptyInputValidator"/>
                                             <f:validator validatorId="ShortPasswordValidator"/>

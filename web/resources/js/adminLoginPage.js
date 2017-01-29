@@ -15,6 +15,11 @@ function showServicePopupWin(){
     inputToShow.style.display = "block";
 }
 
+function showEmailPopupWin(){
+    var inputToShow = document.getElementById("emailPopupBack");
+    inputToShow.style.display = "block";
+}
+
 //Pri pokusaju brisanja posledjeg activity-ja kompanije javlja se obavestenje da to nije dozvoljeno.
 function companyMustHaveAtLeastOneActivity(){
     var moreThenOneRow = false;
@@ -49,4 +54,15 @@ function showReservationTimeList() {
         'minTime': '8:00',
         'maxTime': '19:30'
     });
+}
+
+// Kada kliknemo na email, sa tim email-om se popunjava polje sa id-em "to_input".
+function populateEmailToInput(toEmailId){
+    var toEmailString = document.getElementById(toEmailId).innerHTML.trim();
+    var emailPopupToInput = document.getElementById("emailForm:to_input").value = toEmailString;
+}
+
+function showOrderIdPopupWin(){
+    var inputToShow = document.getElementById("orderPopupBack");
+    inputToShow.style.display = "block";
 }

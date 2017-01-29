@@ -12,6 +12,7 @@ import com.cloudApp.entity.Owners;
 import com.cloudApp.entity.OwnersContacts;
 import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
+import com.cloudApp.pojo.MailFromAdminTable;
 import com.cloudApp.sessions.ActivityFacade;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
@@ -31,17 +32,31 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.logging.*;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import org.primefaces.event.RowEditEvent;
 
 @Named
 @ViewScoped
+// Ova klasa treba da se zove "AdminLoginPageController".
 public class LogInController implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(LogInController.class.getName());
@@ -69,6 +84,8 @@ public class LogInController implements Serializable {
     private int pageRows;
     private long todayAsLong = LocalDate.now().toEpochDay();
     private List<ClientOrderPresenter> listOfClientOrderPresenters;
+    private MailFromAdminTable mailFromAdminTable;
+    private CompanyOrder tempOrderId;
 
     public LogInController() {
 
@@ -81,9 +98,12 @@ public class LogInController implements Serializable {
         servicesNames = new HashSet<>();
         agentsNames = new HashSet<>();
         tempCompanyActivitiesForAdding = new CompanyActivities();
+        mailFromAdminTable = new MailFromAdminTable();
         setAllData();
     }
 
+    @Inject
+    private AuthenticationController authenticationController;
     @Inject
     private AgentsFacade agentsFacade;
     @Inject
@@ -112,8 +132,7 @@ public class LogInController implements Serializable {
 //  Methods for all data.
     public void setAllData() {
         // Uzimamo owner-a, koji se ulog-ovao iz map-e flash scope-a.
-        // TODO Ovde je problem sto ne radi refresh admin strane. Owners je null i onda ode sve do djavola.
-        owner = (Owners) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("owner");
+        owner = authenticationController.getOwner();
         company = owner.getCompaniesId();
         setListOfCompanyActivities();
         setOwnersContacts();
@@ -243,6 +262,10 @@ public class LogInController implements Serializable {
         this.tempAgentForAdding = tempAgentForAdding;
     }
 
+    public void clearTempAgent() {
+        tempAgentForAdding = new Agents();
+    }
+
 //  Services methods.
     public void unavailableService(Services service) {
         int serviceId = service.getId();
@@ -289,6 +312,10 @@ public class LogInController implements Serializable {
 
     public void setTempServiceForAdding(Services tempServiceForAdding) {
         this.tempServiceForAdding = tempServiceForAdding;
+    }
+
+    public void clearTempService() {
+        tempServiceForAdding = new Services();
     }
 
     public List<Services> getServices() {
@@ -501,7 +528,7 @@ public class LogInController implements Serializable {
     public List<ClientOrderPresenter> setListOfClientOrderPresenters() {
         ClientOrderPresenter tempClientOrderPresenter;
         List<ClientOrderPresenter> tempList = new ArrayList<>();
-        for(ClientOrders tempClientOrder : listOfClientOrders){
+        for (ClientOrders tempClientOrder : listOfClientOrders) {
             tempClientOrderPresenter = new ClientOrderPresenter();
             tempClientOrderPresenter.setClientOrder(tempClientOrder);
             Reservations tempReservation = reservationsFacade.getReservationByClientOrdersId(tempClientOrder);
@@ -511,4 +538,64 @@ public class LogInController implements Serializable {
         return tempList;
     }
 
+    public MailFromAdminTable getMailFromAdminTable() {
+        return mailFromAdminTable;
+    }
+
+    public void sendMailFromAdminTable() {
+        Properties props = new Properties();
+        // Drugi parametar je ime mail server-a ili njegova IP adresa.
+        props.setProperty("mail.smtp.host", "email.mds.rs");
+
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                // Autentifikacija prilikom slanja mail-ova.
+                return new PasswordAuthentication("cloud@mds.rs", "cloud");
+            }
+        });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setHeader("Content-Type", "text/html; charset=UTF-8");
+            // TODO Promeniti setFrom adresu u "cloud@mds.rs".
+            message.setFrom(new InternetAddress(mailFromAdminTable.getEmailFrom()));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mailFromAdminTable.getEmailTo()));
+            message.setSubject(mailFromAdminTable.getEmailSubject(), "UTF-8");
+            message.setSentDate(new Date());
+            BodyPart messageBodyPart = new MimeBodyPart();
+            String mailBody = mailFromAdminTable.getEmailBody();
+            messageBodyPart.setText(mailBody);
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+            message.setContent(multipart);
+            Transport.send(message);
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage("Successful", "Your e-mail is sent."));
+            LOGGER.log(Level.INFO, "sendMailFromAdminTable() for user {0}", mailFromAdminTable.getEmailTo());
+        } catch (MessagingException e) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage("Failure", "Your e-mail is not sent."));
+            e.printStackTrace();
+        }
+        mailFromAdminTable = new MailFromAdminTable();
+    }
+
+    public void setTempOrderId(CompanyOrder tempOrderId) {
+        this.tempOrderId = tempOrderId;
+    }
+
+    public CompanyOrder getTempOrderId() {
+        return tempOrderId;
+    }
+
+    public String goToServicePage() {
+        // TODO Promeniti argument substring() metoda kada se promeni URL sa "localhost".
+        String orderId = tempOrderId.getUrl().substring(51);
+        // Obrati paznju na navigaciju na stranicu u 2. folderu. Koristi se apsolutna putanja i "faces-redirect" atribut.
+        String url = "/cloud/services.xhtml?" + orderId + "&faces-redirect=true";
+        return url;
+    }
 }

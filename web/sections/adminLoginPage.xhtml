@@ -7,15 +7,16 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <body>
-        <!-- TODO Namestiti da radi refresh.-->
+        <!-- Kada se uradi Back na ovoj strani pa Forward, korisnik ce videti opet ovu stranu jer je vec ulogovan. Ako se u medjuvremenu
+        izlogovao onda Back/Forward nece pomoci da se vrati na ovu stranu (bacace ga na log in stranu zahvaljujuci AuthenticationFilter-u).
+        Ako korisnik nema aktivnosti view ce isteci (ViewExpiredException handle-ujemo) i ugasicemo sesiju.-->
         <ui:composition template="./../templates/masterTemplate.xhtml">
             <ui:define name="left">
                 <h:form id="leftForm">
                     <!-- Logout and Company Informations button -->
                     <div class="col-md-4">
                         <h:commandLink value="Company Informations " onclick="return showCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>
-                        <!-- TODO Ovaj logout ne valja, treba da postoji terminacija sesije.-->
-                        <h:commandLink value="Logout " action="#{navigationController.goHome()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-out"/></h:commandLink>
+                        <h:commandLink value="Logout " action="#{authenticationController.adminLogout()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-log-out"/></h:commandLink>
                     </div>
                 </h:form>
             </ui:define>
@@ -327,6 +328,7 @@
                                 <f:facet name="header">
                                     Client orders
                                     <p:outputPanel id="tableGlobalComponents">
+                                        <p:commandButton value="New order " onclick="showOrderIdPopupWin();" update="clientOrdersForm:clientOrdersTableId" icon="fa fa-magic" iconPos="right"/>
                                         <p:commandButton value="Get orders " action="#{logInController.refreshListOfClientOrderPresenters()}" update="clientOrdersForm:clientOrdersTableId"
                                                          icon="fa fa-pencil" iconPos="right"/>
                                         <h:outputText value="Search all fields:"/>
@@ -386,11 +388,11 @@
 
                                 <!--Client Email kolona-->
                                 <p:column headerText="Client Email" sortBy="#{clientOrderPresenter.clientOrder.clientEmail}" filterBy="#{clientOrderPresenter.clientOrder.clientEmail}" filterMatchMode="contains">
-                                    <!-- Pravimo link koji, kada kliknemo, otvara prozor za slanje mail-a u default-nom mail klijentu. Da bi se to izvelo potrebno je koristiti
-                                        standardnu HTML "mailto: link" sintaksu.-->
-                                    <h:outputLink value="mailto:#{clientOrderPresenter.clientOrder.clientEmail}">
-                                        <h:outputText value="#{clientOrderPresenter.clientOrder.clientEmail}"/>
-                                    </h:outputLink>
+                                    <!-- Pravimo link koji, kada kliknemo, otvara formu koja sadrzi polja koja postoje pri slanju email-a ali mail se ne salje
+                                    kroz mail client na racunaru klijenta nego kroz samu app.-->
+                                    <h:commandLink id="toClientEmail" onclick="showEmailPopupWin(); populateEmailToInput(this.id); return false;">
+                                        #{clientOrderPresenter.clientOrder.clientEmail}
+                                    </h:commandLink>
                                 </p:column>
 
                                 <!--Reservation Date kolona--> 
@@ -497,7 +499,7 @@
                                     <!--Agent Email text input.-->
                                     <h:outputLabel id="agent_email_label" value="E-Mail" class="previewElement"/>
                                     <h:inputText id="agent_email" pt:placeholder="Agent's E-Mail" value="#{logInController.tempAgentForAdding.email}" disabled="#{agentInput.inputType != 'oneByOne'}" required="true" requiredMessage="E-mail is required.">
-                                        <f:ajax event="blur" render="agent_email_message"/>
+                                        <f:ajax render="agent_email_message"/>
                                         <f:validator validatorId="EmailValidator"/>
                                     </h:inputText>
                                     <h:inputHidden/>
@@ -542,7 +544,9 @@
                                     <h:commandLink id="agentOkButton" action="#{logInController.updateAgents()}" onclick="hidePopupWin('agentPopupBack');" class="btn btn-warning">OK <span class="glyphicon glyphicon-ok"></span>
                                         <f:ajax event="action" execute="@form" render="agentsTable"/>
                                     </h:commandLink>
-                                    <h:commandLink id="agentCancleButton" onclick="hidePopupWin('agentPopupBack'); return false;" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
+                                    <h:commandLink id="agentCancleButton" onclick="hidePopupWin('agentPopupBack');" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span>
+                                        <f:ajax execute="@this" render="@form" listener="#{logInController.clearTempAgent()}"/>
+                                    </h:commandLink>
                                 </div>
                             </h:form>
                         </div>
@@ -581,6 +585,7 @@
                                         </p:column>
                                         <p:column>
                                             <h:selectOneMenu id="orderList" value="#{logInController.tempServiceForAdding.companyOrderId}" converter="omnifaces.SelectItemsConverter">
+                                                <!-- TODO Promeniti argument substring() metoda kada se promeni URL sa "localhost".-->
                                                 <f:selectItems value="#{logInController.companyOrders}" var="companyOrders" itemLabel="#{companyOrders.url.substring(51)}" itemValue="#{companyOrders}"/>
                                             </h:selectOneMenu>
                                         </p:column>
@@ -602,7 +607,9 @@
                                                 </h:commandLink>
                                             </p:column>
                                             <p:column>
-                                                <h:commandLink id="serviceCancleButton" value="Cancel " styleClass="btn btn-warning" onclick="hidePopupWin('servicesPopupBack'); return false;"><span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
+                                                <h:commandLink id="serviceCancleButton" value="Cancel " styleClass="btn btn-warning" onclick="hidePopupWin('servicesPopupBack');"><span class="glyphicon glyphicon-remove-circle"></span>
+                                                    <f:ajax execute="@this" render="@form" listener="#{logInController.clearTempService()}"/>
+                                                </h:commandLink>
                                             </p:column>
                                         </p:row>
                                     </p:panelGrid>
@@ -627,6 +634,71 @@
                                         <f:ajax event="action" execute="@form" render="companyActivityTable"/>
                                     </h:commandLink>
                                     <h:commandLink id="activityCancleButton" onclick="hidePopupWin('activityPopupBack'); return false;" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- Popup koji se pojavi kada se salje email.-->
+                    <div id="emailPopupBack">
+                        <div id="emailPopup">
+                            <h:form id="emailForm">
+                                <!-- Ovaj tag je notification widget i koristi se za prikaz FacesMessages-a poput h:messages tag-a.-->
+                                <p:growl id="msgs" showDetail="true"/>
+                                <h2>Send e-mail</h2>
+                                <h:panelGrid columns="2">
+
+                                    <!-- Email From input je definisan u MailFromAdminTable objektu.-->
+
+                                    <!-- Email To input.-->
+                                    <h:outputLabel id="to_input_label" value="To:" class="previewElement"/>
+                                    <h:inputText id="to_input" pt:placeholder="E-mail to." value="#{logInController.mailFromAdminTable.emailTo}" required="true" requiredMessage="To input is required."/>
+                                    <!-- h:inputHidden koristimo samo da bi necim popunili 1. celiju u redu-->
+                                    <h:inputHidden/>
+                                    <h:message id="to_input_message" for="to_input" class="label label-danger"/>
+
+                                    <!-- Email Subject input.-->
+                                    <h:outputLabel id="subject_input_label" value="Subject:" class="previewElement"/>
+                                    <h:inputText id="subject_input" pt:placeholder="E-mail subject." value="#{logInController.mailFromAdminTable.emailSubject}"/>
+
+                                    <!-- Email Body input.-->
+                                    <h:outputLabel id="body_input_label" value="Text body:" class="previewElement"/>
+                                    <h:inputTextarea id="body_input" value="#{logInController.mailFromAdminTable.emailBody}" pt:placeholder="E-mail text." cols="45"/>
+                                </h:panelGrid>
+
+                                <!-- Send i Cancle dugmad na dnu popup prozora. Oba dugmeta iskljucuju popup.-->
+                                <div align="center">
+                                    <h:commandLink id="emailSendButton" onclick="hidePopupWin('emailPopupBack');" action="#{logInController.sendMailFromAdminTable()}" class="btn btn-warning">Send <span class="glyphicon glyphicon-ok"></span>
+                                        <!-- Render-ujemo formu kao i p:growl tag koji ispisuje poruku koju smo set-ovali kroz sendMailFromAdminTable() metod.-->
+                                        <f:ajax event="action" execute="@form" render="@form emailForm:msgs"/>
+                                    </h:commandLink>
+                                    <h:commandLink id="emailCancleButton" onclick="hidePopupWin('emailPopupBack');" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span>
+                                        <f:ajax execute="@this" render="@form"/>
+                                    </h:commandLink>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+
+                    <!-- Popup koji se pojavi kada se dodaje novi client order.-->
+                    <div id="orderPopupBack">
+                        <div id="orderPopup">
+                            <h:form id="orderForm">
+                                <h2>Choose order ID</h2>
+                                
+                                <h:panelGrid id="orderPopupGrid" columns="2">
+                                    <h:outputLabel id="order_id_label" value="Order ID:" for="orderList" styleClass="previewElement"/>
+                                    <h:selectOneMenu id="orderList" value="#{logInController.tempOrderId}" converter="omnifaces.SelectItemsConverter">
+                                        <!-- TODO Promeniti argument substring() metoda kada se promeni URL sa "localhost".-->
+                                        <f:selectItems value="#{logInController.companyOrders}" var="companyOrders" itemLabel="#{companyOrders.url.substring(51)}" itemValue="#{companyOrders}"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+
+                                <!-- Order i Cancle dugmad na dnu popup prozora. Oba dugmeta iskljucuju popup.-->
+                                <div id="orderPopupButtons" align="center">
+                                    <!-- Ono sto vraca metod koji se poziva kroz atribut "action" je URL rezultujuce str.    Obrati paznju na atribut "target" on definise otvaranje view-a u novom tab-u.-->
+                                    <h:commandLink id="orderButton" action="#{logInController.goToServicePage()}" target="_blank" onclick="hidePopupWin('orderPopupBack');" class="btn btn-warning">Order <span class="glyphicon glyphicon-ok"></span></h:commandLink>
+                                    <h:commandLink id="orderCancleButton" onclick="hidePopupWin('orderPopupBack');" class="btn btn-warning">Cancel <span class="glyphicon glyphicon-remove-circle"></span></h:commandLink>
                                 </div>
                             </h:form>
                         </div>
