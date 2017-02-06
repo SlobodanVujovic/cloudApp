@@ -27,6 +27,7 @@
 #companyInformationsGrid label{
     width: 180px;
     text-align: right;
+    display: inline;
 }
 
 #companyInformationsGrid table, #clientOrdersDiv table{
@@ -215,4 +216,35 @@ input[type="checkbox"]{
 #emailForm\:emailSendButton, #orderForm\:orderButton{
     margin-right: 5px;
     width: 82px;
+}
+
+#companyInformationsGrid label[id$="poIdLabel"]{
+    text-align: right;
+    width: 7em;
+    padding: 3px /* Da bi bilo u ravni sa tabelom koja se nalazi u susednoj celiji, jer celije tabele imaju 3px padding. */
+    
+}
+
+table[id$="daysInWeek"] input{
+    vertical-align: middle;
+}
+
+table[id$="daysInWeek"]{
+    margin-bottom: 0px;
+}
+
+.wTimepicker{
+    width: 3.5em;
+}
+
+input[id$="workDayStartTime"], input[id$="weekendDayStartTime"]{
+    margin-right: 5px;
+}
+
+.openHoursHeader{
+    text-align: center;
+}
+
+.activeHoursInput{
+    display: none;
 }

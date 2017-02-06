@@ -2,10 +2,14 @@ package com.cloudApp.controller;
 
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
+import com.cloudApp.entity.CompanyOrderHasDaysOfWeek;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.CompanyOrderFacade;
+import com.cloudApp.sessions.CompanyOrderHasDaysOfWeekFacade;
+import com.cloudApp.sessions.DaysOfWeekFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -29,6 +33,7 @@ public class DefineServicesController implements Serializable {
     private int numberOfServicesWithReservation;
     private List<BasicServiceInfo> listOfBasicServices;
     private BasicServiceInfo initialBasicService;
+    private CompanyOrderHasDaysOfWeek tempCompanyOrderWorkingDays;
 
     @PostConstruct
     public void init() {
@@ -47,6 +52,10 @@ public class DefineServicesController implements Serializable {
     private CompanyOrderFacade companyOrderFacade;
     @Inject
     private PublicUrlController publicUrlController;
+    @Inject
+    private DaysOfWeekFacade daysOfWeekFacade;
+    @Inject
+    private CompanyOrderHasDaysOfWeekFacade companyOrderHasDaysOfWeekFacade;
 
     public void writeToDatabase() {
         companyOrder.setCompaniesId(companyController.getSelectedCompany());
@@ -64,6 +73,18 @@ public class DefineServicesController implements Serializable {
             }
             services.setCompanyOrderId(companyOrder);
             servicesFacade.create(services);
+        }
+        // Ovde unosimo default-ne radne dane (od ponedeljka do petka) za svaki company order. Kasnije administrator moze ovo promeniti kada se
+        // uloguje na adminLoginPage.xhtml stranicu.
+        for (int i = 0; i < 5; i++) {
+            // Obrati paznju da je 1. potrebno definisati PK za entity a zatim set-ovati i vrednosti polja CompanyOrderId i DayOfWeekId.
+            tempCompanyOrderWorkingDays = new CompanyOrderHasDaysOfWeek(companyOrder.getId(), daysOfWeekFacade.find(i + 1).getId());
+            tempCompanyOrderWorkingDays.setCompanyOrder(companyOrder);
+            tempCompanyOrderWorkingDays.setDaysOfWeek(daysOfWeekFacade.find(i + 1));
+            tempCompanyOrderWorkingDays.setSortIdx(i);
+            tempCompanyOrderWorkingDays.setStartTime(LocalTime.of(8, 0));
+            tempCompanyOrderWorkingDays.setCloseTime(LocalTime.of(20, 0));
+            companyOrderHasDaysOfWeekFacade.create(tempCompanyOrderWorkingDays);
         }
     }
 

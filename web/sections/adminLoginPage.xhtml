@@ -298,6 +298,60 @@
                                 <h:outputLabel value=""/>
                                 <h:commandLink value="Add new service " onclick="showServicePopupWin(); return false;" styleClass="btn btn-warning"><span class="glyphicon glyphicon-tasks"/></h:commandLink>
 
+                                <!-- Podaci iz days_of_week DB tabele-->
+                                <!-- Kada se ova stranica ucita pokrece se JavaScript checkIfThisIsAdminLoginPage() funkcija.-->
+                                <h:outputLabel value="Working days for"/>
+                                <h:dataTable id="workingDaysTable" value="#{logInController.listOrderWorkingDays}" var="entry">
+                                    <h:column>
+                                        <f:facet name="header">poId</f:facet>
+                                        <h:outputLabel value="#{entry.companyOrder.id}" for="allDaysInWeek"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">
+                                            <!-- Da bi dodali razmak (space) u string koji ispisujemo u view-u, moramo koristiti kode za space: "&nbsp;".
+                                            Na ovaj nacin smo samo poravnali da nazivi dana budu u liniji sa checkbox-om ispod njih. Koriscene su 3-slovne
+                                            skracenice za dane jer na taj nacin imamo jednaku duzinu naziva dana pa se moze lako poravnati sa checkbox-ovima.-->
+                                            <h:outputText value="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mon 
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tue 
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Wed 
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thu
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fri
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sat
+                                                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sun"/>
+                                        </f:facet>
+                                        <!-- Posto h:commandLink "Update data" koristi AJAX pri submit-u, h:selectManyCheckbox takodje mora koristiti AJAX da bi se
+                                        pozivao setter metod za "workingDays" field. Konverter "omnifaces.SelectItemsConverter" omogucava da Java model objekat (entitet)
+                                        predstavlja vrednost f:selectItems tag-a. JSF vrsi konverziju automatski. Konverzija se vrsi na osnovu Object.toString() 
+                                        metode selektovanog item-a.-->
+                                        <h:selectManyCheckbox id="daysInWeek" value="#{entry.workingDays}" onchange="countDays(this.id);" converter="omnifaces.SelectItemsConverter">
+                                            <f:selectItems id="allDaysInWeek" value="#{logInController.daysOfWeek}" var="day" itemLabel="" itemValue="#{day}"/>
+                                            <f:ajax event="click"/>
+                                        </h:selectManyCheckbox>
+                                    </h:column>
+                                    <h:column headerClass="openHoursHeader">
+                                        <f:facet name="header">Mon - Fri</f:facet>
+                                        <h:inputText id="workDayStartTime" onchange="updateTimeInput(this.id)" class="wTimepicker"/>
+                                        <h:inputText id="workDayStopTime" onchange="updateTimeInput(this.id)" class="wTimepicker"/>
+                                        <h:inputText id="workDayStartInput" value="#{entry.workingDayStartTime}" class="activeHoursInput">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
+                                        <h:inputText id="workDayStopInput" value="#{entry.workingDayStopTime}" class="activeHoursInput">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
+                                    </h:column>
+                                    <h:column headerClass="openHoursHeader">
+                                        <f:facet name="header">Sat - Sun</f:facet>
+                                        <h:inputText id="weekendDayStartTime" onchange="updateTimeInput(this.id)" class="wTimepicker"/>
+                                        <h:inputText id="weekendDayStopTime" onchange="updateTimeInput(this.id)" class="wTimepicker"/>
+                                        <h:inputText id="weekendDayStartInput" value="#{entry.weekendDayStartTime}" class="activeHoursInput">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
+                                        <h:inputText id="weekendDayStopInput" value="#{entry.weekendDayStopTime}" class="activeHoursInput">
+                                            <f:ajax event="change"/>
+                                        </h:inputText>
+                                    </h:column>
+                                </h:dataTable>
+
                                 <!-- Button za submit-ovanje cele forme.-->
                                 <h:commandLink value="Hide informations " onclick="return hideCompanyInformation()" styleClass="btn btn-warning"><span class="glyphicon glyphicon-info-sign"/></h:commandLink>    
                                 <h:commandLink value="Update data " action="#{logInController.updateDatabase()}" styleClass="btn btn-warning"><span class="glyphicon glyphicon-upload"/>
@@ -319,12 +373,16 @@
                             Ako jeste primenimo klasu "pastDays", a ako nije proveravamo da li je vrednost vece od trenutnog dana. Ako jeste koristimo klasu "futureDays". Ako
                             nije onda ne redimo nista jer to znaci da su vrednosti jednake i te redove ostavljamo u default stanju. Ako je vrednost "tempRes" promenljive pak,
                             jednaka null vrednosti, primenjujemo klasu "pastDays".-->
+                            <!-- Da bi znali koji red u tabeli je selektovan koristimo atribut "selection" koji ukazuje na property ciji tip odgovara tipu objekata koji se 
+                            prikazuje u tabeli (ClientOrderPresenter u ovom slucaju). U taj property ce se upisati selektovan red (objekat). Mod selektovanja set-ujemo kroz
+                            "selectionMode" atribut i vrednost "single" znaci da se moze izabrati samo 1 red u 1 momentu. Potrebno je definisati i atribut "rowKey" koji
+                            predstavlja jedinstveni identifikator svakog reda (ClientOrders ID u ovom slucaju).-->
                             <p:dataTable id="clientOrdersTableId" value="#{logInController.listOfClientOrderPresenters}" var="clientOrderPresenter"
                                          filteredValue="#{logInController.filteredClientOrderPresenter}" widgetVar="clientOrdersWidgetVar"
                                          editable="true" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                          rowsPerPageTemplate="#{logInController.firstRowToShow},5,10,15" rows="#{logInController.pageRows}" paginatorPosition="bottom" first="#{logInController.firstRowToShow}"
                                          rowStyleClass="#{tempRes = clientOrderPresenter.getReservation(); tempRes != null ? (tempRes.reservationDate.toEpochDay() lt logInController.todayAsLong ? 'pastDays' : (tempRes.reservationDate.toEpochDay() gt logInController.todayAsLong ? 'futureDays' : null )) : 'pastDays'}" 
-                                         rowIndexVar="rowIndex">
+                                         rowIndexVar="rowIndex" rowKey="#{clientOrderPresenter.clientOrder.id}" selection="#{logInController.selectedClientOrderPresenter}" selectionMode="single">
                                 <f:facet name="header">
                                     Client orders
                                     <p:outputPanel id="tableGlobalComponents">
@@ -338,6 +396,10 @@
 
                                 <p:ajax event="rowEdit" listener="#{logInController.onRowEdit}"/>
                                 <p:ajax event="rowEditCancel" listener="#{logInController.onRowCancel}"/>
+                                
+                                <!-- Metode koje se pozivaju kada se red selektuje odnosno deselektuje.-->
+                                <p:ajax event="rowSelect" listener="#{logInController.onRowSelect}"/>
+                                <p:ajax event="rowUnselect" listener="#{logInController.onRowUnselect}"/>
 
                                 <p:column headerText="ID" sortBy="#{clientOrderPresenter.clientOrder.id}" filterBy="#{clientOrderPresenter.clientOrder.id}" filterMatchMode="contains">
                                     <h:outputText value="#{clientOrderPresenter.clientOrder.id}"/>
@@ -416,8 +478,13 @@
                                             <h:outputText value="#{clientOrderPresenter.reservation.reservationDate}"/>
                                         </f:facet>
                                         <f:facet name="input">
+                                            <!-- Ovo je kalendar koji se nalazi u redu admin tabele. Za razliku od kalendara koji se nalazi u zaglavlju ove kolone i koji
+                                            nema nikakvih ogranicenj po pitanju prikaza dana, ovi kalendari, na osnovu vrednosti upisane u hidden input sa ID-jem 
+                                            "workingDaysInputForAdminTable", a kroz JS funkciju "disableNonWorkingDaysInAdminTable" odrejuju koji dani u nedelji ce biti
+                                            enable-ovani odnosn disable-ovani. Vrednost koja se upisuje u hidden input zavisi od selektovanog reda, odnosno company order-a
+                                            kome objekat u tom redu pripada.--> 
                                             <p:calendar value="#{clientOrderPresenter.reservation.reservationDate}" rendered="#{clientOrderPresenter.reservation != null}" mindate="today" placeholder="Pick new date."
-                                                        onkeypress="preventEnterBehaviour(event)" locale="en_GB" pattern="dd-MM-yyyy" size="10"
+                                                        onkeypress="preventEnterBehaviour(event)" beforeShowDay="disableNonWorkingDaysInAdminTable" locale="en_GB" pattern="dd-MM-yyyy" size="10"
                                                         class="dateInputInAdminTable">
                                                 <p:ajax event="change"/>
                                                 <f:converter converterId="localDateConverter"/>
@@ -459,6 +526,12 @@
                                 </p:column>
 
                             </p:dataTable>
+                            
+                            <!-- Ovo je input u koji upisujemo radne dane za selektovani red (company order). Vrednost ovog input-a se koristi da bi se
+                            enable-ovali / disable-ovali dani u nedelji u kalendaru koji se nalazi u selektovanom redu. Ideja je da, bez obzira koji red
+                            se izabere, kalendar u tom redu koristi ovo polje da bi odredio koji dani su enable-vani (disable-ovani) a da se ovaj input
+                            dinamicki popunjava vrednostima zavisno od toga koji red (company order) je izabran.-->
+                            <h:inputHidden id="workingDaysInputForAdminTable" value="#{logInController.selectedOrderWorkingDays}"/>
                         </h:form>
                     </div>
 
@@ -685,7 +758,7 @@
                         <div id="orderPopup">
                             <h:form id="orderForm">
                                 <h2>Choose order ID</h2>
-                                
+
                                 <h:panelGrid id="orderPopupGrid" columns="2">
                                     <h:outputLabel id="order_id_label" value="Order ID:" for="orderList" styleClass="previewElement"/>
                                     <h:selectOneMenu id="orderList" value="#{logInController.tempOrderId}" converter="omnifaces.SelectItemsConverter">

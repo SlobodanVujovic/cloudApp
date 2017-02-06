@@ -152,20 +152,34 @@ function isPhoneEntered() {
     return phoneIsEntered;
 }
 
+// Ova funkcija se poziva svaki put kada se klikne na servis. Ona uzima value servisa (ID servisa) i stavlja ga
+// u hidden input polje ako je servis cekiran odnosno sklanja ga ako je rascekiran.
 function transferValueToTextInput(checkbox) {
+    // Nadjemo input polje.
     var selectedServicesElement = document.getElementById("selectedServices");
+    // Uzmemo vrednost servisa i spojimo ga sa space-om, da bi imali razdvojene id-eve u input-u.
     var clickedServiceValue = checkbox.value + " ";
+    // Uzmemo vrednost koja se nalazi u input-u (OBRATI PAZNJU, promene koje se vrse nad "chosenServicesInputValue"
+    // nece uticati na vrednost koja se cuva u "selectedServicesElement"-u, zato sto smo mi uzeli vrednost input polja
+    // i stavili je u novi objekat i sada menjamo taj novi objekat, originalni objekat iz koga smo uzeli vrednost se nece
+    // promeniti, zato je neophodna poslednja linija u funkciji)
     var chosenServicesInputValue = selectedServicesElement.value;
+    // i ako je checkbox cekiran
     if (checkbox.checked) {
-        if (chosenServicesInputValue !== "") {
-        }
+        // dodamo vrednost servisa (sa sve space-om) u input polje.
         chosenServicesInputValue += clickedServiceValue;
+        // Ako je pak servis rascekiran,
     } else {
+        // 1. proverimo da li u input-u postoji vec ta vrednost serivsa (ovo je redundantno jer ako se servis rascekira onda mora da
+        // je vec bio cekiran, odnosno njegova vrednost je vec bila u input polju).
         var serviceAlreadyChosen = chosenServicesInputValue.includes(clickedServiceValue);
+        // Ako vrednost postoji u input polju
         if (serviceAlreadyChosen) {
+            // onda se ona replace-uje sa "".
             chosenServicesInputValue = chosenServicesInputValue.replace(clickedServiceValue, "");
         }
     }
+    // Na kraju se vrednost input elementa set-uje na vrednost "chosenServicesInputValue".
     selectedServicesElement.value = chosenServicesInputValue;
 }
 

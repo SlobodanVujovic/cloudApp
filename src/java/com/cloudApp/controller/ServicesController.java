@@ -4,11 +4,13 @@ import com.cloudApp.entity.Agents;
 import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyOrder;
+import com.cloudApp.entity.CompanyOrderHasDaysOfWeek;
 import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
 import com.cloudApp.sessions.AgentsFacade;
 import com.cloudApp.sessions.ClientOrdersFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
+import com.cloudApp.sessions.CompanyOrderHasDaysOfWeekFacade;
 import com.cloudApp.sessions.ReservationsFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import com.cloudApp.utility.ConfirmationMailArgument;
@@ -24,11 +26,8 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.lifecycle.ClientWindow;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
@@ -53,6 +52,7 @@ public class ServicesController implements Serializable {
     // Ovaj property koristimo da bi odredili da li je potrebna validacija polja u koja se unose datum i
     // vreme rezervacije servisa.
     private String validateDateAndTime;
+    private List<Integer> workingDays;
 
     public ServicesController() {
 
@@ -74,6 +74,8 @@ public class ServicesController implements Serializable {
     private AgentsFacade agentsFacade;
     @Inject
     private ReservationsFacade reservationsFacade;
+    @Inject
+    private CompanyOrderHasDaysOfWeekFacade companyOrderWorkingDaysFacade;
     @EJB
     private MailManager mailManager;
 
@@ -163,7 +165,7 @@ public class ServicesController implements Serializable {
         }
         reservation = new Reservations();
         clientOrder = new ClientOrders();
-        
+
         return "";
     }
 
@@ -183,6 +185,8 @@ public class ServicesController implements Serializable {
         setCompanyOrder();
         setCompany();
         setServiceIdWithRequiredReservation();
+        // Neophodnost argumenta je objasnjena kod definicije metoda.
+        setWorkingDays(new ArrayList<>());
     }
 
     public void setCheckedServices(String checkedServices) {
@@ -241,4 +245,20 @@ public class ServicesController implements Serializable {
             return false;
         }
     }
+
+    public List<Integer> getWorkingDays() {
+        return workingDays;
+    }
+
+    // Setter metod ne koristi tempList promenljivu, ali je neophodan kao argument da bi konverter, koji se koristi nad input poljem koje prikazuje workingDays
+    // vrednost, radio ispravno. U suprotno stranica se ne submit-uje jer se izbacuje ConverterException.
+    public void setWorkingDays(List<Integer> tempList) {
+        List<CompanyOrderHasDaysOfWeek> listCompanyOrderHasDaysOfWeek = companyOrderWorkingDaysFacade.getCompanyOrderWorkingDaysByCompanyOrderId(orderId);
+        workingDays = new ArrayList<>();
+        for (CompanyOrderHasDaysOfWeek tempCompanyOrderWorkingDays : listCompanyOrderHasDaysOfWeek) {
+            workingDays.add(tempCompanyOrderWorkingDays.getDaysOfWeek().getId());
+        }
+
+    }
+
 }

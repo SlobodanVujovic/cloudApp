@@ -56,13 +56,23 @@ racunara. -->
                                 <f:selectItems value="#{servicesController.allAgents}" var="agent" itemLabel="#{agent.firstName.concat(' ')}#{agent.lastName}" itemValue="#{agent}"/>
                             </h:selectOneMenu>
                         </div>
+
+                        <!-- U ovaj input upisujemo redne brojeve radnih dana u nedelji. Ovi dani treba da budu enable-ovani. Posto je workingDays tipa
+                        List<Integer>, kada se koristi getter metod, lista ce se prikazati u string obliku u input-u, i to radi bez problema. Medjutim kada
+                        se stranica submit-uje (pritisne Schedule dugme) izbacuje se ConverterException jer JSF ne zna kako da string oblika: "[1, 3, 5]" 
+                        set-uje u workingDays property bean-a. Zato je potreban konvertor (cak iako mi ne set-ujemo zaista ovu vrednost u bean property vec
+                        je samo ostavimo neiskoriscenu; set-ovanje se radi samo pri inicijalizaciji ServicesController bean-a.-->
+                        <h:inputHidden id="workingDaysInput" value="#{servicesController.workingDays}">
+                            <f:converter converterId="listOfIntegersConverter"/>
+                        </h:inputHidden>
                         <div class="reservationDiv">
                             <h:outputLabel id="reservation_label" class="reservationLabel" value="Choose appointment"/>
                             <!-- Obrati paznju kako se odredjuje da li je potrebna validacija ovog polja. Atributu "required" dodeljujemo vrednost kroz
-                            EL (pozivamo metod koji vraca boolean, na taj nacin govorimo da li je potrebno raditi validaciju ili ne).-->
-                            <p:calendar id="reservation_date" value="#{servicesController.reservation.reservationDate}" mindate="today" placeholder=" Pick Date" 
-                                        pattern="dd-MM-yyyy" required="#{servicesController.doRequiredOnDateAndTime()}" requiredMessage="Date is required." 
-                                        locale="en_GB" class="reservationDate">
+                            EL (pozivamo metod koji vraca boolean, na taj nacin govorimo da li je potrebno raditi validaciju ili ne). Atribut "beforeShowDay"
+                            ukazuje na JS funkciju u adminLoginPage.js file-u. Ova funkcija odredjuje koji dan u nedelji ce biti enable-ovan a koji disable-ovan.-->
+                            <p:calendar id="reservation_date" value="#{servicesController.reservation.reservationDate}" mindate="today" beforeShowDay="disableNonWorkingDays"
+                                        placeholder=" Pick Date" pattern="dd-MM-yyyy" required="#{servicesController.doRequiredOnDateAndTime()}" 
+                                        requiredMessage="Date is required." locale="en_GB" class="reservationDate">
                                 <f:converter converterId="localDateConverter"/>
                             </p:calendar>
                             <h:inputText id="reservation_time" value="#{servicesController.reservation.reservationTime}" required="#{servicesController.doRequiredOnDateAndTime()}" requiredMessage="Time is required."

@@ -86,7 +86,7 @@ public class Companies implements Serializable {
             this.companyName = companyName;
         }
     }
-    
+
     @XmlTransient
     public List<Agents> getAgentsList() {
         return agentsList;
@@ -95,18 +95,14 @@ public class Companies implements Serializable {
     public void setAgentsList(List<Agents> agentsList) {
         this.agentsList = agentsList;
     }
-    
+
     @XmlTransient
     public List<CompanyOrder> getCompanyOrderList() {
         return companyOrderList;
-
-
     }
 
     public void setCompanyOrderList(List<CompanyOrder> companyOrderList) {
         this.companyOrderList = companyOrderList;
-
-
     }
 
     @XmlTransient

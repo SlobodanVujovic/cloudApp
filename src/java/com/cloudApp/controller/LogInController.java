@@ -6,12 +6,16 @@ import com.cloudApp.entity.ClientOrders;
 import com.cloudApp.entity.Companies;
 import com.cloudApp.entity.CompanyActivities;
 import com.cloudApp.entity.CompanyOrder;
+import com.cloudApp.entity.CompanyOrderHasDaysOfWeek;
+import com.cloudApp.entity.CompanyOrderHasDaysOfWeekPK;
 import com.cloudApp.entity.CompanysContacts;
 import com.cloudApp.entity.CompanysLocation;
+import com.cloudApp.entity.DaysOfWeek;
 import com.cloudApp.entity.Owners;
 import com.cloudApp.entity.OwnersContacts;
 import com.cloudApp.entity.Reservations;
 import com.cloudApp.entity.Services;
+import com.cloudApp.pojo.CompanyOrderWorkingDaysPresenter;
 import com.cloudApp.pojo.MailFromAdminTable;
 import com.cloudApp.sessions.ActivityFacade;
 import com.cloudApp.sessions.AgentsFacade;
@@ -19,14 +23,17 @@ import com.cloudApp.sessions.ClientOrdersFacade;
 import com.cloudApp.sessions.CompaniesFacade;
 import com.cloudApp.sessions.CompanyActivitiesFacade;
 import com.cloudApp.sessions.CompanyOrderFacade;
+import com.cloudApp.sessions.CompanyOrderHasDaysOfWeekFacade;
 import com.cloudApp.sessions.CompanysContactsFacade;
 import com.cloudApp.sessions.CompanysLocationFacade;
+import com.cloudApp.sessions.DaysOfWeekFacade;
 import com.cloudApp.sessions.OwnersContactsFacade;
 import com.cloudApp.sessions.OwnersFacade;
 import com.cloudApp.sessions.ReservationsFacade;
 import com.cloudApp.sessions.ServicesFacade;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -52,7 +59,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 @Named
 @ViewScoped
@@ -86,6 +96,15 @@ public class LogInController implements Serializable {
     private List<ClientOrderPresenter> listOfClientOrderPresenters;
     private MailFromAdminTable mailFromAdminTable;
     private CompanyOrder tempOrderId;
+    private List<DaysOfWeek> daysOfWeek;
+    // Ovoj listi cemo pristupati kroz JSF i eventualno edit-ovati.
+    private List<CompanyOrderWorkingDaysPresenter> listOrderWorkingDays;
+    // Ova lista predstavlja stanje u DB-u i nju koristimo kada treba da update-ujemo DB da bi proverili da li je update uopste i potreban.
+    private List<CompanyOrderWorkingDaysPresenter> oldOrderWorkingDays;
+    // Cuva objekat (red) koji je trenutno selektovan.
+    private ClientOrderPresenter selectedClientOrderPresenter;
+    // Cuva listu int-ova koji predstavljaju ID-jeve radnih dana za izabrani red (company order).
+    private List<Integer> selectedOrderWorkingDays;
 
     public LogInController() {
 
@@ -99,6 +118,8 @@ public class LogInController implements Serializable {
         agentsNames = new HashSet<>();
         tempCompanyActivitiesForAdding = new CompanyActivities();
         mailFromAdminTable = new MailFromAdminTable();
+        listOrderWorkingDays = new ArrayList<>();
+        oldOrderWorkingDays = new ArrayList<>();
         setAllData();
     }
 
@@ -128,6 +149,10 @@ public class LogInController implements Serializable {
     private CompanyActivitiesFacade companyActivitiesFacade;
     @Inject
     private ActivityFacade activityFacade;
+    @Inject
+    private DaysOfWeekFacade daysOfWeekFacade;
+    @Inject
+    private CompanyOrderHasDaysOfWeekFacade companyOrderHasDaysOfWeekFacade;
 
 //  Methods for all data.
     public void setAllData() {
@@ -144,6 +169,8 @@ public class LogInController implements Serializable {
         listOfClientOrders = setListOfClientOrders();
         listOfClientOrderPresenters = setListOfClientOrderPresenters();
         setFirstRowToShow();
+        setDaysOfWeek();
+        setListOrderWorkingDays();
         LOGGER.log(Level.INFO, "Method setAllData() finished successfully.");
     }
 
@@ -156,6 +183,7 @@ public class LogInController implements Serializable {
         updateAgents();
         updateCompanyServices();
         updateCompanyOrder();
+        updateOrderWorkingDays();
     }
 
 //  ClientOrders methods.
@@ -597,5 +625,165 @@ public class LogInController implements Serializable {
         // Obrati paznju na navigaciju na stranicu u 2. folderu. Koristi se apsolutna putanja i "faces-redirect" atribut.
         String url = "/cloud/services.xhtml?" + orderId + "&faces-redirect=true";
         return url;
+    }
+
+    public List<DaysOfWeek> getDaysOfWeek() {
+        return daysOfWeek;
+    }
+
+    public void setDaysOfWeek() {
+        daysOfWeek = daysOfWeekFacade.findAll();
+    }
+
+    public List<CompanyOrderWorkingDaysPresenter> getListOrderWorkingDays() {
+        return listOrderWorkingDays;
+    }
+
+    public void setListOrderWorkingDays() {
+        List<CompanyOrderHasDaysOfWeek> tempListWorkingDaysOfOrder;
+        CompanyOrderWorkingDaysPresenter tempOrderWorkingDaysPresenter;
+        List<DaysOfWeek> tempWorkingDays;
+        // Posto svi radni dani imaju isto radno vreme i posto svi vikend dani imaju isto radno vreme, da ne bi 5, odnosno 2, puta
+        // set-ovali vrednosti za pocetak i kraj radnog vremena radnih, odnosno vikend, dana, koristimo naredna 2 flag-a koji se set-uju
+        // na true kada odgovarajuce promenljive dobiju vrednost. Na taj naci sprecavamo kasniji ponovni ulazak u if statement.
+        boolean wordTimeSet = false;
+        boolean weekendTimeSet = false;
+        // Moramo inicijalizovati vremena da se ne bi desilo da neke promenljive ostanu bez vrednosti.
+        LocalTime tempWorkStart = LocalTime.of(0, 0),
+                tempWorkClose = LocalTime.of(0, 0),
+                tempWeekednStart = LocalTime.of(0, 0),
+                tempWeekendClose = LocalTime.of(0, 0);
+        // Za svaki order koji kompanija ima
+        for (CompanyOrder tempCompanyOrder : companyOrders) {
+            tempOrderWorkingDaysPresenter = new CompanyOrderWorkingDaysPresenter();
+            tempWorkingDays = new ArrayList<>();
+            // uzimamo iz "company_order_has_days_of_week" DB tabele record-e koji imaju navedeni order.
+            tempListWorkingDaysOfOrder = companyOrderHasDaysOfWeekFacade.getCompanyOrderWorkingDaysByCompanyOrderId(tempCompanyOrder.getId());
+            // Prolazimo kroz listu dobijenih record-a i u posebnu listu, "tempWorkingDays" izdvajamo dane koji su vezani za navedeni order.
+            for (CompanyOrderHasDaysOfWeek tempDay : tempListWorkingDaysOfOrder) {
+                tempWorkingDays.add(tempDay.getDaysOfWeek());
+                // Ovde koristimo flag-ove. Kada se 1 set-uju na true, vise se nece ulaziti u if statement.
+                if (!wordTimeSet && tempDay.getDaysOfWeek().getId() >= 1 && tempDay.getDaysOfWeek().getId() <= 5) {
+                    tempWorkStart = tempDay.getStartTime();
+                    tempWorkClose = tempDay.getCloseTime();
+                    wordTimeSet = true;
+                } else if (!weekendTimeSet && tempDay.getDaysOfWeek().getId() >= 6 && tempDay.getDaysOfWeek().getId() <= 7) {
+                    tempWeekednStart = tempDay.getStartTime();
+                    tempWeekendClose = tempDay.getCloseTime();
+                    weekendTimeSet = true;
+                }
+            }
+            // Sada kada imamo order, listu dana i vremena, setujemo ih u presenter objektu.
+            tempOrderWorkingDaysPresenter.setCompanyOrder(tempCompanyOrder);
+            tempOrderWorkingDaysPresenter.setWorkingDays(tempWorkingDays);
+            tempOrderWorkingDaysPresenter.setWorkingDayStartTime(tempWorkStart);
+            tempOrderWorkingDaysPresenter.setWorkingDayStopTime(tempWorkClose);
+            tempOrderWorkingDaysPresenter.setWeekendDayStartTime(tempWeekednStart);
+            tempOrderWorkingDaysPresenter.setWeekendDayStopTime(tempWeekendClose);
+            listOrderWorkingDays.add(tempOrderWorkingDaysPresenter);
+            // Posto, pre svakog update-a baze, proveravamo da li se stanje baze izmenilo, popunjavamo ovu listu i imacemo to stanje za kasnije.
+            // Da nema ove liste morali bi prvo citati bazu, da bi uzeli trenutno stanje, sto nepotrebno povecava broj upita ka bazi.
+            oldOrderWorkingDays.add(tempOrderWorkingDaysPresenter);
+        }
+    }
+
+    public void updateOrderWorkingDays() {
+        List<CompanyOrderHasDaysOfWeek> currentListOfOrdersWorkingDays = getCurrentOrderWorkingDays();
+        if (areWorkingDaysChanged(currentListOfOrdersWorkingDays)) {
+            // 1. izbrisemo unose za sve CompanyOrder-e.
+            for (CompanyOrder tempCompanyOrder : companyOrders) {
+                List<CompanyOrderHasDaysOfWeek> oldListOfOrdersWorkingDays = companyOrderHasDaysOfWeekFacade.getCompanyOrderWorkingDaysByCompanyOrderId(tempCompanyOrder.getId());
+                for (CompanyOrderHasDaysOfWeek tempCompanyOrderWorkingDays : oldListOfOrdersWorkingDays) {
+                    companyOrderHasDaysOfWeekFacade.remove(tempCompanyOrderWorkingDays);
+                }
+            }
+            // Zatim unesemo (kreiramo) nove vrednosti (redove).
+            for (CompanyOrderHasDaysOfWeek tempCurrentOrderWorkingDays : currentListOfOrdersWorkingDays) {
+                companyOrderHasDaysOfWeekFacade.create(tempCurrentOrderWorkingDays);
+            }
+        }
+        // Po ucitavanju adminLoginPage.xhtml-a se setuju vrednosti u timepicker-ima na osnovu hidden input-a u kojima se nalaze iscitane
+        // vrednosti iz baze. Medjutim kada se pritisne "Update data" dugme koristi se AJAX, sto znaci da se strana ne ucitava ponovo i 
+        // zato je potrebno ovde pozvati JS funkciju koja ce dodeliti vrednosti timepicker-ima (u suprotnom ce u njima biti blanko).
+        RequestContext.getCurrentInstance().execute("checkIfThisIsAdminLoginPage();");
+    }
+
+    // Vreca listu CompanyOrderHasDaysOfWeek objekata koji sadrze sve promene koje je korisnik napravio (stanje koje je korisnik ostavio).
+    public List<CompanyOrderHasDaysOfWeek> getCurrentOrderWorkingDays() {
+        List<CompanyOrderHasDaysOfWeek> tempListOfOrdersWorkingDays = new ArrayList<>();
+        CompanyOrderHasDaysOfWeek tempOrderHasDaysOfWeek;
+        for (CompanyOrderWorkingDaysPresenter tempOrderWoringDays : listOrderWorkingDays) {
+            List<DaysOfWeek> tempWorkingDays = tempOrderWoringDays.getWorkingDays();
+            for (int i = 0; i < tempWorkingDays.size(); i++) {
+                DaysOfWeek tempDay = tempWorkingDays.get(i);
+                tempOrderHasDaysOfWeek = new CompanyOrderHasDaysOfWeek();
+                CompanyOrderHasDaysOfWeekPK tempPK = new CompanyOrderHasDaysOfWeekPK(tempOrderWoringDays.getCompanyOrder().getId(), tempDay.getId());
+                // Obati paznju da je potrebno setovati i PK (koji se sastoji od CompanyOrder ID-a i DaysOfWeek ID-a) kao i sama polja
+                // CompanyOrder i DaysOfWeek, iako su to ista ona polja od kojih je sacinjen PK.
+                tempOrderHasDaysOfWeek.setCompanyOrderHasDaysOfWeekPK(tempPK);
+                tempOrderHasDaysOfWeek.setCompanyOrder(tempOrderWoringDays.getCompanyOrder());
+                tempOrderHasDaysOfWeek.setDaysOfWeek(tempDay);
+                tempOrderHasDaysOfWeek.setSortIdx(i);
+                if (tempDay.getId() >= 1 && tempDay.getId() <= 5) {
+                    tempOrderHasDaysOfWeek.setStartTime(tempOrderWoringDays.getWorkingDayStartTime());
+                    tempOrderHasDaysOfWeek.setCloseTime(tempOrderWoringDays.getWorkingDayStopTime());
+                } else {
+                    tempOrderHasDaysOfWeek.setStartTime(tempOrderWoringDays.getWeekendDayStartTime());
+                    tempOrderHasDaysOfWeek.setCloseTime(tempOrderWoringDays.getWeekendDayStopTime());
+                }
+                tempListOfOrdersWorkingDays.add(tempOrderHasDaysOfWeek);
+            }
+        }
+        return tempListOfOrdersWorkingDays;
+    }
+
+    // Proverimo da li je zaista potrebno vrsiti update baze. Ovo radimo jer se update sastoji od brisanja starih unosa i upisa novih.
+    // To ne zelimo da radimo osim ako nije neophodno (napravljene promene).
+    public boolean areWorkingDaysChanged(List<CompanyOrderHasDaysOfWeek> currentOrderWorkingDays) {
+        if (currentOrderWorkingDays.size() == oldOrderWorkingDays.size() && currentOrderWorkingDays.containsAll(oldOrderWorkingDays) && oldOrderWorkingDays.containsAll(currentOrderWorkingDays)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public ClientOrderPresenter getSelectedClientOrderPresenter() {
+        return selectedClientOrderPresenter;
+    }
+
+    // Kada se set-uje selectedClientOrderPresenter znaci da je izabran novi red
+    public void setSelectedClientOrderPresenter(ClientOrderPresenter selectedClientOrderPresenter) {
+        this.selectedClientOrderPresenter = selectedClientOrderPresenter;
+        // i tada pozivamo metod koji set-uje novu vrednost u input polje za radne dane selektovanog reda (company order-a).
+        setSelectedOrderWorkingDays();
+    }
+
+    public List<Integer> getSelectedOrderWorkingDays() {
+        return selectedOrderWorkingDays;
+    }
+
+    public void setSelectedOrderWorkingDays() {
+        // Svaki put pravimo novu list.
+        selectedOrderWorkingDays = new ArrayList<>();
+        // 1. odredimo ID company order-a za selektovani red (objekat).
+        int tempCompanyOrderId = selectedClientOrderPresenter.getClientOrder().getCompanyOrderId().getId();
+        // Onda procitamo iz baze CompanyOrderHasDaysOfWeek objekte koji imaju navedeni company order ID.
+        List<CompanyOrderHasDaysOfWeek> tempOrderWorkingDays = companyOrderHasDaysOfWeekFacade.getCompanyOrderWorkingDaysByCompanyOrderId(tempCompanyOrderId);
+        // Prodjemo kroz dobijenu listu CompanyOrderHasDaysOfWeek i izdvojimo ID-jeve dana (radni dani za navedeni company order).
+        for (CompanyOrderHasDaysOfWeek tempDay : tempOrderWorkingDays) {
+            selectedOrderWorkingDays.add(tempDay.getDaysOfWeek().getId());
+        }
+        // Na kraju update-ujemo input polje u JSF-u sa novim nizom int-ova.
+        RequestContext.getCurrentInstance().update("clientOrdersForm:workingDaysInputForAdminTable");
+    }
+
+    // Nista ne redimo sa naredna 2 metoda. Morali smo ih implementirati da bi zadovoljili formu. Cilj smo postigli u prethodnom
+    // metodu.
+    public void onRowSelect(SelectEvent event) {
+        
+    }
+ 
+    public void onRowUnselect(UnselectEvent event) {
+        
     }
 }

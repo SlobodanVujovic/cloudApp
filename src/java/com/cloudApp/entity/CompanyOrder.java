@@ -69,6 +69,10 @@ public class CompanyOrder implements Serializable {
     @NotNull
     @Column(name = "notification")
     private int notification = 0;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrder")
+    private List<CompanyOrderHasDaysOfWeek> companyOrderHasDaysOfWeekList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
+    private List<NonWorkingDays> nonWorkingDaysList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
     private List<ClientOrders> clientOrdersList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "companyOrderId")
@@ -84,11 +88,12 @@ public class CompanyOrder implements Serializable {
         this.id = id;
     }
 
-    public CompanyOrder(Integer id, Date dateCreated, String url, int amount) {
+    public CompanyOrder(Integer id, Date dateCreated, String url, int amount, int notification) {
         this.id = id;
         this.dateCreated = dateCreated;
         this.url = url;
         this.amount = amount;
+        this.notification = notification;
     }
 
     public Integer getId() {
@@ -123,6 +128,32 @@ public class CompanyOrder implements Serializable {
         this.amount = amount;
     }
 
+    public int getNotification() {
+        return notification;
+    }
+
+    public void setNotification(int notification) {
+        this.notification = notification;
+    }
+
+    @XmlTransient
+    public List<CompanyOrderHasDaysOfWeek> getCompanyOrderHasDaysOfWeekList() {
+        return companyOrderHasDaysOfWeekList;
+    }
+
+    public void setCompanyOrderHasDaysOfWeekList(List<CompanyOrderHasDaysOfWeek> companyOrderHasDaysOfWeekList) {
+        this.companyOrderHasDaysOfWeekList = companyOrderHasDaysOfWeekList;
+    }
+    
+    @XmlTransient
+    public List<NonWorkingDays> getNonWorkingDaysList() {
+        return nonWorkingDaysList;
+    }
+
+    public void setNonWorkingDaysList(List<NonWorkingDays> nonWorkingDaysList) {
+        this.nonWorkingDaysList = nonWorkingDaysList;
+    }
+
     @XmlTransient
     public List<ClientOrders> getClientOrdersList() {
         return clientOrdersList;
@@ -131,7 +162,7 @@ public class CompanyOrder implements Serializable {
     public void setClientOrdersList(List<ClientOrders> clientOrdersList) {
         this.clientOrdersList = clientOrdersList;
     }
-     
+
     @XmlTransient
     public List<Services> getServicesList() {
         return servicesList;
@@ -147,14 +178,6 @@ public class CompanyOrder implements Serializable {
 
     public void setCompaniesId(Companies companiesId) {
         this.companiesId = companiesId;
-    }
-
-    public int getNotification() {
-        return notification;
-    }
-
-    public void setNotification(int notification) {
-        this.notification = notification;
     }
 
     @Override
@@ -181,5 +204,5 @@ public class CompanyOrder implements Serializable {
     public String toString() {
         return "com.cloudApp.entity.CompanyOrder[ id=" + id + " ]";
     }
-
+    
 }

@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.FacesConverter;
 import javax.faces.convert.Converter;
 
+// Posto nismo definisali ime kroz atribut "value" potrebno je to uciniti kroz faces-config.xml file.
 @FacesConverter(forClass = LocalDate.class)
 public class LocalDateConverter implements Converter {
 
